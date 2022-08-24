@@ -1,0 +1,25 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Validator.Domain.Entities;
+
+namespace Validator.Data.Mappings
+{
+    internal class UsuarioMap : IEntityTypeConfiguration<Usuario>
+    {
+        public void Configure(EntityTypeBuilder<Usuario> builder)
+        {
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Nome).HasMaxLength(120);
+            builder.Property(c => c.Email).HasMaxLength(120);
+            builder.Property(c => c.EmailSuperior).HasMaxLength(120);
+
+            builder.HasOne(c => c.AnoBase)
+                .WithMany()
+                .HasForeignKey(c => c.AnoBaseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+        }
+    }
+}
