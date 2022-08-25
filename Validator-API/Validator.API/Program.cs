@@ -2,9 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Validator.Application.Interfaces;
 using Validator.Application.Services;
 using Validator.Data.Contexto;
+using Validator.Data.Repositories;
 using Validator.Data.UoW;
 using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
+using Validator.Domain.Core.Services;
+using Validator.Domain.Interfaces;
+using Validator.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +18,10 @@ builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
 
 // Add services to the container.
 builder.Services.AddTransient<IPlanilhaAppService, PlanilhaAppService>();
+builder.Services.AddTransient<IPlanilhaService, PlanilhaService>();
+builder.Services.AddTransient(typeof(IServiceDomain<>), typeof(ServiceDomain<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ValidatorContext>();
 
 builder.Services.AddControllers();
