@@ -20,8 +20,16 @@ namespace Validator.Data.Contexto
             modelBuilder.ApplyConfiguration(new AnoBaseMap());
             modelBuilder.ApplyConfiguration(new PlanilhaMap());
             modelBuilder.ApplyConfiguration(new UsuarioMap());
+            modelBuilder.ApplyConfiguration(new DivisaoMap());
+            modelBuilder.ApplyConfiguration(new SetorMap());
+            modelBuilder.ApplyConfiguration(new ParametroMap());
+            modelBuilder.ApplyConfiguration(new UsuarioAvaliadorMap());
+
+            modelBuilder.Entity<Parametro>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
 
             base.OnModelCreating(modelBuilder);
+
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

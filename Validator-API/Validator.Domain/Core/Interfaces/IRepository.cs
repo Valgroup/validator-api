@@ -11,6 +11,7 @@ namespace Validator.Domain.Core.Interfaces
         Task<TEntity> FindNoFilter(Expression<Func<TEntity, bool>> predicate);
         TEntity? GetById(Guid id);
         Task<TEntity?> GetByIdAsync(Guid id);
+        Task<TEntity?> GetByCurrentYear();
 
     }
 }

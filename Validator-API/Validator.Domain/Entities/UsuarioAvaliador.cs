@@ -1,4 +1,6 @@
-﻿using Validator.Domain.Core.Enums;
+﻿using Validator.Domain.Core;
+using Validator.Domain.Core.Enums;
+using Validator.Domain.Core.Interfaces;
 
 namespace Validator.Domain.Entities
 {

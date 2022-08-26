@@ -51,6 +51,11 @@ namespace Validator.Data.Repositories
             return await DbSet.FindAsync(id);
         }
 
+        public async Task<TEntity?> GetByCurrentYear()
+        {
+            return await DbSet.FirstOrDefaultAsync();
+        }
+
         public void Dispose()
         {
             Db.Dispose();

@@ -2,6 +2,8 @@
 {
     public enum EPerfilUsuario
     {
+        Diretor,
+        Administrador,
         Avaliado,
         Aprovador,
         Ambos

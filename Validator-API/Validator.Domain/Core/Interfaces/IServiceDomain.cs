@@ -7,5 +7,6 @@
         ValidationResult Delete(TEntity entity);
         TEntity? GetById(Guid id);
         Task<TEntity?> GetByIdAsync(Guid id);
+        Task<TEntity?> GetByCurrentYear();
     }
 }

@@ -49,5 +49,10 @@ namespace Validator.Domain.Core.Services
         {
             return await _repository.GetByIdAsync(id);
         }
+
+        public async Task<TEntity?> GetByCurrentYear()
+        {
+            return await _repository.GetByCurrentYear();
+        }
     }
 }

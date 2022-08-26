@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Validator.Data.Contexto;
 
@@ -11,9 +12,10 @@ using Validator.Data.Contexto;
 namespace Validator.Data.Migrations
 {
     [DbContext(typeof(ValidatorContext))]
-    partial class ValidatorContextModelSnapshot : ModelSnapshot
+    [Migration("20220826164446_V_1_0_1")]
+    partial class V_1_0_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +223,7 @@ namespace Validator.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SuperiorId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -321,7 +324,8 @@ namespace Validator.Data.Migrations
                     b.HasOne("Validator.Domain.Entities.Usuario", "Superior")
                         .WithMany()
                         .HasForeignKey("SuperiorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("AnoBase");
 

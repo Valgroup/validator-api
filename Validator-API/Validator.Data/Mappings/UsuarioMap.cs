@@ -19,6 +19,20 @@ namespace Validator.Data.Mappings
                 .HasForeignKey(c => c.AnoBaseId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(c => c.Setor)
+                .WithMany()
+                .HasForeignKey(c => c.SetorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(c => c.Divisao)
+               .WithMany()
+               .HasForeignKey(c => c.DivisaoId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(c => c.Superior)
+                .WithMany()
+                .HasForeignKey(c => c.SuperiorId).OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }

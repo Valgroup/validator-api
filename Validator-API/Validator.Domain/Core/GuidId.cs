@@ -7,6 +7,6 @@
             NewId = Guid.NewGuid();
         }
 
-        public Guid NewId { get; private set; }
+        public Guid NewId { get; }
     }
 }
