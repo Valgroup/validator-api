@@ -10,9 +10,9 @@ namespace Validator.API.Resolvers
     public class WebApiResolver : IUserResolver
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IUsuarioReadOnlyRepository _usuarioReadOnlyRepository;
+        private readonly IUsuarioAuthReadOnlyRepository _usuarioReadOnlyRepository;
 
-        public WebApiResolver(IHttpContextAccessor httpContextAccessor, IUsuarioReadOnlyRepository usuarioReadOnlyRepository)
+        public WebApiResolver(IHttpContextAccessor httpContextAccessor, IUsuarioAuthReadOnlyRepository usuarioReadOnlyRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _usuarioReadOnlyRepository = usuarioReadOnlyRepository;
@@ -21,7 +21,7 @@ namespace Validator.API.Resolvers
         public async Task<UsarioJwt> GetAuthenticateAsync()
         {
             var headerValues = new StringValues();
-            var headers = _httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("AccessToken", out headerValues);
+            var headers = _httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("Token", out headerValues);
             if (headers == true)
             {
                 var accessTokenCry = headerValues.ToString();

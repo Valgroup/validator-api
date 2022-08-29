@@ -12,6 +12,7 @@ namespace Validator.Domain.Entities
         {
             UsuarioId = usuarioId;
             AvaliadorId = avaliadorId;
+            Status = EStatuAvaliador.Pendente;
         }
 
         public Guid UsuarioId { get; private set; }

@@ -16,7 +16,7 @@ namespace Validator.API.Controllers
             _paramentroAppService = paramentroAppService;
         }
 
-        [HttpPost, Route("Salvar")]
+        [HttpPost, Route("SalvarParametros")]
         public async Task<IActionResult> Salvar([FromBody] ParametroSalvarCommand command)
         {
             var result = await _paramentroAppService.AdicionarOuAtualizar(command);

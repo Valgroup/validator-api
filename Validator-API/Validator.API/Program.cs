@@ -23,15 +23,18 @@ builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
 builder.Services.AddTransient<IPlanilhaAppService, PlanilhaAppService>();
 builder.Services.AddTransient<IDashAppService, DashAppService>();
 builder.Services.AddTransient<IAuthAppService, AuthAppService>();
+builder.Services.AddTransient<IUsuarioAppService, UsuarioAppService>();
 
 //DOMAIN
 builder.Services.AddTransient<IPlanilhaService, PlanilhaService>();
 builder.Services.AddTransient<IParametroService, ParametroService>();
 builder.Services.AddTransient(typeof(IServiceDomain<>), typeof(ServiceDomain<>));
+builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 //DOMAIN
 
 //DATA
 builder.Services.AddTransient<IUsuarioReadOnlyRepository, UsuarioReadOnlyRepository>();
+builder.Services.AddTransient<IUsuarioAuthReadOnlyRepository, UsuarioAuthReadOnlyRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

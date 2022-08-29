@@ -3,28 +3,35 @@ using Validator.Domain.Commands.Logins;
 using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Models;
+using Validator.Domain.Interfaces;
 
 namespace Validator.Application.Services
 {
     public class AuthAppService : AppBaseService, IAuthAppService
     {
-        public AuthAppService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        private readonly IUsuarioService _usuarioService;
+        public AuthAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService) : base(unitOfWork)
         {
+            _usuarioService = usuarioService;
         }
 
         public async Task<LoginResultCommand> Autenticar(LoginCommand command)
         {
+            var usuario = await _usuarioService.Find(f => f.Email == command.Email);
+            if (usuario == null)
+                return new LoginResultCommand { IsValid = false, Message = "Usuário inválido" };
+
             var jwt = new UsarioJwt()
             {
-                Nome = "Jonata Gomes",
-                Email = "jonata@valgroupco.com",
-                Id = Guid.Parse("DD2FD0EC-F7BA-4252-8F6A-82F54FFBFB66"),
-                Perfil = Domain.Core.Enums.EPerfilUsuario.Administrador,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Id = usuario.Id,
+                Perfil = usuario.Perfil,
                 Permissao = new PermissaoJwt(),
-                AnoBaseId = Guid.Parse("3C099378-2E67-480A-B0BB-900CB4B268EC")
-               
+                AnoBaseId = usuario.AnoBaseId
+
             };
-            return new LoginResultCommand { AccessToken = CryptoHelper.Crypto(jwt.Id.ToString()), Jwt = jwt };
+            return new LoginResultCommand { Token = CryptoHelper.Crypto(jwt.Id.ToString()), Jwt = jwt };
         }
     }
 }

@@ -36,9 +36,9 @@ namespace Validator.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool asNoTracking)
+        public Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool asNoTracking)
         {
-            throw new NotImplementedException();
+            return asNoTracking ? DbSet.AsNoTracking().FirstOrDefaultAsync(predicate) : DbSet.FirstOrDefaultAsync(predicate);
         }
 
         public TEntity? GetById(Guid id)

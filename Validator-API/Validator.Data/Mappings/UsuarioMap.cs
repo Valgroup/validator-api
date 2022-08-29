@@ -13,6 +13,7 @@ namespace Validator.Data.Mappings
             builder.Property(c => c.Nome).HasMaxLength(120);
             builder.Property(c => c.Email).HasMaxLength(120);
             builder.Property(c => c.EmailSuperior).HasMaxLength(120);
+            builder.Property(c => c.Cargo).HasMaxLength(30);
 
             builder.HasOne(c => c.AnoBase)
                 .WithMany()

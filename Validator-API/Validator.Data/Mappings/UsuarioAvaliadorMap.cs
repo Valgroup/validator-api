@@ -16,7 +16,7 @@ namespace Validator.Data.Mappings
             builder.HasKey(c => new { c.UsuarioId, c.AvaliadorId });
 
             builder.HasOne(c => c.Usuario)
-                .WithMany()
+                .WithMany(m => m.Avaliadores)
                 .HasForeignKey(c => c.UsuarioId).OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(c => c.Avaliador)
