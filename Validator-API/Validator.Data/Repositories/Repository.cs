@@ -21,6 +21,11 @@ namespace Validator.Data.Repositories
             await DbSet.AddAsync(entity);
         }
 
+        public async Task CreateRangeAsync(List<TEntity> entities)
+        {
+            await DbSet.AddRangeAsync(entities);
+        }
+
         public void Delete(TEntity entity)
         {
             DbSet.Remove(entity);
@@ -55,6 +60,8 @@ namespace Validator.Data.Repositories
         {
             return await DbSet.FirstOrDefaultAsync();
         }
+
+
 
         public void Dispose()
         {

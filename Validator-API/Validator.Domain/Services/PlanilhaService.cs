@@ -7,8 +7,16 @@ namespace Validator.Domain.Services
 {
     public class PlanilhaService : ServiceDomain<Planilha>, IPlanilhaService
     {
+        private readonly IRepository<Planilha> _repository;
+
         public PlanilhaService(IRepository<Planilha> repository) : base(repository)
         {
+            _repository = repository;
+        }
+
+        public async Task CreateRangeAsync(List<Planilha> entities)
+        {
+            await _repository.CreateRangeAsync(entities);
         }
     }
 }

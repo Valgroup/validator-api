@@ -5,5 +5,6 @@ namespace Validator.Domain.Interfaces
 {
     public interface IPlanilhaService : IServiceDomain<Planilha>
     {
+        Task CreateRangeAsync(List<Planilha> entities);
     }
 }

@@ -18,11 +18,20 @@ namespace Validator.API.Controllers
         [HttpPost, Route("UploadXLS")]
         public async Task<IActionResult> UploadXLS()
         {
-            var result = await _planilhaAppService.Updload(null);
-            if (result.IsValid)
-                return await StatusCodeOK(result);
+            var formFile = HttpContext.Request.Form.Files.FirstOrDefault();
+            using (Stream stream = formFile.OpenReadStream())
+            using (MemoryStream memory = new MemoryStream())
+            {
+                await stream.CopyToAsync(memory);
 
-            return await EntityValidation(result);
+                var result = await _planilhaAppService.Updload(memory);
+                if (result.IsValid)
+                    return await StatusCodeOK(result);
+
+                return await EntityValidation(result);
+            }
+
+           
         }
     }
 }

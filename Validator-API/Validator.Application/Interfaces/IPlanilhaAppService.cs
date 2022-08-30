@@ -9,6 +9,6 @@ namespace Validator.Application.Interfaces
 {
     public interface IPlanilhaAppService
     {
-        Task<ValidationResult> Updload(object objPlanilha);
+        Task<ValidationResult> Updload(Stream excelStream);
     }
 }
