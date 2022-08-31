@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Validator.Domain.Commands.Planilhas;
 using Validator.Domain.Core;
 
 namespace Validator.Application.Interfaces
@@ -10,5 +6,7 @@ namespace Validator.Application.Interfaces
     public interface IPlanilhaAppService
     {
         Task<ValidationResult> Updload(Stream excelStream);
+        Task<ValidationResult> Remover(Guid id);
+        Task<ValidationResult> Resolver(PlanilhaResolverPendenciaCommand command);
     }
 }

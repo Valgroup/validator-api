@@ -35,6 +35,8 @@ builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 //DATA
 builder.Services.AddTransient<IUsuarioReadOnlyRepository, UsuarioReadOnlyRepository>();
 builder.Services.AddTransient<IUsuarioAuthReadOnlyRepository, UsuarioAuthReadOnlyRepository>();
+builder.Services.AddTransient<IDashReadOnlyRepository, DashReadOnlyRepository>();
+builder.Services.AddTransient<IPlanilhaReadOnlyRepository, PlanilhaReadOnlyRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -47,6 +49,40 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: "CorsValidador",
+        builder =>
+        {
+            builder
+                .SetIsOriginAllowed(origin =>
+                {
+#if DEBUG
+                    // Usando localhost todas as portas são permitidas
+                    return true;
+#endif
+
+                    var host = new Uri(origin).Host;
+
+                    return
+                        host == "localhost" ||
+
+                        host == "192.168.4.199" ||
+                        host == "roma" ||
+
+                        host == "192.168.5.103" ||
+                        host == "trento" ||
+
+                        host == "192.168.4.157" ||
+                        host == "matera";
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 
 var app = builder.Build();
 

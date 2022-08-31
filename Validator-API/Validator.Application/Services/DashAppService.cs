@@ -1,4 +1,5 @@
 ﻿using Validator.Application.Interfaces;
+using Validator.Data.Dapper;
 using Validator.Domain.Commands.Dashes;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Interfaces;
@@ -11,9 +12,11 @@ namespace Validator.Application.Services
     public class DashAppService : AppBaseService, IDashAppService
     {
         private readonly IParametroService _parametroService;
-        public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService) : base(unitOfWork)
+        private readonly IDashReadOnlyRepository _dashReadOnlyRepository;
+        public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService, IDashReadOnlyRepository dashReadOnlyRepository) : base(unitOfWork)
         {
             _parametroService = parametroService;
+            _dashReadOnlyRepository = dashReadOnlyRepository;
         }
 
         public async Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command)
@@ -49,7 +52,7 @@ namespace Validator.Application.Services
 
         public async Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command)
         {
-            return new DashResultadosDto();
+            return await _dashReadOnlyRepository.ObterResultados(command);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Validator.Data.Contexto;
 
@@ -11,9 +12,10 @@ using Validator.Data.Contexto;
 namespace Validator.Data.Migrations
 {
     [DbContext(typeof(ValidatorContext))]
-    partial class ValidatorContextModelSnapshot : ModelSnapshot
+    [Migration("20220831113506_V_1_0_6")]
+    partial class V_1_0_6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

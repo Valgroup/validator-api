@@ -1,4 +1,5 @@
-﻿using Validator.Domain.Core;
+﻿using Validator.Domain.Commands.Planilhas;
+using Validator.Domain.Core;
 using Validator.Domain.Core.Extensions;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Resources;
@@ -30,20 +31,23 @@ namespace Validator.Domain.Entities
         }
 
         public Guid Id { get; private set; }
-        public string Unidade { get; private set; }
-        public string CPF { get; private set; }
-        public string Nome { get; private set; }
-        public string Email { get; private set; }
-        public string Cargo { get; private set; }
-        public string Nivel { get; private set; }
+        public string? Unidade { get; private set; }
+        public string? CPF { get; private set; }
+        public string? Nome { get; private set; }
+        public string? Email { get; private set; }
+        public string? Cargo { get; private set; }
+
+       
+
+        public string? Nivel { get; private set; }
         public DateTime? DataAdmissao { get; private set; }
-        public string CentroCusto { get; private set; }
-        public string NumeroCentroCusto { get; private set; }
-        public string SuperiorImediato { get; private set; }
-        public string EmailSuperior { get; private set; }
-        public string Direcao { get; private set; }
+        public string? CentroCusto { get; private set; }
+        public string? NumeroCentroCusto { get; private set; }
+        public string? SuperiorImediato { get; private set; }
+        public string? EmailSuperior { get; private set; }
+        public string? Direcao { get; private set; }
         public bool EhValido { get; private set; }
-        public string Validacoes { get; private set; }
+        public string? Validacoes { get; private set; }
         public bool Deleted { get; set; }
         public void Validar()
         {
@@ -76,6 +80,21 @@ namespace Validator.Domain.Entities
             Validacoes = string.Join(" | ", validacoes);
 
             EhValido = !validacoes.Any();
+        }
+
+        public void Resolver(PlanilhaResolverPendenciaCommand command)
+        {
+            Unidade = command.Unidade;
+            CPF = command.CPF;
+            Nome = command.Nome;
+            Email = command.Email;
+            Cargo = command.Cargo;
+            Nivel = command.Nivel;
+            SuperiorImediato = command.SuperiorImediato;
+            EmailSuperior = command.EmailSuperior;
+
+            Validar();
+
         }
     }
 }

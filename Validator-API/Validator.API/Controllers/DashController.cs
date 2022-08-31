@@ -26,7 +26,7 @@ namespace Validator.API.Controllers
             return await EntityValidation(result);
         }
 
-        [HttpGet, Route("Resultados")]
+        [HttpPost, Route("Resultados")]
         public async Task<IActionResult> Resultados(ConsultarResultadoCommand command)
         {
             return Ok(await _paramentroAppService.ObterResultados(command));

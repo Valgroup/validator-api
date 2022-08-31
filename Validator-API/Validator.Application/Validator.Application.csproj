@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Validator.Data\Validator.Data.csproj" />
     <ProjectReference Include="..\Validator.Domain\Validator.Domain.csproj" />
   </ItemGroup>
 

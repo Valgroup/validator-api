@@ -9,6 +9,7 @@ namespace Validator.Domain.Core.Models
         public string Nome { get; set; }
         public string Email { get; set; }
         public EPerfilUsuario Perfil { get; set; }
+        public string PerfilNome { get { return Perfil.ToString(); } }
         public PermissaoJwt Permissao { get; set; }
     }
 

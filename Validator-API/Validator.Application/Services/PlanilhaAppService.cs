@@ -2,6 +2,7 @@
 using System.Data;
 using System.Text;
 using Validator.Application.Interfaces;
+using Validator.Domain.Commands.Planilhas;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Entities;
@@ -15,6 +16,41 @@ namespace Validator.Application.Services
         public PlanilhaAppService(IUnitOfWork unitOfWork, IPlanilhaService planilhaService) : base(unitOfWork)
         {
             _planilhaService = planilhaService;
+        }
+
+        public async Task<ValidationResult> Remover(Guid id)
+        {
+            var planilha = _planilhaService.GetById(id);
+            if (planilha == null)
+            {
+                ValidationResult.Add("Registro não encontrado");
+                return ValidationResult;
+            }
+
+            _planilhaService.Delete(planilha);
+
+            await CommitAsync();
+
+            return ValidationResult;
+
+        }
+
+        public async Task<ValidationResult> Resolver(PlanilhaResolverPendenciaCommand command)
+        {
+            var planilha = _planilhaService.GetById(command.Id);
+            if (planilha == null)
+            {
+                ValidationResult.Add("Registro não encontrado");
+                return ValidationResult;
+            }
+
+            planilha.Resolver(command);
+
+            _planilhaService.Update(planilha);
+
+            await CommitAsync();
+
+            return ValidationResult;
         }
 
         public async Task<ValidationResult> Updload(Stream excelStream)
@@ -48,6 +84,9 @@ namespace Validator.Application.Services
                     planilhas.Add(new Planilha(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao));
                 }
 
+                await _planilhaService.CreateRangeAsync(planilhas);
+
+                await CommitAsync();
 
             }
 
