@@ -39,9 +39,9 @@ namespace Validator.API.Controllers
             }
             catch(Exception e)
             {
-                var oi = 0;
+                return Ok(e);
             }
-            return Ok();
+            
         }
     }
 }
