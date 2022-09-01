@@ -36,9 +36,6 @@ namespace Validator.Domain.Entities
         public string? Nome { get; private set; }
         public string? Email { get; private set; }
         public string? Cargo { get; private set; }
-
-       
-
         public string? Nivel { get; private set; }
         public DateTime? DataAdmissao { get; private set; }
         public string? CentroCusto { get; private set; }
@@ -95,6 +92,22 @@ namespace Validator.Domain.Entities
 
             Validar();
 
+        }
+
+        public void Alterar(string? unidade, string? nome, string? email, string? cargo, string? nivel, DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao)
+        {
+            Unidade = unidade.TrimOrDefault();
+            Nome = nome.TrimOrDefault();
+            Email = email.TrimOrDefault();
+            Cargo = cargo.TrimOrDefault();
+            Nivel = nivel.TrimOrDefault();
+            DataAdmissao = dataAdm;
+            CentroCusto = centroCusto.TrimOrDefault();
+            NumeroCentroCusto = numeroCentro.TrimOrDefault();
+            SuperiorImediato = superior.TrimOrDefault();
+            EmailSuperior = emailSuperior.TrimOrDefault();
+            Direcao = direcao.TrimOrDefault();
+            Validar();
         }
     }
 }

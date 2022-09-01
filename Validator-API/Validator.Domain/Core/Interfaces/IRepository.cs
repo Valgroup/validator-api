@@ -7,6 +7,7 @@ namespace Validator.Domain.Core.Interfaces
         Task CreateAsync(TEntity entity);
         Task CreateRangeAsync(List<TEntity> entities);
         void Update(TEntity entity);
+        void UpdateRange(List<TEntity> entities);
         void Delete(TEntity entity);
         Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool asNoTracking);
         Task<TEntity> FindNoFilter(Expression<Func<TEntity, bool>> predicate);

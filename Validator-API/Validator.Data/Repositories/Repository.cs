@@ -36,6 +36,11 @@ namespace Validator.Data.Repositories
             DbSet.Update(entity);
         }
 
+        public void UpdateRange(List<TEntity> entities)
+        {
+            DbSet.UpdateRange(entities);
+        }
+
         public Task<TEntity> FindNoFilter(Expression<Func<TEntity, bool>> predicate)
         {
             throw new NotImplementedException();
@@ -69,6 +74,6 @@ namespace Validator.Data.Repositories
             GC.SuppressFinalize(this);
         }
 
-
+       
     }
 }

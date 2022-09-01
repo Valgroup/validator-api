@@ -58,27 +58,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .SetIsOriginAllowed(origin =>
-                {
-#if DEBUG
-                    // Usando localhost todas as portas são permitidas
-                    return true;
-#endif
-
-                    var host = new Uri(origin).Host;
-
-                    return
-                        host == "localhost" ||
-
-                        host == "192.168.4.199" ||
-                        host == "roma" ||
-
-                        host == "192.168.5.103" ||
-                        host == "trento" ||
-
-                        host == "192.168.4.157" ||
-                        host == "matera";
-                })
+                .AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -93,6 +73,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsValidador");
 
 app.UseAuthorization();
 

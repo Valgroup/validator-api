@@ -1,5 +1,6 @@
 ﻿using Validator.Domain.Commands.Planilhas;
 using Validator.Domain.Core;
+using Validator.Domain.Dtos;
 
 namespace Validator.Application.Interfaces
 {
@@ -8,5 +9,6 @@ namespace Validator.Application.Interfaces
         Task<ValidationResult> Updload(Stream excelStream);
         Task<ValidationResult> Remover(Guid id);
         Task<ValidationResult> Resolver(PlanilhaResolverPendenciaCommand command);
+        Task<PendenciaDto> ObterPorId(Guid id);
     }
 }

@@ -25,6 +25,12 @@ namespace Validator.API.Controllers
             return Ok(await _planilhaReadOnlyRepository.ListarPendencias(command));
         }
 
+        [HttpGet, Route("{id}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            return Ok(await _planilhaAppService.ObterPorId(id));
+        }
+
         [HttpPut, Route("Resolver")]
         public async Task<IActionResult> Resolver([FromBody] PlanilhaResolverPendenciaCommand command)
         {

@@ -2,9 +2,11 @@
 using System.Data;
 using System.Text;
 using Validator.Application.Interfaces;
+using Validator.Data.Dapper;
 using Validator.Domain.Commands.Planilhas;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Interfaces;
+using Validator.Domain.Dtos;
 using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
 
@@ -13,9 +15,37 @@ namespace Validator.Application.Services
     public class PlanilhaAppService : AppBaseService, IPlanilhaAppService
     {
         private readonly IPlanilhaService _planilhaService;
-        public PlanilhaAppService(IUnitOfWork unitOfWork, IPlanilhaService planilhaService) : base(unitOfWork)
+        private readonly IPlanilhaReadOnlyRepository _planilhaReadOnlyRepository;
+        public PlanilhaAppService(IUnitOfWork unitOfWork, IPlanilhaService planilhaService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository) : base(unitOfWork)
         {
             _planilhaService = planilhaService;
+            _planilhaReadOnlyRepository = planilhaReadOnlyRepository;
+        }
+
+        public async Task<PendenciaDto> ObterPorId(Guid id)
+        {
+            var planilha = await _planilhaService.GetByIdAsync(id);
+            if (planilha != null)
+            {
+                return new PendenciaDto
+                {
+                    Id = planilha.Id,
+                    Cargo = planilha.Cargo,
+                    CentroCusto = planilha.CentroCusto,
+                    CPF = planilha.CPF,
+                    DataAdmissao = planilha.DataAdmissao,
+                    Email = planilha.Email,
+                    EmailSuperior = planilha.EmailSuperior,
+                    Nivel = planilha.Nivel,
+                    Nome = planilha.Nome,
+                    NumeroCentroCusto = planilha.NumeroCentroCusto,
+                    SuperiorImediato = planilha.SuperiorImediato,
+                    Unidade = planilha.Unidade,
+                    Validacoes = planilha.Validacoes
+                };
+            }
+
+            return null;
         }
 
         public async Task<ValidationResult> Remover(Guid id)
@@ -61,6 +91,8 @@ namespace Validator.Application.Services
                 var dataSet = reader.AsDataSet();
                 var table = dataSet.Tables[2];
                 var planilhas = new List<Planilha>();
+                var planilhasAtualizar = new List<Planilha>();
+                var todas = await _planilhaReadOnlyRepository.ObterTodas();
 
                 for (int i = 1; i < table.Rows.Count; i++)
                 {
@@ -81,15 +113,33 @@ namespace Validator.Application.Services
                     if (!dataAdmissao.Contains("-"))
                         dataAdm = Convert.ToDateTime(dataAdmissao);
 
-                    planilhas.Add(new Planilha(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao));
+                    var planilha = todas.FirstOrDefault(f => f.Email == email);
+                    if (planilha != null)
+                    {
+                        planilha.Alterar(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao);
+                        planilhasAtualizar.Add(planilha);
+                    }
+                    else
+                    {
+                        planilhas.Add(new Planilha(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao));
+                    }
+
+
                 }
 
-                await _planilhaService.CreateRangeAsync(planilhas);
+                if (planilhas.Any())
+                {
+                    await _planilhaService.CreateRangeAsync(planilhas);
+                }
 
+                if (planilhasAtualizar.Any())
+                {
+                    _planilhaService.UpdateRange(planilhasAtualizar);
+                }
+                
                 await CommitAsync();
 
             }
-
 
             return ValidationResult;
         }

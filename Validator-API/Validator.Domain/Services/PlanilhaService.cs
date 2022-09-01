@@ -18,5 +18,10 @@ namespace Validator.Domain.Services
         {
             await _repository.CreateRangeAsync(entities);
         }
+
+        public void UpdateRange(List<Planilha> entities)
+        {
+            _repository.UpdateRange(entities);
+        }
     }
 }
