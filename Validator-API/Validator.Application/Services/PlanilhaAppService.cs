@@ -1,5 +1,4 @@
 ﻿using ExcelDataReader;
-using System.Data;
 using System.Text;
 using Validator.Application.Interfaces;
 using Validator.Data.Dapper;
@@ -96,18 +95,18 @@ namespace Validator.Application.Services
 
                 for (int i = 1; i < table.Rows.Count; i++)
                 {
-                    var nome = table.Rows[i][0].ToString();
-                    var email = table.Rows[i][1].ToString();
-                    var cpf = table.Rows[i][2].ToString();
-                    var cargo = table.Rows[i][3].ToString();
-                    var nivel = table.Rows[i][4].ToString();
-                    var dataAdmissao = table.Rows[i][5].ToString();
-                    var centroCusto = table.Rows[i][6].ToString();
-                    var numeroCentro = table.Rows[i][7].ToString();
-                    var unidade = table.Rows[i][8].ToString();
-                    var superior = table.Rows[i][9].ToString();
-                    var emailSuperior = table.Rows[i][10].ToString();
-                    var direcao = table.Rows[i][11].ToString();
+                    var nome = table.Rows[i][0]?.ToString();
+                    var email = table.Rows[i][1]?.ToString();
+                    var cpf = table.Rows[i][2]?.ToString();
+                    var cargo = table.Rows[i][3]?.ToString();
+                    var nivel = table.Rows[i][4]?.ToString();
+                    var dataAdmissao = table.Rows[i][5]?.ToString();
+                    var centroCusto = table.Rows[i][6]?.ToString();
+                    var numeroCentro = table.Rows[i][7]?.ToString();
+                    var unidade = table.Rows[i][8]?.ToString();
+                    var superior = table.Rows[i][9]?.ToString();
+                    var emailSuperior = table.Rows[i][10]?.ToString();
+                    var direcao = table.Rows[i][11]?.ToString();
 
                     DateTime? dataAdm = null;
                     if (!dataAdmissao.Contains("-"))
@@ -116,27 +115,21 @@ namespace Validator.Application.Services
                     var planilha = todas.FirstOrDefault(f => f.Email == email);
                     if (planilha != null)
                     {
-                        planilha.Alterar(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao);
+                        planilha.Alterar(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf);
                         planilhasAtualizar.Add(planilha);
                     }
                     else
                     {
-                        planilhas.Add(new Planilha(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao));
+                        planilhas.Add(new Planilha(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf));
                     }
-
-
                 }
 
                 if (planilhas.Any())
-                {
                     await _planilhaService.CreateRangeAsync(planilhas);
-                }
 
                 if (planilhasAtualizar.Any())
-                {
                     _planilhaService.UpdateRange(planilhasAtualizar);
-                }
-                
+
                 await CommitAsync();
 
             }

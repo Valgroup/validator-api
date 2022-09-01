@@ -13,7 +13,7 @@ namespace Validator.Domain.Entities
         public Planilha(string unidade, string nome, string email,
             string cargo, string nivel, DateTime? dataAdmissao,
             string centroCusto, string numeroCentroCusto,
-            string superiorImediato, string emailSuperior, string direcao)
+            string superiorImediato, string emailSuperior, string direcao, string cpf)
         {
             Id = NewId;
             Unidade = unidade.TrimOrDefault();
@@ -21,11 +21,12 @@ namespace Validator.Domain.Entities
             Email = email.TrimOrDefault();
             Cargo = cargo.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
+            CPF = cpf.ClearCaracters(new char[] { '.', '-' });
             DataAdmissao = dataAdmissao;
-            CentroCusto = centroCusto.TrimOrDefault();
+            CentroCusto = centroCusto.ClearCaracters(new char[] { '-' }); ;
             NumeroCentroCusto = numeroCentroCusto.TrimOrDefault();
-            SuperiorImediato = superiorImediato.TrimOrDefault();
-            EmailSuperior = emailSuperior.TrimOrDefault();
+            SuperiorImediato = superiorImediato.ClearCaracters(new char[] { '-' });
+            EmailSuperior = emailSuperior.ClearCaracters(new char[] { '-' });
             Direcao = direcao.TrimOrDefault();
             Validar();
         }
@@ -82,30 +83,32 @@ namespace Validator.Domain.Entities
         public void Resolver(PlanilhaResolverPendenciaCommand command)
         {
             Unidade = command.Unidade;
-            CPF = command.CPF;
+            CPF = command.CPF.ClearCaracters(new char[] { '.', '-' });
             Nome = command.Nome;
             Email = command.Email;
             Cargo = command.Cargo;
             Nivel = command.Nivel;
-            SuperiorImediato = command.SuperiorImediato;
-            EmailSuperior = command.EmailSuperior;
+            SuperiorImediato = command.SuperiorImediato.ClearCaracters(new char[] { '-' });
+            EmailSuperior = command.EmailSuperior.ClearCaracters(new char[] { '-' }); 
 
             Validar();
 
         }
 
-        public void Alterar(string? unidade, string? nome, string? email, string? cargo, string? nivel, DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao)
+        public void Alterar(string? unidade, string? nome, string? email, string? cargo, string? nivel,
+            DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao, string? cpf)
         {
             Unidade = unidade.TrimOrDefault();
             Nome = nome.TrimOrDefault();
             Email = email.TrimOrDefault();
             Cargo = cargo.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
+            CPF = cpf.ClearCaracters(new char[] { '.', '-' });
             DataAdmissao = dataAdm;
-            CentroCusto = centroCusto.TrimOrDefault();
+            CentroCusto = centroCusto.ClearCaracters(new char[] { '-' }); ;
             NumeroCentroCusto = numeroCentro.TrimOrDefault();
-            SuperiorImediato = superior.TrimOrDefault();
-            EmailSuperior = emailSuperior.TrimOrDefault();
+            SuperiorImediato = superior.ClearCaracters(new char[] { '-' });
+            EmailSuperior = emailSuperior.ClearCaracters(new char[] { '-' });
             Direcao = direcao.TrimOrDefault();
             Validar();
         }
