@@ -22,20 +22,26 @@ namespace Validator.API.Controllers
         [HttpPost, DisableRequestSizeLimit, Route("UploadXLS")]
         public async Task<IActionResult> UploadXLS()
         {
-            var formFile = HttpContext.Request.Form.Files.FirstOrDefault();
-            using (Stream stream = formFile.OpenReadStream())
-            using (MemoryStream memory = new MemoryStream())
+            try
             {
-                await stream.CopyToAsync(memory);
+                var formFile = HttpContext.Request.Form.Files.FirstOrDefault();
+                using (Stream stream = formFile.OpenReadStream())
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memory);
 
-                var result = await _planilhaAppService.Updload(memory);
-                if (result.IsValid)
-                    return await StatusCodeOK(result);
+                    var result = await _planilhaAppService.Updload(memory);
+                    if (result.IsValid)
+                        return await StatusCodeOK(result);
 
-                return await EntityValidation(result);
+                    return await EntityValidation(result);
+                }
             }
-
-           
+            catch(Exception e)
+            {
+                var oi = 0;
+            }
+            return Ok();
         }
     }
 }
