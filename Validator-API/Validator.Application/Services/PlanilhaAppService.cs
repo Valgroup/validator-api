@@ -89,7 +89,7 @@ namespace Validator.Application.Services
             using (var reader = ExcelReaderFactory.CreateReader(excelStream, new ExcelReaderConfiguration { FallbackEncoding = Encoding.UTF8 }))
             {
                 var dataSet = reader.AsDataSet();
-                var table = dataSet.Tables[2];
+                var table = dataSet.Tables[0];
                 var planilhas = new List<Planilha>();
                 var planilhasAtualizar = new List<Planilha>();
                 var todas = await _planilhaReadOnlyRepository.ObterTodas();

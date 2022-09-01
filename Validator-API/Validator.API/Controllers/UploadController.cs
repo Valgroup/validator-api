@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Validator.API.Controllers.Common;
 using Validator.Application.Interfaces;
 
@@ -15,7 +16,10 @@ namespace Validator.API.Controllers
             _planilhaAppService = planilhaAppService;
         }
 
-        [HttpPost, Route("UploadXLS")]
+        //[EnableCors("CorsValidador")]
+        //[RequestSizeLimit(525336576)]
+        //[RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
+        [HttpPost, DisableRequestSizeLimit, Route("UploadXLS")]
         public async Task<IActionResult> UploadXLS()
         {
             var formFile = HttpContext.Request.Form.Files.FirstOrDefault();

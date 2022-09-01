@@ -51,20 +51,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        name: "CorsValidador",
-        builder =>
-        {
-            builder
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-});
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -74,7 +60,13 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors("CorsValidador");
+app.UseCors(o =>
+    o.AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowAnyOrigin()
+    .SetIsOriginAllowed(origin => true)
+
+);
 
 app.UseAuthorization();
 
