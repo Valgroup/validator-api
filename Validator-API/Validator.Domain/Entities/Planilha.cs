@@ -3,8 +3,9 @@ using Validator.Domain.Core.Interfaces;
 
 namespace Validator.Domain.Entities
 {
-    public class Planilha : EntityWithAnoBase, IAnoBase, ISoftDelete
+    public class Planilha : EntityWithAnoBase, IAnoBase, ISoftDelete, IPlanilha
     {
+
         public Planilha(string unidade, string nome, string email,
             string cargo, string nivel, DateTime dataAdmissao,
             string centroCusto, string numeroCentroCusto,

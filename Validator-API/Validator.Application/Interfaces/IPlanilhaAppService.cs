@@ -9,6 +9,6 @@ namespace Validator.Application.Interfaces
 {
     public interface IPlanilhaAppService
     {
-        Task<ValidationResult> Updload(object objPlanilha);
+        Task<dynamic> Upload(FileStream objPlanilha);
     }
 }

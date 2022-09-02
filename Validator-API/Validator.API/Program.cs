@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var cnConfig = builder.Configuration.GetConnectionString("Test");
 RuntimeConfigurationHelper.ConnectionString = cnConfig;
+
 builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
 
 // Add services to the container.
@@ -36,5 +37,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors();
 
 app.Run();
