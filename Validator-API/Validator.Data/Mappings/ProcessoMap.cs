@@ -4,15 +4,15 @@ using Validator.Domain.Entities;
 
 namespace Validator.Data.Mappings
 {
-    public class ParametroMap : IEntityTypeConfiguration<Parametro>
+    public class ProcessoMap : IEntityTypeConfiguration<Processo>
     {
-        public void Configure(EntityTypeBuilder<Parametro> builder)
+        public void Configure(EntityTypeBuilder<Processo> builder)
         {
             builder.HasKey(c => c.Id);
 
             builder.HasOne(c => c.AnoBase)
                 .WithMany()
-                .HasForeignKey(c => c.AnoBaseId).OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(c => c.AnoBaseId);
         }
     }
 }

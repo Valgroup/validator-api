@@ -14,6 +14,7 @@ namespace Validator.Data.Contexto
         public DbSet<AnoBase> AnoBases { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Planilha> Planilhas { get; set; }
+        public DbSet<Processo> Processos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,7 @@ namespace Validator.Data.Contexto
             modelBuilder.ApplyConfiguration(new SetorMap());
             modelBuilder.ApplyConfiguration(new ParametroMap());
             modelBuilder.ApplyConfiguration(new UsuarioAvaliadorMap());
+            modelBuilder.ApplyConfiguration(new ProcessoMap());
 
             modelBuilder.Entity<Parametro>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
 
