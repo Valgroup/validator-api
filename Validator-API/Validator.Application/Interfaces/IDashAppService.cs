@@ -14,5 +14,6 @@ namespace Validator.Application.Interfaces
         Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command);
         Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command);
         Task<PermissaoDto> ObterPermissao();
+        Task<ParametroDto> ObterParametros();
     }
 }

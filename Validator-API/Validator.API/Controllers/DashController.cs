@@ -26,6 +26,12 @@ namespace Validator.API.Controllers
             return await EntityValidation(result);
         }
 
+        [HttpPost, Route("ObterParametros")]
+        public async Task<IActionResult> Obter()
+        {
+            return Ok(await _paramentroAppService.ObterParametros());
+        }
+
         [HttpPost, Route("Resultados")]
         public async Task<IActionResult> Resultados(ConsultarResultadoCommand command)
         {

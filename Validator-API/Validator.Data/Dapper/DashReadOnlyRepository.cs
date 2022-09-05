@@ -6,12 +6,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Validator.Data.Repositories;
 using Validator.Domain.Commands.Dashes;
+using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Dtos.Dashes;
 
 namespace Validator.Data.Dapper
 {
     public class DashReadOnlyRepository : BaseConnection, IDashReadOnlyRepository
     {
+        private readonly IUserResolver _userResolver;
+
+        public DashReadOnlyRepository(IUserResolver userResolver)
+        {
+            _userResolver = userResolver;
+        }
+
+        public async Task<ParametroDto> ObterParametros()
+        {
+            using var cn = CnRead;
+            var anoId = await _userResolver.GetYearIdAsync();
+            var parametro = await cn.QueryFirstOrDefaultAsync<ParametroDto>(@"SELECT * FROM Parametro
+                                                                        WHERE
+                                                                        AnoBaseId = @AnoBaseId ", new { AnoBaseId = anoId });
+            if (parametro == null)
+                return new ParametroDto();
+
+            return parametro;
+        }
+
         public async Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command)
         {
             using var cn = CnRead;

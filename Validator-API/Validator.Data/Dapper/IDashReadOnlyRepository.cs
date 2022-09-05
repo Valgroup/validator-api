@@ -11,5 +11,6 @@ namespace Validator.Data.Dapper
     public interface IDashReadOnlyRepository
     {
         Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command);
+        Task<ParametroDto> ObterParametros(); 
     }
 }

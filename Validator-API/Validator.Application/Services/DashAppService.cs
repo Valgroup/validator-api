@@ -45,6 +45,11 @@ namespace Validator.Application.Services
             return ValidationResult;
         }
 
+        public async Task<ParametroDto> ObterParametros()
+        {
+            return await _dashReadOnlyRepository.ObterParametros();
+        }
+
         public async Task<PermissaoDto> ObterPermissao()
         {
             return new PermissaoDto();
