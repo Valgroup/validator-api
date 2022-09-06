@@ -1,4 +1,6 @@
-﻿using Validator.Domain.Core;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Validator.Domain.Core;
 using Validator.Domain.Core.Enums;
 using Validator.Domain.Core.Interfaces;
 
@@ -8,7 +10,7 @@ namespace Validator.Domain.Entities
     {
         protected Usuario() { }
 
-        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo)
+        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha)
         {
             AzureId = azureId;
             Nome = nome;
@@ -16,6 +18,7 @@ namespace Validator.Domain.Entities
             EmailSuperior = emailSuperior;
             EhDiretor = ehDiretor;
             Cargo = cargo;
+            Senha = CryptoMD5(senha);
         }
 
         public Guid Id { get; private set; }
@@ -24,6 +27,7 @@ namespace Validator.Domain.Entities
         public Guid SetorId { get; private set; }
         public Guid? SuperiorId { get; private set; }
         public EPerfilUsuario Perfil { get; private set; }
+        public string Senha { get; private set; }
         public string Nome { get; private set; }
         public string Email { get; private set; }
         public string EmailSuperior { get; private set; }
@@ -60,6 +64,23 @@ namespace Validator.Domain.Entities
             {
                 Avaliadores.Add(new UsuarioAvaliador(Id, id));
             }
+        }
+
+        private string CryptoMD5(string senha)
+        {
+            senha += "!5fa395fb-45dc-4503-b70e-c44f90048281";
+            var md5 = MD5.Create();
+            var data = md5.ComputeHash(Encoding.Default.GetBytes(senha));
+            var sb = new StringBuilder();
+            foreach (var d in data)
+                sb.Append(d.ToString("x2"));
+
+            return sb.ToString();
+        }
+
+        public bool Autenticar(string senha)
+        {
+            return Senha == CryptoMD5(senha);
         }
     }
 }

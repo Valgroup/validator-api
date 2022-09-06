@@ -3,6 +3,7 @@ using Validator.Domain.Commands.Logins;
 using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Models;
+using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
 
 namespace Validator.Application.Services
@@ -20,6 +21,9 @@ namespace Validator.Application.Services
             var usuario = await _usuarioService.Find(f => f.Email == command.Email);
             if (usuario == null)
                 return new LoginResultCommand { IsValid = false, Message = "Usuário inválido" };
+
+            if (!usuario.Autenticar(command.Senha))
+                return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 
             var jwt = new UsarioJwt()
             {

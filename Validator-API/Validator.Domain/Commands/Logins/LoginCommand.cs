@@ -2,7 +2,7 @@
 {
     public class LoginCommand
     {
-        public Guid AdUserId { get; set; }
         public string Email { get; set; }
+        public string Senha { get; set; }
     }
 }
