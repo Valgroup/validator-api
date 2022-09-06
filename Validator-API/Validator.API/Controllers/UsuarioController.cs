@@ -3,6 +3,8 @@ using Validator.API.Controllers.Common;
 using Validator.Application.Interfaces;
 using Validator.Domain.Commands;
 using Validator.Domain.Commands.Usuarios;
+using Validator.Domain.Core.Pagination;
+using Validator.Domain.Dtos.Usuarios;
 using Validator.Domain.Interfaces.Repositories;
 
 namespace Validator.API.Controllers
@@ -21,6 +23,7 @@ namespace Validator.API.Controllers
         }
 
         [HttpPost, Route("Todos")]
+        [ProducesResponseType(typeof(PagedResult<UsuarioDto>), 200)]
         public async Task<IActionResult> Todos(UsuarioAdmConsultaCommand command)
         {
             return Ok(await _usuarioReadOnlyRepository.Todos(command));

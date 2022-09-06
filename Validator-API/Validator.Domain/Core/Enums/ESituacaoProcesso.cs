@@ -2,7 +2,8 @@
 {
     public enum ESituacaoProcesso
     {
-        ComPendecia,
+        ComPendencia,
+        SemPendencia,
         Inicializada,
         Finalizado
     }

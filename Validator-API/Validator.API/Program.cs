@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Validator.API.Filter;
 using Validator.API.Resolvers;
 using Validator.Application.Interfaces;
 using Validator.Application.Services;
@@ -30,6 +31,7 @@ builder.Services.AddTransient<IPlanilhaService, PlanilhaService>();
 builder.Services.AddTransient<IParametroService, ParametroService>();
 builder.Services.AddTransient(typeof(IServiceDomain<>), typeof(ServiceDomain<>));
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
+builder.Services.AddTransient<IProcessoService, ProcessoService>();
 //DOMAIN
 
 //DATA
@@ -48,6 +50,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.OperationFilter<AuthorizationHeaderOperationFilter>();
+});
 
 builder.Services.AddHttpContextAccessor();
 

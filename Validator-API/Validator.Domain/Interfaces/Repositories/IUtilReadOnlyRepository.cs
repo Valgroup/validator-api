@@ -1,10 +1,11 @@
 ﻿using Validator.Domain.Dtos;
 
-namespace Validator.Data.Dapper
+namespace Validator.Domain.Interfaces.Repositories
 {
     public interface IUtilReadOnlyRepository
     {
         Task<IEnumerable<SelectedItemDto>> ObterTodosSetores();
         Task<IEnumerable<SelectedItemDto>> ObterTodasDivisoes();
+        Task<bool> TemPendencias();
     }
 }

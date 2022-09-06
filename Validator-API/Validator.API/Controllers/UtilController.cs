@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Validator.API.Controllers.Common;
-using Validator.Data.Dapper;
+using Validator.Domain.Interfaces.Repositories;
 
 namespace Validator.API.Controllers
 {

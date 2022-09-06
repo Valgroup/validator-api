@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Validator.Domain.Core;
+﻿using Validator.Domain.Core;
 using Validator.Domain.Core.Enums;
 using Validator.Domain.Core.Interfaces;
 
@@ -17,7 +12,7 @@ namespace Validator.Domain.Entities
         {
             Id = NewId;
             Situacao = situacao;
-            InformarSituacao();
+
         }
 
         public Guid Id { get; private set; }
@@ -26,21 +21,18 @@ namespace Validator.Domain.Entities
         public DateTime? DhFim { get; private set; }
 
 
-        public void InformarSituacao()
+        public void InformarSituacao(bool temPendencia)
         {
-            switch (Situacao)
-            {
-                case ESituacaoProcesso.ComPendecia:
-                    break;
-                case ESituacaoProcesso.Inicializada:
-                    DhInicio = DateTime.Now;
-                    break;
-                case ESituacaoProcesso.Finalizado:
-                    DhFim = DateTime.Now;
-                    break;
-                default:
-                    break;
-            }
+            if (temPendencia)
+                Situacao = ESituacaoProcesso.ComPendencia;
+            else
+                Situacao = ESituacaoProcesso.SemPendencia;
+        }
+
+        public void Inicializar()
+        {
+            Situacao = ESituacaoProcesso.Inicializada;
+            DhInicio = DateTime.Now;
         }
     }
 }

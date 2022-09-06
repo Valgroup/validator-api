@@ -15,10 +15,12 @@ namespace Validator.Application.Services
     {
         private readonly IPlanilhaService _planilhaService;
         private readonly IPlanilhaReadOnlyRepository _planilhaReadOnlyRepository;
-        public PlanilhaAppService(IUnitOfWork unitOfWork, IPlanilhaService planilhaService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository) : base(unitOfWork)
+        private readonly IProcessoService _processoService;
+        public PlanilhaAppService(IUnitOfWork unitOfWork, IPlanilhaService planilhaService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, IProcessoService processoService) : base(unitOfWork)
         {
             _planilhaService = planilhaService;
             _planilhaReadOnlyRepository = planilhaReadOnlyRepository;
+            _processoService = processoService;
         }
 
         public async Task<PendenciaDto> ObterPorId(Guid id)
@@ -58,6 +60,8 @@ namespace Validator.Application.Services
 
             _planilhaService.Delete(planilha);
 
+            
+
             await CommitAsync();
 
             return ValidationResult;
@@ -76,6 +80,10 @@ namespace Validator.Application.Services
             planilha.Resolver(command);
 
             _planilhaService.Update(planilha);
+            
+            await CommitAsync();
+
+            await _processoService.Atualizar();
 
             await CommitAsync();
 
@@ -129,6 +137,9 @@ namespace Validator.Application.Services
 
                 if (planilhasAtualizar.Any())
                     _planilhaService.UpdateRange(planilhasAtualizar);
+
+                var temPendencias = (planilhas.Any(a => !a.EhValido) || planilhasAtualizar.Any(a => !a.EhValido));
+                await _processoService.Atualizar(temPendencias);
 
                 await CommitAsync();
 
