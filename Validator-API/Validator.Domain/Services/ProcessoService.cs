@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Validator.Domain.Core.Interfaces;
+﻿using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
 using Validator.Domain.Interfaces.Repositories;
@@ -39,6 +34,16 @@ namespace Validator.Domain.Services
                 processo.InformarSituacao(temPendencia.Value);
                 _repository.Update(processo);
             }
+        }
+
+        public async Task<Processo?> GetByCurrentYear()
+        {
+            return await _repository.GetByCurrentYear();
+        }
+
+        public void  Update(Processo entity)
+        {
+            _repository.Update(entity);
         }
     }
 }

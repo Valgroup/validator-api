@@ -15,5 +15,7 @@ namespace Validator.Application.Interfaces
         Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command);
         Task<PermissaoDto> ObterPermissao();
         Task<ParametroDto> ObterParametros();
+
+        Task<ValidationResult> IniciarProcesso();
     }
 }

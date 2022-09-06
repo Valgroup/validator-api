@@ -6,5 +6,8 @@ namespace Validator.Domain.Interfaces
     public interface IProcessoService
     {
         Task Atualizar(bool? temPendencia = null);
+        Task<Processo?> GetByCurrentYear();
+        void Update(Processo entity);
+
     }
 }
