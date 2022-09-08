@@ -17,7 +17,7 @@ namespace Validator.Domain.Services
 
         public async Task<Usuario?> Find(Expression<Func<Usuario, bool>> predicate)
         {
-            return await _repository.FirstOrDefaultAsync(predicate, true);
+            return await _repository.FirstOrDefaultAsync(predicate, false);
         }
     }
 }

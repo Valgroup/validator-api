@@ -28,7 +28,17 @@ namespace Validator.API.Resolvers
                 var id = Guid.Parse(CryptoHelper.Decrypt(accessTokenCry));
                 var usuario = await _usuarioReadOnlyRepository.ObterPorId(id);
                 if (usuario != null)
-                    return new UsarioJwt { Email = usuario.Email, Id = id, Nome = usuario.Nome, Perfil = usuario.Perfil, AnoBaseId = usuario.AnoBaseId };
+                    return new UsarioJwt
+                    {
+                        Email = usuario.Email,
+                        Id = id,
+                        Nome = usuario.Nome,
+                        Perfil = usuario.Perfil,
+                        AnoBaseId = usuario.AnoBaseId,
+                        DivisaoId = usuario.DivisaoId,
+                        DivisaoNome = usuario.DivisaoNome,
+                        SuperiorId = usuario.SuperiorId
+                    };
             }
 
             return null;

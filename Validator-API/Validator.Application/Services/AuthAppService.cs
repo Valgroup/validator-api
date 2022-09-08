@@ -20,7 +20,7 @@ namespace Validator.Application.Services
         {
             var usuario = await _usuarioService.Find(f => f.Email == command.Email);
             if (usuario == null)
-                return new LoginResultCommand { IsValid = false, Message = "Usuário inválido" };
+                return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 
             if (!usuario.Autenticar(command.Senha))
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
@@ -32,8 +32,9 @@ namespace Validator.Application.Services
                 Id = usuario.Id,
                 Perfil = usuario.Perfil,
                 Permissao = new PermissaoJwt(),
-                AnoBaseId = usuario.AnoBaseId
-
+                AnoBaseId = usuario.AnoBaseId,
+                DivisaoNome = usuario.Divisao.Nome,
+                DivisaoId = usuario.DivisaoId
             };
 
             switch (usuario.Perfil)

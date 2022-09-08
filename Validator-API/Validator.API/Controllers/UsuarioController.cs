@@ -30,15 +30,21 @@ namespace Validator.API.Controllers
         }
 
         [HttpPost, Route("Avaliadores")]
-        public async Task<IActionResult> Avaliadores(UsuarioAdmConsultaCommand command)
+        public async Task<IActionResult> Avaliadores(AvaliadoresConsultaCommand command)
         {
             return Ok(await _usuarioReadOnlyRepository.ObterAvaliadores(command));
         }
 
-        [HttpPost, Route("EscolherAvaliadores")]
-        public async Task<IActionResult> EscolherAvaliadores(List<Guid> ids)
+        [HttpPost, Route("SugestaoAvaliadores")]
+        public async Task<IActionResult> SugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command)
         {
-            var result = await _usuarioAppService.EscolherAvaliadores(ids);
+            return Ok(await _usuarioReadOnlyRepository.ObterSugestaoAvaliadores(command));
+        }
+
+        [HttpPost, Route("EscolherAvaliadores")]
+        public async Task<IActionResult> EscolherAvaliadores(List<Guid> avaliadoresId)
+        {
+            var result = await _usuarioAppService.EscolherAvaliadores(avaliadoresId);
             if (result.IsValid)
                 return await StatusCodeOK(result);
 
