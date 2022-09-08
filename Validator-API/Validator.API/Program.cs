@@ -32,6 +32,7 @@ builder.Services.AddTransient<IParametroService, ParametroService>();
 builder.Services.AddTransient(typeof(IServiceDomain<>), typeof(ServiceDomain<>));
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IProcessoService, ProcessoService>();
+builder.Services.AddTransient<IUsuarioAvaliadorService, UsuarioAvaliadorService>();
 //DOMAIN
 
 //DATA

@@ -62,6 +62,13 @@ namespace Validator.Data.Dapper
 
         }
 
+        public async Task<UsuarioDto> ObterDetalhes(Guid id)
+        {
+            using var cn = CnRead;
+
+            return await cn.QueryFirstOrDefaultAsync<UsuarioDto>("SELECT Id, Nome FROM Usuarios WHERE Id = @Id ", new { Id = id });
+        }
+
         public async Task<UsuarioAuthDto> ObterPorId(Guid id)
         {
             using var cn = CnRead;
@@ -136,7 +143,7 @@ namespace Validator.Data.Dapper
 
         }
 
-        public async Task<IPagedResult<UsuarioDto>> Todos(UsuarioAdmConsultaCommand command)
+        public async Task<IPagedResult<UsuarioDto>> Todos(UsuarioAdmConsultaCommand command, Guid? avaliadorAntigoId = null)
         {
             using var cn = CnRead;
             var usuario = await _userResolver.GetAuthenticateAsync();
@@ -166,6 +173,9 @@ namespace Validator.Data.Dapper
             if (command.DivisaoId.HasValue)
                 qrySb.Append(" AND D.Id = @DivisaoId ");
 
+            if (avaliadorAntigoId.HasValue)
+                qrySb.Append(" AND U.Id != @AvaliadorAntigoId ");
+
             var divisoes = new List<string> { "SP1", "MG2" };
             if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
             {
@@ -191,7 +201,8 @@ namespace Validator.Data.Dapper
                 Skip = command.Skip,
                 Take = command.Take,
                 UsuarioId = usuario.Id,
-                SuperiorId = usuario.SuperiorId
+                SuperiorId = usuario.SuperiorId,
+                AvaliadorAntigoId = avaliadorAntigoId
             });
 
             int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;

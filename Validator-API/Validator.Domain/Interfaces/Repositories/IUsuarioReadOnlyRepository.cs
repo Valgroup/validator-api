@@ -13,9 +13,11 @@ namespace Validator.Domain.Interfaces.Repositories
     public interface IUsuarioReadOnlyRepository
     {
         Task<UsuarioAuthDto> ObterPorId(Guid id);
-        Task<IPagedResult<UsuarioDto>> Todos(UsuarioAdmConsultaCommand command);
+        Task<IPagedResult<UsuarioDto>> Todos(UsuarioAdmConsultaCommand command, Guid? avaliadorAntigoId = null);
         Task<IPagedResult<AvaliadorDto>> ObterAvaliadores(AvaliadoresConsultaCommand command);
         Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command);
         Task<IPagedResult<UsuarioSubordinadoDto>> ObterSubordinados(PaginationBaseCommand command);
+        Task<UsuarioDto> ObterDetalhes(Guid id);
+
     }
 }

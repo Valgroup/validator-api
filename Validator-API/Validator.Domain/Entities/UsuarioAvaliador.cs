@@ -20,5 +20,10 @@ namespace Validator.Domain.Entities
         public EStatuAvaliador Status { get; private set; }
         public virtual Usuario Usuario { get; private set; }
         public virtual Usuario Avaliador { get; private set; }
+
+        public void AlterarAvaliador(Guid avaliadorNovoId)
+        {
+            AvaliadorId = avaliadorNovoId;
+        }
     }
 }

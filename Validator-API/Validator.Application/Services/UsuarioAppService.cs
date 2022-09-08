@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Validator.Application.Interfaces;
+using Validator.Domain.Commands.Usuarios;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Interfaces;
@@ -15,11 +16,16 @@ namespace Validator.Application.Services
         private readonly IUsuarioService _usuarioService;
         private readonly IParametroService _parametroService;
         private readonly IUserResolver _userResolver;
-        public UsuarioAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService, IParametroService parametroService, IUserResolver userResolver) : base(unitOfWork)
+        private readonly IUsuarioAvaliadorService _usuarioAvaliadorService;
+        public UsuarioAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService,
+            IParametroService parametroService,
+            IUserResolver userResolver,
+            IUsuarioAvaliadorService usuarioAvaliadorService) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
             _parametroService = parametroService;
             _userResolver = userResolver;
+            _usuarioAvaliadorService = usuarioAvaliadorService;
         }
 
         public async Task<ValidationResult> DeleteAsync(Guid id)
@@ -60,6 +66,31 @@ namespace Validator.Application.Services
             usuario.AdicionarAvaliadores(ids);
 
             _usuarioService.Update(usuario);
+
+            await CommitAsync();
+
+            return ValidationResult;
+        }
+
+        public async Task<ValidationResult> SubstituirAvaliador(SubstituirAvaliadorCommand command)
+        {
+            var user = await _userResolver.GetAuthenticateAsync();
+            var usuarioAvaliador = await _usuarioAvaliadorService.Find(f => f.UsuarioId == user.Id && f.AvaliadorId == command.AvaliadorAntigoId);
+            if (usuarioAvaliador == null)
+            {
+                ValidationResult.Add("Sugestão de Avaliação não encontrada");
+                return ValidationResult;
+            }
+
+            if (usuarioAvaliador.Status == Domain.Core.Enums.EStatuAvaliador.Enviada)
+            {
+                ValidationResult.Add("Não pode substituir esse Avaliador pois já foi enviado para Aprovação");
+                return ValidationResult;
+            }
+
+            usuarioAvaliador.AlterarAvaliador(command.AvaliadorNovoId);
+
+            _usuarioAvaliadorService.Update(usuarioAvaliador);
 
             await CommitAsync();
 
