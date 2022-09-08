@@ -29,6 +29,18 @@ namespace Validator.Application.Services
                 return ValidationResult;
             }
 
+            if (command.QtdeAvaliador < command.QtdeSugestaoMin)
+            {
+                ValidationResult.Add("Quantidade Avaliador não pode ser menor do que a Quantidade Mínima de Sugestão");
+                return ValidationResult;
+            }
+
+            if (command.QtdeAvaliador > command.QtdeSugestaoMax)
+            {
+                ValidationResult.Add("Quantidade Avaliador não pode ser maior do que a Quantidade Máxima de Sugestão");
+                return ValidationResult;
+            }
+
             var parametro = await _parametroService.GetByCurrentYear();
             if (parametro != null)
             {

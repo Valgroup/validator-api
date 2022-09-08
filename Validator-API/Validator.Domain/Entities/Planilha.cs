@@ -69,12 +69,15 @@ namespace Validator.Domain.Entities
             if (string.IsNullOrEmpty(Nivel))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nivel)));
 
-            if (string.IsNullOrEmpty(SuperiorImediato))
-                validacoes.Add(MensagemResource.EhObrigatorio("Superior Imediato"));
+            if (!string.IsNullOrEmpty(Cargo) && !Cargo.Contains("Diretor"))
+            {
+                if (string.IsNullOrEmpty(SuperiorImediato))
+                    validacoes.Add(MensagemResource.EhObrigatorio("Superior Imediato"));
 
-            if (string.IsNullOrEmpty(EmailSuperior))
-                validacoes.Add(MensagemResource.EhObrigatorio("E-mail Superior"));
-
+                if (string.IsNullOrEmpty(EmailSuperior))
+                    validacoes.Add(MensagemResource.EhObrigatorio("E-mail Superior"));
+            }
+            
             Validacoes = string.Join(" | ", validacoes);
 
             EhValido = !validacoes.Any();

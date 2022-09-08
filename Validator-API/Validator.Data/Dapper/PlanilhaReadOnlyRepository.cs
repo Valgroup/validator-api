@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System.Text;
 using Validator.Data.Repositories;
 using Validator.Domain.Commands;
 using Validator.Domain.Core.Interfaces;
@@ -21,16 +22,31 @@ namespace Validator.Data.Dapper
         {
             using var cn = CnRead;
 
-            var planilhas = await cn.QueryAsync<PlanilhaDto>(@"SELECT
-	                                                             *,
-	                                                             COUNT(1) OVER() AS Total
-                                                               FROM Planilhas
-                                                               WHERE
-                                                                 EhValido = 0
-                                                                 AND Deleted = 0
-                                                                 ORDER BY Nome OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ", new { command.Skip, command.Take });
+            var sbQry = new StringBuilder(@"SELECT
+	                                            *,
+	                                        COUNT(1) OVER() AS Total
+                                            FROM Planilhas
+                                            WHERE
+                                            EhValido = 0 AND Deleted = 0 ");
 
+            if (!string.IsNullOrEmpty(command.QueryNome))
+            {
+                sbQry.Append(@"AND (
+	                                Nome LIKE @WhereLike OR
+	                                Email LIKE @WhereLike OR
+	                                Unidade LIKE @WhereLike OR
+	                                Cargo LIKE @WhereLike OR
+	                                Nivel LIKE @WhereLike OR
+	                                CentroCusto LIKE @WhereLike OR
+	                                NumeroCentroCusto LIKE @WhereLike OR
+	                                SuperiorImediato LIKE @WhereLike OR
+	                                EmailSuperior LIKE @WhereLike OR
+	                                CPF LIKE @WhereLike ) ");
+            }
 
+            sbQry.Append(" ORDER BY Nome OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
+
+            var planilhas = await cn.QueryAsync<PlanilhaDto>(sbQry.ToString(), new { command.Skip, command.Take, WhereLike = $"%{command.QueryNome}%" });
 
             return new PagedResult<PlanilhaDto>
             {
@@ -47,6 +63,6 @@ namespace Validator.Data.Dapper
             return await cn.QueryAsync<Planilha>(@"SELECT * FROM Planilhas WHERE AnoBaseId = @AnoBaseId ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
         }
 
-        
+
     }
 }
