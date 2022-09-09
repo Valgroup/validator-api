@@ -30,8 +30,8 @@ namespace Validator.Domain.Entities
         public string Senha { get; private set; }
         public string Nome { get; private set; }
         public string Email { get; private set; }
-        public string EmailSuperior { get; private set; }
-        public string Cargo { get; private set; }
+        public string? EmailSuperior { get; private set; }
+        public string? Cargo { get; private set; }
         public bool EhDiretor { get; private set; }
         public bool Deleted { get; set; }
         public virtual Divisao Divisao { get; private set; }

@@ -124,7 +124,7 @@ namespace Validator.Application.Services
                     var planilha = todas.FirstOrDefault(f => f.Email == email);
                     if (planilha != null)
                     {
-                        planilha.Alterar(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf);
+                        planilha.Alterar(unidade, nome, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf);
                         planilhasAtualizar.Add(planilha);
                     }
                     else

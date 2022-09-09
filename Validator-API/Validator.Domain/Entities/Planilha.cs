@@ -77,7 +77,7 @@ namespace Validator.Domain.Entities
                 if (string.IsNullOrEmpty(EmailSuperior))
                     validacoes.Add(MensagemResource.EhObrigatorio("E-mail Superior"));
             }
-            
+
             Validacoes = string.Join(" | ", validacoes);
 
             EhValido = !validacoes.Any();
@@ -92,18 +92,17 @@ namespace Validator.Domain.Entities
             Cargo = command.Cargo;
             Nivel = command.Nivel;
             SuperiorImediato = command.SuperiorImediato.ClearCaracters(new char[] { '-' });
-            EmailSuperior = command.EmailSuperior.ClearCaracters(new char[] { '-' }); 
+            EmailSuperior = command.EmailSuperior.ClearCaracters(new char[] { '-' });
 
             Validar();
 
         }
 
-        public void Alterar(string? unidade, string? nome, string? email, string? cargo, string? nivel,
+        public void Alterar(string? unidade, string? nome, string? cargo, string? nivel,
             DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao, string? cpf)
         {
             Unidade = unidade.TrimOrDefault();
             Nome = nome.TrimOrDefault();
-            Email = email.TrimOrDefault();
             Cargo = cargo.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
             CPF = cpf.ClearCaracters(new char[] { '.', '-' });
