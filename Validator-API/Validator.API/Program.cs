@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Validator.API.Filter;
+using Validator.API.Middlewares;
 using Validator.API.Resolvers;
 using Validator.Application.Interfaces;
 using Validator.Application.Services;
@@ -16,7 +17,7 @@ using Validator.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var cnConfig = builder.Configuration.GetConnectionString("Test");
+var cnConfig = builder.Configuration.GetConnectionString("CnValidator");
 RuntimeConfigurationHelper.ConnectionString = cnConfig;
 builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
 
@@ -56,6 +57,8 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.OperationFilter<AuthorizationHeaderOperationFilter>();
 });
+
+
 
 builder.Services.AddHttpContextAccessor();
 
@@ -98,5 +101,7 @@ app.UseCors(o =>
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionGlobalHandlerMiddleware>();
 
 app.Run();

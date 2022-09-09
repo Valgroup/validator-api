@@ -176,14 +176,20 @@ namespace Validator.Data.Dapper
             if (avaliadorAntigoId.HasValue)
                 qrySb.Append(" AND U.Id != @AvaliadorAntigoId ");
 
-            var divisoes = new List<string> { "SP1", "MG2" };
-            if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+            if (command.SetorId.HasValue)
+                qrySb.Append(" AND S.Id = @SetorId ");
+
+            if (usuario.Perfil != Domain.Core.Enums.EPerfilUsuario.Administrador)
             {
-                qrySb.Append(" AND D.Nome IN ('SP1', 'MG2') ");
-            }
-            else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
-            {
-                qrySb.Append(" AND D.Nome NOT IN ('SP1', 'MG2') ");
+                var divisoes = new List<string> { "SP1", "MG2" };
+                if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+                {
+                    qrySb.Append(" AND D.Nome IN ('SP1', 'MG2') ");
+                }
+                else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+                {
+                    qrySb.Append(" AND D.Nome NOT IN ('SP1', 'MG2') ");
+                }
             }
 
             if (!string.IsNullOrEmpty(command.QueryNome))
@@ -197,12 +203,13 @@ namespace Validator.Data.Dapper
             {
                 AnoBaseId = yearId,
                 DivisaoId = command.DivisaoId,
-                WhereLike = $"'%{command.QueryNome}%'",
+                WhereLike = $"%{command.QueryNome}%",
                 Skip = command.Skip,
                 Take = command.Take,
                 UsuarioId = usuario.Id,
                 SuperiorId = usuario.SuperiorId,
-                AvaliadorAntigoId = avaliadorAntigoId
+                AvaliadorAntigoId = avaliadorAntigoId,
+                SetorId = command.SetorId
             });
 
             int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;

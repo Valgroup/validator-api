@@ -60,8 +60,6 @@ namespace Validator.Application.Services
 
             _planilhaService.Delete(planilha);
 
-            
-
             await CommitAsync();
 
             return ValidationResult;
@@ -80,7 +78,7 @@ namespace Validator.Application.Services
             planilha.Resolver(command);
 
             _planilhaService.Update(planilha);
-            
+
             await CommitAsync();
 
             await _processoService.Atualizar();
@@ -115,6 +113,9 @@ namespace Validator.Application.Services
                     var superior = table.Rows[i][9]?.ToString();
                     var emailSuperior = table.Rows[i][10]?.ToString();
                     var direcao = table.Rows[i][11]?.ToString();
+
+                    if (string.IsNullOrEmpty(email))
+                        continue;
 
                     DateTime? dataAdm = null;
                     if (!dataAdmissao.Contains("-"))

@@ -13,32 +13,41 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 - API", "01 - API", "{07
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator.Domain", "Validator.Domain\Validator.Domain.csproj", "{6F9B2A31-57ED-4D39-89DE-DA3872531C95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validator.Data", "Validator.Data\Validator.Data.csproj", "{365E42A6-3C0D-4F6A-A831-E13E86413610}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator.Data", "Validator.Data\Validator.Data.csproj", "{365E42A6-3C0D-4F6A-A831-E13E86413610}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validator.API", "Validator.API\Validator.API.csproj", "{73550EE3-AC7D-402B-B818-634CEC210FE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator.API", "Validator.API\Validator.API.csproj", "{73550EE3-AC7D-402B-B818-634CEC210FE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validator.Application", "Validator.Application\Validator.Application.csproj", "{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator.Application", "Validator.Application\Validator.Application.csproj", "{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		QA|Any CPU = QA|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6F9B2A31-57ED-4D39-89DE-DA3872531C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F9B2A31-57ED-4D39-89DE-DA3872531C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F9B2A31-57ED-4D39-89DE-DA3872531C95}.QA|Any CPU.ActiveCfg = Release|Any CPU
+		{6F9B2A31-57ED-4D39-89DE-DA3872531C95}.QA|Any CPU.Build.0 = Release|Any CPU
 		{6F9B2A31-57ED-4D39-89DE-DA3872531C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F9B2A31-57ED-4D39-89DE-DA3872531C95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{365E42A6-3C0D-4F6A-A831-E13E86413610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{365E42A6-3C0D-4F6A-A831-E13E86413610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{365E42A6-3C0D-4F6A-A831-E13E86413610}.QA|Any CPU.ActiveCfg = Release|Any CPU
+		{365E42A6-3C0D-4F6A-A831-E13E86413610}.QA|Any CPU.Build.0 = Release|Any CPU
 		{365E42A6-3C0D-4F6A-A831-E13E86413610}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{365E42A6-3C0D-4F6A-A831-E13E86413610}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73550EE3-AC7D-402B-B818-634CEC210FE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73550EE3-AC7D-402B-B818-634CEC210FE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73550EE3-AC7D-402B-B818-634CEC210FE2}.QA|Any CPU.ActiveCfg = Release|Any CPU
+		{73550EE3-AC7D-402B-B818-634CEC210FE2}.QA|Any CPU.Build.0 = Release|Any CPU
 		{73550EE3-AC7D-402B-B818-634CEC210FE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73550EE3-AC7D-402B-B818-634CEC210FE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}.QA|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}.QA|Any CPU.Build.0 = Release|Any CPU
 		{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AC5D06D-44B6-4E3E-AE5B-C96670AA4FA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

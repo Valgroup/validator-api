@@ -20,11 +20,20 @@ namespace Validator.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody] LoginCommand command)
         {
-            var result = await _authAppService.Autenticar(command);
-            if (result.IsValid)
-                return Ok(result);
+            try
+            {
+                var result = await _authAppService.Autenticar(command);
+                if (result.IsValid)
+                    return Ok(result);
 
-            return StatusCode(422, result);
+                return StatusCode(422, result);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex);
+            }
+           
         }
     }
 }
