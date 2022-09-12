@@ -10,5 +10,6 @@ namespace Validator.Application.Interfaces
         Task<ValidationResult> Remover(Guid id);
         Task<ValidationResult> Resolver(PlanilhaResolverPendenciaCommand command);
         Task<PendenciaDto> ObterPorId(Guid id);
+        Task<bool> PossuiPendencias();
     }
 }

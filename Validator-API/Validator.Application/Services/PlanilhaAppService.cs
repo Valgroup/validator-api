@@ -49,6 +49,15 @@ namespace Validator.Application.Services
             return null;
         }
 
+        public async Task<bool> PossuiPendencias()
+        {
+            var processo = await _processoService.GetByCurrentYear();
+            if (processo == null)
+                return false;
+
+            return processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.ComPendencia;
+        }
+
         public async Task<ValidationResult> Remover(Guid id)
         {
             var planilha = _planilhaService.GetById(id);
@@ -104,19 +113,15 @@ namespace Validator.Application.Services
                     var nome = table.Rows[i][0]?.ToString();
                     var email = table.Rows[i][1]?.ToString();
                     var cpf = table.Rows[i][2]?.ToString();
-                    var cargo = table.Rows[i][3]?.ToString();
-                    var nivel = table.Rows[i][4]?.ToString();
-                    var dataAdmissao = table.Rows[i][5]?.ToString();
-                    var centroCusto = table.Rows[i][6]?.ToString();
-                    var numeroCentro = table.Rows[i][7]?.ToString();
-                    var unidade = table.Rows[i][8]?.ToString();
-                    var superior = table.Rows[i][9]?.ToString();
-                    var emailSuperior = table.Rows[i][10]?.ToString();
-                    var direcao = table.Rows[i][11]?.ToString();
-
-                    if (string.IsNullOrEmpty(email))
-                        continue;
-
+                    var nivel = table.Rows[i][3]?.ToString();
+                    var dataAdmissao = table.Rows[i][4]?.ToString();
+                    var centroCusto = table.Rows[i][5]?.ToString();
+                    var numeroCentro = table.Rows[i][6]?.ToString();
+                    var unidade = table.Rows[i][7]?.ToString();
+                    var superior = table.Rows[i][8]?.ToString();
+                    var emailSuperior = table.Rows[i][9]?.ToString();
+                    var direcao = table.Rows[i][10]?.ToString();
+                                       
                     DateTime? dataAdm = null;
                     if (!dataAdmissao.Contains("-"))
                         dataAdm = Convert.ToDateTime(dataAdmissao);
@@ -124,12 +129,12 @@ namespace Validator.Application.Services
                     var planilha = todas.FirstOrDefault(f => f.Email == email);
                     if (planilha != null)
                     {
-                        planilha.Alterar(unidade, nome, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf);
+                        planilha.Alterar(unidade, nome, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf, email);
                         planilhasAtualizar.Add(planilha);
                     }
                     else
                     {
-                        planilhas.Add(new Planilha(unidade, nome, email, cargo, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf));
+                        planilhas.Add(new Planilha(unidade, nome, email, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf));
                     }
                 }
 

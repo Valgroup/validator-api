@@ -11,7 +11,7 @@ namespace Validator.Domain.Entities
         protected Planilha() { }
 
         public Planilha(string unidade, string nome, string email,
-            string cargo, string nivel, DateTime? dataAdmissao,
+            string nivel, DateTime? dataAdmissao,
             string centroCusto, string numeroCentroCusto,
             string superiorImediato, string emailSuperior, string direcao, string cpf)
         {
@@ -19,8 +19,8 @@ namespace Validator.Domain.Entities
             Unidade = unidade.TrimOrDefault();
             Nome = nome.TrimOrDefault();
             Email = email.TrimOrDefault();
-            Cargo = cargo.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
+            Cargo = Nivel;
             CPF = cpf.ClearCaracters(new char[] { '.', '-' });
             DataAdmissao = dataAdmissao;
             CentroCusto = centroCusto.ClearCaracters(new char[] { '-' }); ;
@@ -62,14 +62,11 @@ namespace Validator.Domain.Entities
 
             if (string.IsNullOrEmpty(Email))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Email)));
-
-            if (string.IsNullOrEmpty(Cargo))
-                validacoes.Add(MensagemResource.EhObrigatorio(nameof(Cargo)));
-
+                       
             if (string.IsNullOrEmpty(Nivel))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nivel)));
 
-            if (!string.IsNullOrEmpty(Cargo) && !Cargo.Contains("Diretor"))
+            if (!string.IsNullOrEmpty(Nivel) && !Nivel.Contains("Diretor"))
             {
                 if (string.IsNullOrEmpty(SuperiorImediato))
                     validacoes.Add(MensagemResource.EhObrigatorio("Superior Imediato"));
@@ -89,8 +86,8 @@ namespace Validator.Domain.Entities
             CPF = command.CPF.ClearCaracters(new char[] { '.', '-' });
             Nome = command.Nome;
             Email = command.Email;
-            Cargo = command.Cargo;
             Nivel = command.Nivel;
+            Cargo = command.Nivel;
             SuperiorImediato = command.SuperiorImediato.ClearCaracters(new char[] { '-' });
             EmailSuperior = command.EmailSuperior.ClearCaracters(new char[] { '-' });
 
@@ -98,13 +95,17 @@ namespace Validator.Domain.Entities
 
         }
 
-        public void Alterar(string? unidade, string? nome, string? cargo, string? nivel,
-            DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao, string? cpf)
+        public void Alterar(string? unidade, string? nome, string? nivel,
+            DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao, string? cpf, string? email)
         {
+            if (!string.IsNullOrEmpty(cpf))
+                cpf = cpf.Replace("Não tem Registro", "");
+
             Unidade = unidade.TrimOrDefault();
             Nome = nome.TrimOrDefault();
-            Cargo = cargo.TrimOrDefault();
+            Email = email.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
+            Cargo = Nivel;
             CPF = cpf.ClearCaracters(new char[] { '.', '-' });
             DataAdmissao = dataAdm;
             CentroCusto = centroCusto.ClearCaracters(new char[] { '-' }); ;

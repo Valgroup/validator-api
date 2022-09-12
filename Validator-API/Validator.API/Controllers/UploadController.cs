@@ -24,6 +24,14 @@ namespace Validator.API.Controllers
         {
             try
             {
+
+                if (await _planilhaAppService.PossuiPendencias())
+                {
+                    var res = new Domain.Core.ValidationResult();
+                    res.Add("A Planilha importada anteriormente ainda possui Pendências");
+                    return await EntityValidation(res);
+                }
+
                 var formFile = HttpContext.Request.Form.Files.FirstOrDefault();
                 using (Stream stream = formFile.OpenReadStream())
                 using (MemoryStream memory = new MemoryStream())
