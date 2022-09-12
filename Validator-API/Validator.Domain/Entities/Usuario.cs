@@ -23,8 +23,8 @@ namespace Validator.Domain.Entities
 
         public Guid Id { get; private set; }
         public Guid AzureId { get; private set; }
-        public Guid DivisaoId { get; private set; }
-        public Guid SetorId { get; private set; }
+        public Guid? DivisaoId { get; private set; }
+        public Guid? SetorId { get; private set; }
         public Guid? SuperiorId { get; private set; }
         public EPerfilUsuario Perfil { get; private set; }
         public string Senha { get; private set; }
@@ -34,8 +34,8 @@ namespace Validator.Domain.Entities
         public string? Cargo { get; private set; }
         public bool EhDiretor { get; private set; }
         public bool Deleted { get; set; }
-        public virtual Divisao Divisao { get; private set; }
-        public virtual Setor Setor { get; private set; }
+        public virtual Divisao? Divisao { get; private set; }
+        public virtual Setor? Setor { get; private set; }
         public virtual Usuario? Superior { get; private set; }
         public virtual ICollection<UsuarioAvaliador> Avaliadores { get; private set; }
 
@@ -81,6 +81,13 @@ namespace Validator.Domain.Entities
         public bool Autenticar(string senha)
         {
             return Senha == CryptoMD5(senha);
+        }
+
+        public void InformarDadosExtras(Guid setorId, Guid divisaoId, Guid? superiorId)
+        {
+            SetorId = setorId;
+            DivisaoId = divisaoId;
+            SuperiorId = superiorId;
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Validator.Data.Contexto;
 
@@ -11,9 +12,10 @@ using Validator.Data.Contexto;
 namespace Validator.Data.Migrations
 {
     [DbContext(typeof(ValidatorContext))]
-    partial class ValidatorContextModelSnapshot : ModelSnapshot
+    [Migration("20220912163523_V_1_0_10")]
+    partial class V_1_0_10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,7 +224,7 @@ namespace Validator.Data.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("DivisaoId")
+                    b.Property<Guid>("DivisaoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("EhDiretor")
@@ -250,7 +252,7 @@ namespace Validator.Data.Migrations
                         .HasMaxLength(180)
                         .HasColumnType("nvarchar(180)");
 
-                    b.Property<Guid?>("SetorId")
+                    b.Property<Guid>("SetorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SuperiorId")
@@ -353,12 +355,14 @@ namespace Validator.Data.Migrations
                     b.HasOne("Validator.Domain.Entities.Divisao", "Divisao")
                         .WithMany()
                         .HasForeignKey("DivisaoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Validator.Domain.Entities.Setor", "Setor")
                         .WithMany()
                         .HasForeignKey("SetorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Validator.Domain.Entities.Usuario", "Superior")
                         .WithMany()

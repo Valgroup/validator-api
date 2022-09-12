@@ -1,6 +1,8 @@
-﻿using Validator.Domain.Commands.Planilhas;
+﻿using System.Text.RegularExpressions;
+using Validator.Domain.Commands.Planilhas;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Extensions;
+using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Resources;
 
@@ -21,13 +23,14 @@ namespace Validator.Domain.Entities
             Email = email.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
             Cargo = Nivel;
-            CPF = cpf.ClearCaracters(new char[] { '.', '-' });
+            CPF = string.IsNullOrEmpty(cpf) ? null : Regex.Replace(cpf, @"[^\d]", "");
             DataAdmissao = dataAdmissao;
             CentroCusto = centroCusto.ClearCaracters(new char[] { '-' }); ;
             NumeroCentroCusto = numeroCentroCusto.TrimOrDefault();
             SuperiorImediato = superiorImediato.ClearCaracters(new char[] { '-' });
             EmailSuperior = emailSuperior.ClearCaracters(new char[] { '-' });
             Direcao = direcao.TrimOrDefault();
+
             Validar();
         }
 
@@ -57,12 +60,24 @@ namespace Validator.Domain.Entities
             if (string.IsNullOrEmpty(CPF))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(CPF)));
 
+            //if (!string.IsNullOrEmpty(CPF))
+            //{
+            //    if (!ValidadorHelper.CPFEhValido(CPF))
+            //        validacoes.Add("CPF inválido");
+            //}
+
             if (string.IsNullOrEmpty(Nome))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nome)));
 
             if (string.IsNullOrEmpty(Email))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Email)));
-                       
+
+            if (!string.IsNullOrEmpty(Email))
+            {
+                if (!ValidadorHelper.ValidarEmail(Email))
+                    validacoes.Add("E-mail inválido");
+            }
+
             if (string.IsNullOrEmpty(Nivel))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nivel)));
 
@@ -73,6 +88,12 @@ namespace Validator.Domain.Entities
 
                 if (string.IsNullOrEmpty(EmailSuperior))
                     validacoes.Add(MensagemResource.EhObrigatorio("E-mail Superior"));
+
+                if (!string.IsNullOrEmpty(EmailSuperior))
+                {
+                    if (!ValidadorHelper.ValidarEmail(EmailSuperior))
+                        validacoes.Add("E-mail do superior inválido");
+                }
             }
 
             Validacoes = string.Join(" | ", validacoes);
@@ -83,7 +104,7 @@ namespace Validator.Domain.Entities
         public void Resolver(PlanilhaResolverPendenciaCommand command)
         {
             Unidade = command.Unidade;
-            CPF = command.CPF.ClearCaracters(new char[] { '.', '-' });
+            CPF = string.IsNullOrEmpty(command.CPF) ? null : Regex.Replace(command.CPF, @"[^\d]", "");
             Nome = command.Nome;
             Email = command.Email;
             Nivel = command.Nivel;
@@ -106,7 +127,7 @@ namespace Validator.Domain.Entities
             Email = email.TrimOrDefault();
             Nivel = nivel.TrimOrDefault();
             Cargo = Nivel;
-            CPF = cpf.ClearCaracters(new char[] { '.', '-' });
+            CPF = string.IsNullOrEmpty(cpf) ? null : Regex.Replace(cpf, @"[^\d]", "");
             DataAdmissao = dataAdm;
             CentroCusto = centroCusto.ClearCaracters(new char[] { '-' }); ;
             NumeroCentroCusto = numeroCentro.TrimOrDefault();

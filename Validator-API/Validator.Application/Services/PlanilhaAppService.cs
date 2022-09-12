@@ -116,11 +116,10 @@ namespace Validator.Application.Services
                     var nivel = table.Rows[i][3]?.ToString();
                     var dataAdmissao = table.Rows[i][4]?.ToString();
                     var centroCusto = table.Rows[i][5]?.ToString();
-                    var numeroCentro = table.Rows[i][6]?.ToString();
-                    var unidade = table.Rows[i][7]?.ToString();
-                    var superior = table.Rows[i][8]?.ToString();
-                    var emailSuperior = table.Rows[i][9]?.ToString();
-                    var direcao = table.Rows[i][10]?.ToString();
+                    var unidade = table.Rows[i][6]?.ToString();
+                    var superior = table.Rows[i][7]?.ToString();
+                    var emailSuperior = table.Rows[i][8]?.ToString();
+                    var direcao = table.Rows[i][9]?.ToString();
                                        
                     DateTime? dataAdm = null;
                     if (!dataAdmissao.Contains("-"))
@@ -129,12 +128,12 @@ namespace Validator.Application.Services
                     var planilha = todas.FirstOrDefault(f => f.Email == email);
                     if (planilha != null)
                     {
-                        planilha.Alterar(unidade, nome, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf, email);
+                        planilha.Alterar(unidade, nome, nivel, dataAdm, centroCusto, null, superior, emailSuperior, direcao, cpf, email);
                         planilhasAtualizar.Add(planilha);
                     }
                     else
                     {
-                        planilhas.Add(new Planilha(unidade, nome, email, nivel, dataAdm, centroCusto, numeroCentro, superior, emailSuperior, direcao, cpf));
+                        planilhas.Add(new Planilha(unidade, nome, email, nivel, dataAdm, centroCusto, null, superior, emailSuperior, direcao, cpf));
                     }
                 }
 

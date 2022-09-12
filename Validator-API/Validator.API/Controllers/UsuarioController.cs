@@ -88,6 +88,7 @@ namespace Validator.API.Controllers
         }
 
         [HttpPost, Route("Subordinados")]
+        [ProducesResponseType(typeof(PagedResult<UsuarioSubordinadoDto>), 200)]
         public async Task<IActionResult> Subordinados(PaginationBaseCommand command)
         {
             return Ok(await _usuarioReadOnlyRepository.ObterSubordinados(command));

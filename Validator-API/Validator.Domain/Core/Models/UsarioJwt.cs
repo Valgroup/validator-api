@@ -6,7 +6,7 @@ namespace Validator.Domain.Core.Models
     {
         public Guid Id { get; set; }
         public Guid AnoBaseId { get; set; }
-        public Guid DivisaoId { get; set; }
+        public Guid? DivisaoId { get; set; }
         public Guid? SuperiorId { get; set; }
         public string DivisaoNome { get; set; }
         public string Nome { get; set; }

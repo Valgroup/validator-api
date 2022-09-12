@@ -34,6 +34,8 @@ builder.Services.AddTransient(typeof(IServiceDomain<>), typeof(ServiceDomain<>))
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IProcessoService, ProcessoService>();
 builder.Services.AddTransient<IUsuarioAvaliadorService, UsuarioAvaliadorService>();
+builder.Services.AddTransient<IDivisaoService, DivisaoService>();
+builder.Services.AddTransient<ISetorService, SetorService>();
 //DOMAIN
 
 //DATA
@@ -57,8 +59,6 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.OperationFilter<AuthorizationHeaderOperationFilter>();
 });
-
-
 
 builder.Services.AddHttpContextAccessor();
 

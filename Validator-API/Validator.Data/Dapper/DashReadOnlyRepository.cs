@@ -44,7 +44,7 @@ namespace Validator.Data.Dapper
 		                            WHEN Status = 0 THEN 'Enviada'
 		                            WHEN Status = 1 THEN 'Confirmada'
 		                            END StatusNome,
-	                                COUNT(1) OVER() AS Total
+	                               (SELECT COUNT(1) FROM UsuarioAvaliador) Total
                                 FROM UsuarioAvaliador UA
                                 INNER JOIN Usuarios U ON U.Id = UA.UsuarioId
                                 WHERE 1=1 ");

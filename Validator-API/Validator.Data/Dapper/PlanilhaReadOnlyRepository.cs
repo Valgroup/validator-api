@@ -60,7 +60,7 @@ namespace Validator.Data.Dapper
         {
             using var cn = CnRead;
 
-            return await cn.QueryAsync<Planilha>(@"SELECT * FROM Planilhas WHERE AnoBaseId = @AnoBaseId ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
+            return await cn.QueryAsync<Planilha>(@"SELECT * FROM Planilhas WHERE AnoBaseId = @AnoBaseId AND Deleted = 0 ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
         }
 
 
