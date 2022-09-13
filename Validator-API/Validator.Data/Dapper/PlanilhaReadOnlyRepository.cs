@@ -62,9 +62,7 @@ namespace Validator.Data.Dapper
             using var cn = CnRead;
 
             return await cn.QueryAsync<PlanilhaExtraiDto>(@"SELECT 
-
-	                                                            CASE WHEN U.Deleted = 0 THEN U.Documento
-		                                                             WHEN U.Deleted = 1 THEN 'Inativo' END AS CPFAvaliado,
+                                                                U.Documento AS CPFAvaliado,
 	                                                            CASE WHEN UAV.Deleted = 0 THEN UAV.Documento
 		                                                             WHEN UAV.Deleted = 1 THEN 'Inativo' END AS CPFAvaliador,
 	                                                            CASE WHEN U.SuperiorId != UA.AvaliadorId THEN 'PAR' END AS Tipo,
