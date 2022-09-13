@@ -4,6 +4,7 @@ using Validator.Data.Repositories;
 using Validator.Domain.Commands;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Pagination;
+using Validator.Domain.Dtos;
 using Validator.Domain.Dtos.Dashes;
 using Validator.Domain.Entities;
 
@@ -54,6 +55,27 @@ namespace Validator.Data.Dapper
                 RecordsFiltered = planilhas.Count(),
                 RecordsTotal = planilhas.Any() ? planilhas.FirstOrDefault().Total : 0
             };
+        }
+
+        public async Task<IEnumerable<PlanilhaExtraiDto>> ObterDadosExtracao()
+        {
+            using var cn = CnRead;
+
+            return await cn.QueryAsync<PlanilhaExtraiDto>(@"SELECT 
+
+	                                                            CASE WHEN U.Deleted = 0 THEN U.Documento
+		                                                             WHEN U.Deleted = 1 THEN 'Inativo' END AS CPFAvaliado,
+	                                                            CASE WHEN UAV.Deleted = 0 THEN UAV.Documento
+		                                                             WHEN UAV.Deleted = 1 THEN 'Inativo' END AS CPFAvaliador,
+	                                                            CASE WHEN U.SuperiorId != UA.AvaliadorId THEN 'PAR' END AS Tipo,
+	                                                            CASE WHEN U.Deleted = 0 THEN 'Ativo'
+		                                                             WHEN U.Deleted = 1 THEN 'Inativo' END AS Status
+
+                                                            FROM UsuarioAvaliador UA
+                                                            INNER JOIN Usuarios U ON U.Id = UA.UsuarioId
+                                                            INNER JOIN Usuarios UAV ON UAV.Id = UA.AvaliadorId
+                                                            WHERE
+                                                            U.AnoBaseId = @AnoBaseId ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
         }
 
         public async Task<IEnumerable<Planilha>> ObterTodas()

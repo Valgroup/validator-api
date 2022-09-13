@@ -19,5 +19,10 @@ namespace Validator.Domain.Services
         {
             return await _repository.FirstOrDefaultAsync(predicate, false);
         }
+
+        public async Task<IEnumerable<UsuarioAvaliador>> FindAll(Expression<Func<UsuarioAvaliador, bool>> predicate)
+        {
+            return await _repository.FindAll(predicate);
+        }
     }
 }

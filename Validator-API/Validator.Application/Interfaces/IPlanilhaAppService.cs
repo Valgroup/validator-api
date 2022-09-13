@@ -12,5 +12,6 @@ namespace Validator.Application.Interfaces
         Task<PendenciaDto> ObterPorId(Guid id);
         Task<bool> PossuiPendencias();
         Task<bool> ProcessoInicializado();
+        Task<byte[]> GerarAvaliacao();
     }
 }

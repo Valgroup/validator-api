@@ -10,7 +10,7 @@ namespace Validator.Domain.Entities
     {
         protected Usuario() { }
 
-        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha)
+        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha, string? documento)
         {
             AzureId = azureId;
             Nome = nome;
@@ -19,6 +19,7 @@ namespace Validator.Domain.Entities
             EhDiretor = ehDiretor;
             Cargo = cargo;
             Senha = CryptoMD5(senha);
+            Documento = documento;
         }
 
         public Guid Id { get; private set; }
@@ -32,6 +33,7 @@ namespace Validator.Domain.Entities
         public string Email { get; private set; }
         public string? EmailSuperior { get; private set; }
         public string? Cargo { get; private set; }
+        public string? Documento { get; private set; }
         public bool EhDiretor { get; private set; }
         public bool Deleted { get; set; }
         public virtual Divisao? Divisao { get; private set; }
@@ -88,6 +90,25 @@ namespace Validator.Domain.Entities
             SetorId = setorId;
             DivisaoId = divisaoId;
             SuperiorId = superiorId;
+        }
+
+
+        public void ExecutarRegraPerfil()
+        {
+            if (EhDiretor)
+            {
+                Perfil = EPerfilUsuario.Diretor;
+                return;
+            }
+
+            if (Email == EmailSuperior)
+            {
+                Perfil = EPerfilUsuario.Ambos;
+                return;
+            }
+
+            Perfil = EPerfilUsuario.Avaliado;
+
         }
     }
 }

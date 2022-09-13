@@ -101,6 +101,16 @@ namespace Validator.API.Controllers
             return Ok(await _usuarioReadOnlyRepository.ObterAprovacaoSubordinados(command));
         }
 
+        [HttpPut, Route("AprovarSubordinado/{subordinadoId}")]
+        public async Task<IActionResult> AprovarSubordinado(Guid subordinadoId)
+        {
+            var result = await _usuarioAppService.AprovarSubordinado(subordinadoId);
+            if (result.IsValid)
+                return await StatusCodeOK(result);
+
+            return await EntityValidation(result);
+        }
+
         [HttpDelete, Route("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

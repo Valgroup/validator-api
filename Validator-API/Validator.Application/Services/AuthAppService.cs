@@ -3,7 +3,6 @@ using Validator.Domain.Commands.Logins;
 using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Models;
-using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
 
 namespace Validator.Application.Services
@@ -11,9 +10,11 @@ namespace Validator.Application.Services
     public class AuthAppService : AppBaseService, IAuthAppService
     {
         private readonly IUsuarioService _usuarioService;
-        public AuthAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService) : base(unitOfWork)
+        private readonly IProcessoService _processoService;
+        public AuthAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService, IProcessoService processoService) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
+            _processoService = processoService;
         }
 
         public async Task<LoginResultCommand> Autenticar(LoginCommand command)
@@ -24,6 +25,9 @@ namespace Validator.Application.Services
 
             if (!usuario.Autenticar(command.Senha))
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
+
+            var processo = await _processoService.GetByCurrentYear();
+            bool liberaProcesso = processo.Situacao != Domain.Core.Enums.ESituacaoProcesso.Inicializada;
 
             var jwt = new UsarioJwt()
             {
@@ -43,7 +47,7 @@ namespace Validator.Application.Services
                     jwt.Permissao = new PermissaoJwt()
                     {
                         Documento = false,
-                        LiberarProcesso = false,
+                        LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = true
                     };
@@ -51,8 +55,8 @@ namespace Validator.Application.Services
                 case Domain.Core.Enums.EPerfilUsuario.Administrador:
                     jwt.Permissao = new PermissaoJwt()
                     {
-                        Documento = true,
-                        LiberarProcesso = true,
+                        Documento = liberaProcesso,
+                        LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = true
                     };
@@ -61,7 +65,7 @@ namespace Validator.Application.Services
                     jwt.Permissao = new PermissaoJwt()
                     {
                         Documento = false,
-                        LiberarProcesso = false,
+                        LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = false
                     };
@@ -70,7 +74,7 @@ namespace Validator.Application.Services
                     jwt.Permissao = new PermissaoJwt()
                     {
                         Documento = false,
-                        LiberarProcesso = false,
+                        LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = false
                     };
@@ -79,7 +83,7 @@ namespace Validator.Application.Services
                     jwt.Permissao = new PermissaoJwt()
                     {
                         Documento = false,
-                        LiberarProcesso = false,
+                        LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = false
                     };

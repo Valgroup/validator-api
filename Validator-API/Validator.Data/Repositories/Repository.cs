@@ -66,7 +66,10 @@ namespace Validator.Data.Repositories
             return await DbSet.FirstOrDefaultAsync();
         }
 
-
+        public async Task<IEnumerable<TEntity>> FindAll(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await DbSet.Where(predicate).ToListAsync();
+        }
 
         public void Dispose()
         {

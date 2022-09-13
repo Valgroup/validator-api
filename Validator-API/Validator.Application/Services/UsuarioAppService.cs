@@ -22,7 +22,7 @@ namespace Validator.Application.Services
             _userResolver = userResolver;
             _usuarioAvaliadorService = usuarioAvaliadorService;
         }
-
+               
         public async Task<ValidationResult> DeleteAsync(Guid id)
         {
             var usuario = _usuarioService.GetById(id);
@@ -91,5 +91,20 @@ namespace Validator.Application.Services
 
             return ValidationResult;
         }
+
+        public async Task<ValidationResult> AprovarSubordinado(Guid subordinadoId)
+        {
+            var sugestoes = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == subordinadoId);
+            foreach (var item in sugestoes)
+            {
+                item.Aprovar();
+                _usuarioAvaliadorService.Update(item);
+            }
+
+            await CommitAsync();
+
+            return ValidationResult;
+        }
+
     }
 }

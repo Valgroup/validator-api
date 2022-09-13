@@ -123,18 +123,20 @@ namespace Validator.Application.Services
                 if (supExiste != null)
                 {
                     var ehDiretor = !string.IsNullOrEmpty(supExiste.Direcao) && supExiste.Direcao.Contains('x');
-                    var supUsario = new Usuario(Guid.NewGuid(), supExiste.Nome, supEmail, supExiste.EmailSuperior, ehDiretor, supExiste.Nivel, "valgroup2022");
+                    var supUsuario = new Usuario(Guid.NewGuid(), supExiste.Nome, supEmail, supExiste.EmailSuperior, ehDiretor, supExiste.Nivel, "valgroup2022", supExiste.CPF);
                     var setorId = setores.First(f => f.Nome == supExiste.Nivel).Id;
                     var divisaoId = divisoes.First(f => f.Nome == supExiste.Unidade).Id;
                     var superior = superiores.FirstOrDefault(f => f.Email == supExiste.EmailSuperior);
-                    supUsario.InformarDadosExtras(setorId, divisaoId, superior != null ? superior.Id : null);
-                    superiores.Add(supUsario);
-                    await _usuarioService.CreateAsync(supUsario);
+                    supUsuario.InformarDadosExtras(setorId, divisaoId, superior != null ? superior.Id : null);
+                    supUsuario.ExecutarRegraPerfil();
+                    superiores.Add(supUsuario);
+                    await _usuarioService.CreateAsync(supUsuario);
                 }
                 else
                 {
                     var supSemUsuario = planilhas.FirstOrDefault(f => f.EmailSuperior == supEmail);
-                    var supUsuario = new Usuario(Guid.NewGuid(), supSemUsuario.Nome, supSemUsuario.Email, null, false, null, "valgroup2022");
+                    var supUsuario = new Usuario(Guid.NewGuid(), supSemUsuario.Nome, supSemUsuario.Email, null, false, null, "valgroup2022", supSemUsuario.CPF) ;
+                    supUsuario.ExecutarRegraPerfil();
                     superiores.Add(supUsuario);
                     await _usuarioService.CreateAsync(supUsuario);
                 }
@@ -144,12 +146,12 @@ namespace Validator.Application.Services
             var avaliados = planilhas.Where(w => !superiorEmails.Contains(w.Email));
             foreach (var avaliado in avaliados)
             {
-
-                var usuario = new Usuario(Guid.NewGuid(), avaliado.Nome, avaliado.Email, avaliado.EmailSuperior, false, avaliado.Nivel, "valgroup2022");
+                var usuario = new Usuario(Guid.NewGuid(), avaliado.Nome, avaliado.Email, avaliado.EmailSuperior, false, avaliado.Nivel, "valgroup2022", avaliado.CPF);
                 var setorId = setores.First(f => f.Nome == avaliado.Nivel).Id;
                 var divisaoId = divisoes.First(f => f.Nome == avaliado.Unidade).Id;
                 var superior = superiores.FirstOrDefault(f => f.Email == avaliado.EmailSuperior);
                 usuario.InformarDadosExtras(setorId, divisaoId, superior != null ? superior.Id : null);
+                usuario.ExecutarRegraPerfil();
                 usuarios.Add(usuario);
                 await _usuarioService.CreateAsync(usuario);
             }

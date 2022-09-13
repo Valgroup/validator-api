@@ -14,6 +14,7 @@ namespace Validator.Domain.Core.Interfaces
         TEntity? GetById(Guid id);
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<TEntity?> GetByCurrentYear();
+        Task<IEnumerable<TEntity>> FindAll(Expression<Func<TEntity, bool>> predicate);
 
     }
 }

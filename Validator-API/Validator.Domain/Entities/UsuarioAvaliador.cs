@@ -1,6 +1,4 @@
-﻿using Validator.Domain.Core;
-using Validator.Domain.Core.Enums;
-using Validator.Domain.Core.Interfaces;
+﻿using Validator.Domain.Core.Enums;
 
 namespace Validator.Domain.Entities
 {
@@ -24,6 +22,11 @@ namespace Validator.Domain.Entities
         public void AlterarAvaliador(Guid avaliadorNovoId)
         {
             AvaliadorId = avaliadorNovoId;
+        }
+
+        public void Aprovar()
+        {
+            Status = EStatuAvaliador.Confirmada;
         }
     }
 }
