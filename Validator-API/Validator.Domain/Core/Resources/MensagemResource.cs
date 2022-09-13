@@ -2,6 +2,6 @@
 {
     public class MensagemResource
     {
-        public static string EhObrigatorio(string campo) => $"{campo} é obrigátório";
+        public static string EhObrigatorio(string campo) => $"{campo} é obrigatório";
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Validator.Domain.Commands;
+﻿using Validator.Domain.Commands;
 using Validator.Domain.Commands.Usuarios;
 using Validator.Domain.Core.Pagination;
 using Validator.Domain.Dtos.Usuarios;
@@ -18,6 +13,7 @@ namespace Validator.Domain.Interfaces.Repositories
         Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command);
         Task<IPagedResult<UsuarioSubordinadoDto>> ObterSubordinados(PaginationBaseCommand command);
         Task<UsuarioDto> ObterDetalhes(Guid id);
+        Task<IPagedResult<UsuarioAprovacaoSubordinadoDto>> ObterAprovacaoSubordinados(AprovacaoSubordinadosCommand command);
 
     }
 }

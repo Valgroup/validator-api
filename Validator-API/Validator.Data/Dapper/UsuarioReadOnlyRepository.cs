@@ -19,6 +19,55 @@ namespace Validator.Data.Dapper
             _userResolver = userResolver;
         }
 
+        public async Task<IPagedResult<UsuarioAprovacaoSubordinadoDto>> ObterAprovacaoSubordinados(AprovacaoSubordinadosCommand command)
+        {
+            using var cn = CnRead;
+
+            var qrySb = new StringBuilder();
+
+            qrySb.Append(@"SELECT 
+	                            UA.AvaliadorId AS Id,
+	                            U.Nome AS Subordinado,
+	                            US.Nome AS SugestaoAvaliador,
+	                            S.Nome AS Setor,
+	                            D.Nome AS Unidade,
+	                            (SELECT COUNT(1) FROM UsuarioAvaliador UAQ WHERE UAQ.AvaliadorId = US.Id) QtdeSugestao,
+	                            (SELECT COUNT(1) FROM UsuarioAvaliador UAQ WHERE UAQ.AvaliadorId = US.Id AND UAQ.Status = 1) QtdeAvaliacaoConfirmada,
+	                            COUNT(1) OVER() AS Total
+                            FROM UsuarioAvaliador UA
+                            INNER JOIN Usuarios U ON U.Id = UA.UsuarioId
+                            INNER JOIN Usuarios US ON US.Id = UA.AvaliadorId
+                            INNER JOIN Setor S ON S.Id = US.SetorId
+                            INNER JOIN Divisao D ON D.Id = US.DivisaoId
+                            WHERE
+                            U.AnoBaseId = @AnoBaseId
+                            AND U.SuperiorId = @SuperiorId
+                            AND UA.UsuarioId = @SubordinadoId
+                            ORDER BY 
+                            U.Nome ");
+
+            qrySb.Append(" OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
+
+            var user = await _userResolver.GetAuthenticateAsync();
+            var usuarios = await cn.QueryAsync<UsuarioAprovacaoSubordinadoDto>(qrySb.ToString(), new
+            {
+                AnoBaseId = user.AnoBaseId,
+                Skip = command.Skip,
+                Take = command.Take,
+                SuperiorId = user.Id,
+                SubordinadoId = command.SubordinadoId
+            });
+
+            int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;
+
+            return new PagedResult<UsuarioAprovacaoSubordinadoDto>
+            {
+                Records = usuarios,
+                RecordsTotal = total,
+                RecordsFiltered = command.Take
+            };
+        }
+
         public async Task<IPagedResult<AvaliadorDto>> ObterAvaliadores(AvaliadoresConsultaCommand command)
         {
             using var cn = CnRead;
@@ -92,11 +141,13 @@ namespace Validator.Data.Dapper
 
             qrySb.Append(@"SELECT 
 	                            U.Id,
+                                U.Nome,
 	                            U.Email,
 	                            S.Nome AS Setor,
 	                            D.Nome AS Unidade,
 	                            CASE WHEN UA.Status = 0 THEN 'Pendente'
 		                             WHEN UA.Status = 1 THEN 'Aprovado'
+                                     WHEN UA.Status = 2 THEN 'Enviado'
 	                            END AS Status,
 	                            COUNT(1) OVER() AS Total 
                             FROM Usuarios U

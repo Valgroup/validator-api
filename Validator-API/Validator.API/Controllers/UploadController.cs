@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Validator.API.Controllers.Common;
 using Validator.Application.Interfaces;
+using Validator.Domain.Core;
 
 namespace Validator.API.Controllers
 {
@@ -16,14 +16,17 @@ namespace Validator.API.Controllers
             _planilhaAppService = planilhaAppService;
         }
 
-        //[EnableCors("CorsValidador")]
-        //[RequestSizeLimit(525336576)]
-        //[RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
         [HttpPost, DisableRequestSizeLimit, Route("UploadXLS")]
         public async Task<IActionResult> UploadXLS()
         {
             try
             {
+                if (await _planilhaAppService.ProcessoInicializado())
+                {
+                    var res = new Domain.Core.ValidationResult();
+                    res.Add("Não é possivel enviar mais planilha pois o Processo de Avaliadores foi inicializado!");
+                    return await EntityValidation(res);
+                }
 
                 if (await _planilhaAppService.PossuiPendencias())
                 {
@@ -47,7 +50,9 @@ namespace Validator.API.Controllers
             }
             catch(Exception e)
             {
-                return Ok(e);
+                var res = new ValidationResult();
+                res.Add($"Ocorreu um erro ao processo a planilha verifique se existe todas as colunas necessária - {e.Message}");
+                return await EntityValidation(res);
             }
             
         }

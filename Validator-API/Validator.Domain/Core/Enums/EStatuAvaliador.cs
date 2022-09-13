@@ -2,7 +2,8 @@
 {
     public enum EStatuAvaliador
     {
-        Enviada,
-        Confirmada
+        Pendente,
+        Confirmada,
+        Enviada
     }
 }

@@ -94,6 +94,13 @@ namespace Validator.API.Controllers
             return Ok(await _usuarioReadOnlyRepository.ObterSubordinados(command));
         }
 
+        [HttpPost, Route("AprovacaoSubordinados")]
+        [ProducesResponseType(typeof(PagedResult<UsuarioAprovacaoSubordinadoDto>), 200)]
+        public async Task<IActionResult> AprovacaoSubordinados(AprovacaoSubordinadosCommand command)
+        {
+            return Ok(await _usuarioReadOnlyRepository.ObterAprovacaoSubordinados(command));
+        }
+
         [HttpDelete, Route("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

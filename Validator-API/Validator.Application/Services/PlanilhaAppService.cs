@@ -58,6 +58,15 @@ namespace Validator.Application.Services
             return processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.ComPendencia;
         }
 
+        public async Task<bool> ProcessoInicializado()
+        {
+            var processo = await _processoService.GetByCurrentYear();
+            if (processo == null)
+                return false;
+
+            return processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.Inicializada;
+        }
+
         public async Task<ValidationResult> Remover(Guid id)
         {
             var planilha = _planilhaService.GetById(id);
