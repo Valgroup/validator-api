@@ -69,8 +69,8 @@ namespace Validator.Application.Services
 
         public async Task<ValidationResult> SubstituirAvaliador(SubstituirAvaliadorCommand command)
         {
-            var user = await _userResolver.GetAuthenticateAsync();
-            var usuarioAvaliador = await _usuarioAvaliadorService.Find(f => f.UsuarioId == user.Id && f.AvaliadorId == command.AvaliadorAntigoId);
+            //var user = await _userResolver.GetAuthenticateAsync();
+            var usuarioAvaliador = await _usuarioAvaliadorService.Find(f => f.UsuarioId == command.AvaliadoId && f.AvaliadorId == command.AvaliadorAntigoId);
             if (usuarioAvaliador == null)
             {
                 ValidationResult.Add("Sugestão de Avaliação não encontrada");

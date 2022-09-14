@@ -8,7 +8,7 @@ using Validator.Domain.Core.Resources;
 
 namespace Validator.Domain.Entities
 {
-    public class Planilha : EntityWithAnoBase, IAnoBase, ISoftDelete
+    public class Planilha : EntityWithAnoBase, IAnoBase
     {
         protected Planilha() { }
 

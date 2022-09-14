@@ -28,7 +28,7 @@ namespace Validator.Data.Dapper
 	                                        COUNT(1) OVER() AS Total
                                             FROM Planilhas
                                             WHERE
-                                            EhValido = 0 AND Deleted = 0 ");
+                                            EhValido = 0 ");
 
             if (!string.IsNullOrEmpty(command.QueryNome))
             {
@@ -80,7 +80,7 @@ namespace Validator.Data.Dapper
         {
             using var cn = CnRead;
 
-            return await cn.QueryAsync<Planilha>(@"SELECT * FROM Planilhas WHERE AnoBaseId = @AnoBaseId AND Deleted = 0 ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
+            return await cn.QueryAsync<Planilha>(@"SELECT * FROM Planilhas WHERE AnoBaseId = @AnoBaseId ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
         }
 
 

@@ -74,27 +74,8 @@ app.UseHttpsRedirection();
 app.UseCors(o =>
     o.AllowAnyHeader()
     .AllowAnyMethod()
-                .SetIsOriginAllowed(origin =>
-                {
-#if DEBUG
-                    // Usando localhost todas as portas são permitidas
-                    return true;
-#endif
-
-                    var host = new Uri(origin).Host;
-
-                    return
-                        host == "localhost" ||
-
-                        host == "192.168.4.199" ||
-                        host == "roma" ||
-
-                        host == "192.168.5.103" ||
-                        host == "trento" ||
-
-                        host == "192.168.4.157" ||
-                        host == "matera";
-                })
+    .AllowAnyOrigin()
+    .SetIsOriginAllowed(origin => { return true; })
 
 ); ;
 

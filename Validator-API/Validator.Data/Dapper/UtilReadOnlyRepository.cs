@@ -23,6 +23,7 @@ namespace Validator.Data.Dapper
 	                                                            D.Nome AS Text
                                                            FROM Usuarios U
                                                            INNER JOIN Divisao D ON D.Id = U.DivisaoId
+                                                           INNER JOIN UsuarioAvaliador UA ON UA.UsuarioId = U.Id OR UA.AvaliadorId = U.Id
                                                            ORDER BY D.Nome ");
         }
 
@@ -34,17 +35,17 @@ namespace Validator.Data.Dapper
 	                                                            S.Nome AS Text
                                                           FROM Usuarios U
                                                           INNER JOIN Setor S ON S.Id = U.SetorId
+                                                          INNER JOIN UsuarioAvaliador UA ON UA.UsuarioId = U.Id OR UA.AvaliadorId = U.Id
                                                           ORDER BY S.Nome ");
         }
 
         public async Task<bool> TemPendencias()
         {
             using var cn = CnRead;
-            var pendencias = await cn.QueryAsync<Guid>(@"SELECT TOP 1 Id FROM Planilhas 
+            var pendencias = await cn.QueryAsync<Guid>(@" SELECT TOP 1 Id FROM Planilhas 
                                                           WHERE
                                                           AnoBaseId = @AnoBaseId
-                                                          AND EhValido = 0
-                                                          AND Deleted = 0", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
+                                                          AND EhValido = 0 ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
 
             return pendencias.Any();
 

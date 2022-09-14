@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Validator.Domain.Entities;
 
 namespace Validator.Data.Mappings
@@ -13,7 +8,7 @@ namespace Validator.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<UsuarioAvaliador> builder)
         {
-            builder.HasKey(c => new { c.UsuarioId, c.AvaliadorId });
+            builder.HasKey(c => c.Id);
 
             builder.HasOne(c => c.Usuario)
                 .WithMany(m => m.Avaliadores)

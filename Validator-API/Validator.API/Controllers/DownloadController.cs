@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Validator.Application.Interfaces;
 
 namespace Validator.API.Controllers
@@ -20,7 +19,7 @@ namespace Validator.API.Controllers
         {
             var stream = await _planilhaAppService.GerarAvaliacao();
             
-            return File(stream, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: $"Avaliador-{DateTime.Now.ToString("dd-MM-yyyy")}");
+            return File(stream, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: $"Avaliador-{DateTime.Now.ToString("dd-MM-yyyy-HH-mm")}");
         }
     }
 }

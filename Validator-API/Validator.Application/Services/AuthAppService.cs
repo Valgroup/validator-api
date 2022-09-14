@@ -26,8 +26,10 @@ namespace Validator.Application.Services
             if (!usuario.Autenticar(command.Senha))
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 
+            bool liberaProcesso = true;
             var processo = await _processoService.GetByCurrentYear();
-            bool liberaProcesso = processo.Situacao != Domain.Core.Enums.ESituacaoProcesso.Inicializada;
+            if (processo != null)
+                liberaProcesso = processo.Situacao != Domain.Core.Enums.ESituacaoProcesso.Inicializada;
 
             var jwt = new UsarioJwt()
             {

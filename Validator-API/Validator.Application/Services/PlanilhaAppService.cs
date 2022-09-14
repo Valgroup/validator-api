@@ -82,6 +82,10 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
+            await _processoService.Atualizar();
+
+            await CommitAsync();
+
             return ValidationResult;
 
         }
@@ -96,6 +100,12 @@ namespace Validator.Application.Services
             }
 
             planilha.Resolver(command);
+
+            if (!planilha.EhValido)
+            {
+                ValidationResult.Add(planilha.Validacoes);
+                return ValidationResult;
+            }
 
             _planilhaService.Update(planilha);
 
@@ -187,7 +197,6 @@ namespace Validator.Application.Services
                 cabecalhoGeral.Style.Border.RightBorderColor = XLColor.Black;
                 cabecalhoGeral.Style.Border.InsideBorder = XLBorderStyleValues.None;
                 cabecalhoGeral.Style.Border.InsideBorderColor = XLColor.Transparent;
-
 
                 ws.Cell("A2").Value = "CPF Avaliado";
                 ws.Cell("B2").Value = "CPF Avaliador";

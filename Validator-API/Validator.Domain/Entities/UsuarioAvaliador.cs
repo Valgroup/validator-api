@@ -1,8 +1,9 @@
-﻿using Validator.Domain.Core.Enums;
+﻿using Validator.Domain.Core;
+using Validator.Domain.Core.Enums;
 
 namespace Validator.Domain.Entities
 {
-    public class UsuarioAvaliador
+    public class UsuarioAvaliador : GuidId
     {
         protected UsuarioAvaliador() { }
 
@@ -11,8 +12,10 @@ namespace Validator.Domain.Entities
             UsuarioId = usuarioId;
             AvaliadorId = avaliadorId;
             Status = EStatuAvaliador.Enviada;
+            Id = NewId;
         }
 
+        public Guid Id { get; private set; }
         public Guid UsuarioId { get; private set; }
         public Guid AvaliadorId { get; private set; }
         public EStatuAvaliador Status { get; private set; }
