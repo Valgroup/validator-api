@@ -26,6 +26,9 @@ namespace Validator.Application.Services
             if (!usuario.Autenticar(command.Senha))
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 
+            if (usuario.Deleted)
+                return new LoginResultCommand { IsValid = false, Message = "Usuário está inativo" };
+
             bool liberaProcesso = false;
             var processo = await _processoService.GetByCurrentYear();
             if (processo != null && processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.SemPendencia)
@@ -51,7 +54,9 @@ namespace Validator.Application.Services
                         Documento = false,
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
-                        ConsutarUsuarios = true
+                        ConsutarUsuarios = true,
+                        HabilitarParametros = false
+
                     };
                     break;
                 case Domain.Core.Enums.EPerfilUsuario.Administrador:
@@ -60,7 +65,8 @@ namespace Validator.Application.Services
                         Documento = liberaProcesso,
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
-                        ConsutarUsuarios = true
+                        ConsutarUsuarios = true,
+                        HabilitarParametros = !liberaProcesso
                     };
                     break;
                 case Domain.Core.Enums.EPerfilUsuario.Avaliado:
@@ -69,7 +75,8 @@ namespace Validator.Application.Services
                         Documento = false,
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
-                        ConsutarUsuarios = false
+                        ConsutarUsuarios = false,
+                        HabilitarParametros = false
                     };
                     break;
                 case Domain.Core.Enums.EPerfilUsuario.Aprovador:
@@ -78,7 +85,8 @@ namespace Validator.Application.Services
                         Documento = false,
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
-                        ConsutarUsuarios = false
+                        ConsutarUsuarios = false,
+                        HabilitarParametros = false
                     };
                     break;
                 case Domain.Core.Enums.EPerfilUsuario.Ambos:
@@ -87,7 +95,8 @@ namespace Validator.Application.Services
                         Documento = false,
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
-                        ConsutarUsuarios = false
+                        ConsutarUsuarios = false,
+                        HabilitarParametros = false
                     };
                     break;
                 default:

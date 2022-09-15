@@ -22,7 +22,7 @@ namespace Validator.Domain.Services
 
         public async Task<IEnumerable<UsuarioAvaliador>> FindAll(Expression<Func<UsuarioAvaliador, bool>> predicate)
         {
-            return await _repository.FindAll(predicate);
+            return await _repository.FindAll(predicate, true);
         }
     }
 }

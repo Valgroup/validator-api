@@ -66,9 +66,9 @@ namespace Validator.Data.Repositories
             return await DbSet.FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> FindAll(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> FindAll(Expression<Func<TEntity, bool>> predicate, bool asNoTracking = false)
         {
-            return await DbSet.Where(predicate).ToListAsync();
+            return asNoTracking ? await DbSet.Where(predicate).AsNoTracking().ToListAsync() : await DbSet.Where(predicate).ToListAsync();
         }
 
         public void Dispose()
@@ -77,6 +77,6 @@ namespace Validator.Data.Repositories
             GC.SuppressFinalize(this);
         }
 
-       
+
     }
 }

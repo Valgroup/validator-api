@@ -19,6 +19,20 @@ namespace Validator.Data.Dapper
             _userResolver = userResolver;
         }
 
+        public async Task<IPagedResult<AvaliadorDto>> EscolherAvaliadores(AvaliadoresConsultaCommand command)
+        {
+            var pagedResult = await Todos(new UsuarioAdmConsultaCommand { Page = command.Page, QueryNome = command.QueryNome, Take = command.Take });
+
+            var avaliadores = pagedResult.Records.Select(s => new AvaliadorDto { AvaliadorId = s.Id, Cargo = s.Cargo, Divisao = s.Unidade, Nome = s.Nome, Setor = s.Setor, Total = s.Total});
+
+            return new PagedResult<AvaliadorDto>()
+            {
+                Records = avaliadores,
+                RecordsFiltered = pagedResult.RecordsFiltered,
+                RecordsTotal = pagedResult.RecordsTotal
+            };
+        }
+
         public async Task<IPagedResult<UsuarioAprovacaoSubordinadoDto>> ObterAprovacaoSubordinados(AprovacaoSubordinadosCommand command)
         {
             using var cn = CnRead;
@@ -219,7 +233,7 @@ namespace Validator.Data.Dapper
                             A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Deleted = 0 AND U.Id != @UsuarioId ");
 
             if (usuario.SuperiorId.HasValue)
-                qrySb.Append(" AND U.Id != @SuperiorId ");
+                qrySb.Append(" AND SUP.Id != @SuperiorId ");
 
             if (command.DivisaoId.HasValue)
                 qrySb.Append(" AND D.Id = @DivisaoId ");

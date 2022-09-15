@@ -2,7 +2,9 @@
 using Validator.Domain.Commands.Usuarios;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Interfaces;
+using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
+using Validator.Domain.Interfaces.Repositories;
 
 namespace Validator.Application.Services
 {
@@ -12,17 +14,19 @@ namespace Validator.Application.Services
         private readonly IParametroService _parametroService;
         private readonly IUserResolver _userResolver;
         private readonly IUsuarioAvaliadorService _usuarioAvaliadorService;
+        private readonly IUsuarioReadOnlyRepository _usuarioReadOnlyRepository;
         public UsuarioAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService,
             IParametroService parametroService,
             IUserResolver userResolver,
-            IUsuarioAvaliadorService usuarioAvaliadorService) : base(unitOfWork)
+            IUsuarioAvaliadorService usuarioAvaliadorService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
             _parametroService = parametroService;
             _userResolver = userResolver;
             _usuarioAvaliadorService = usuarioAvaliadorService;
+            _usuarioReadOnlyRepository = usuarioReadOnlyRepository;
         }
-               
+
         public async Task<ValidationResult> DeleteAsync(Guid id)
         {
             var usuario = _usuarioService.GetById(id);
@@ -56,11 +60,21 @@ namespace Validator.Application.Services
             }
 
             var userAuth = await _userResolver.GetAuthenticateAsync();
-            var usuario = _usuarioService.GetById(userAuth.Id);
 
-            usuario.AdicionarAvaliadores(ids);
+            var avaliadoresExitentes = await _usuarioReadOnlyRepository.ObterAvaliadores(new AvaliadoresConsultaCommand { Take = 10 });
+                       
+            foreach (var avaliadorId in ids)
+            {
+                var jaExiste = avaliadoresExitentes.Records.FirstOrDefault(f => f.AvaliadorId == avaliadorId);
+                if (jaExiste != null)
+                {
+                    ValidationResult.Add($"O Avaliador {jaExiste.Nome} já foi escolhido para te Avaliar");
+                    return ValidationResult;
+                }
 
-            _usuarioService.Update(usuario);
+                var usuarioAvaliador = new UsuarioAvaliador(userAuth.Id, avaliadorId);
+                await _usuarioAvaliadorService.CreateAsync(usuarioAvaliador);
+            }
 
             await CommitAsync();
 

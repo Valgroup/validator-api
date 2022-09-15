@@ -30,5 +30,6 @@ namespace Validator.Domain.Core.Models
         public bool Documento { get; set; }
         public bool ConsutarUsuarios { get; set; }
         public bool LiberarProcesso { get; set; }
+        public bool HabilitarParametros { get; set; }
     }
 }
