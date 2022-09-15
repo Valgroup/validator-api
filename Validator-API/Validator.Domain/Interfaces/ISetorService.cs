@@ -5,5 +5,6 @@ namespace Validator.Domain.Interfaces
 {
     public interface ISetorService : IServiceDomain<Setor>
     {
+        Task<IEnumerable<Setor>> FindAllByYear();
     }
 }

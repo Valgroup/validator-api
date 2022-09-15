@@ -71,12 +71,17 @@ namespace Validator.Data.Repositories
             return asNoTracking ? await DbSet.Where(predicate).AsNoTracking().ToListAsync() : await DbSet.Where(predicate).ToListAsync();
         }
 
+        public async Task<IEnumerable<TEntity>> FindAllByYear(bool asNoTracking = false)
+        {
+            return asNoTracking ? await DbSet.AsNoTracking().ToListAsync() : await DbSet.ToListAsync();
+        }
+
         public void Dispose()
         {
             Db.Dispose();
             GC.SuppressFinalize(this);
         }
 
-
+        
     }
 }

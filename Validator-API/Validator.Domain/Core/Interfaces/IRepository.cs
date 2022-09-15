@@ -15,6 +15,7 @@ namespace Validator.Domain.Core.Interfaces
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<TEntity?> GetByCurrentYear();
         Task<IEnumerable<TEntity>> FindAll(Expression<Func<TEntity, bool>> predicate, bool asNoTracking = false);
+        Task<IEnumerable<TEntity>> FindAllByYear(bool asNoTracking = false);
 
     }
 }

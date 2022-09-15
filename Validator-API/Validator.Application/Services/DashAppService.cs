@@ -6,6 +6,7 @@ using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Dtos.Dashes;
 using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
+using Validator.Domain.Interfaces.Repositories;
 
 namespace Validator.Application.Services
 {
@@ -18,9 +19,10 @@ namespace Validator.Application.Services
         private readonly IDivisaoService _divisaoService;
         private readonly ISetorService _setorService;
         private readonly IUsuarioService _usuarioService;
+        private readonly IUsuarioReadOnlyRepository _usuarioReadOnlyRepository;
         public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService, IDashReadOnlyRepository dashReadOnlyRepository,
             IProcessoService processoService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, IDivisaoService divisaoService,
-            ISetorService setorService, IUsuarioService usuarioService) : base(unitOfWork)
+            ISetorService setorService, IUsuarioService usuarioService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository) : base(unitOfWork)
         {
             _parametroService = parametroService;
             _dashReadOnlyRepository = dashReadOnlyRepository;
@@ -29,6 +31,7 @@ namespace Validator.Application.Services
             _divisaoService = divisaoService;
             _setorService = setorService;
             _usuarioService = usuarioService;
+            _usuarioReadOnlyRepository = usuarioReadOnlyRepository;
         }
 
         public async Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command)
@@ -96,20 +99,37 @@ namespace Validator.Application.Services
                 return ValidationResult;
             }
 
+            var usuariosExistentes = await _usuarioReadOnlyRepository.TodosPorAno();
             var planilhas = await _planilhaReadOnlyRepository.ObterTodas();
+            var divisoesExistentes = await _divisaoService.FindAllByYear();
             var divisoes = new List<Divisao>();
             var unidades = planilhas.Select(s => s.Unidade).DistinctBy(s => s);
             foreach (var nome in unidades)
             {
+                var existe = divisoesExistentes.FirstOrDefault(f => f.Nome.Contains(nome));
+                if (existe != null)
+                {
+                    divisoes.Add(existe);
+                    continue;
+                }
+
                 var entDiv = new Divisao(nome);
                 divisoes.Add(entDiv);
                 await _divisaoService.CreateAsync(entDiv);
             }
 
+            var setoresExistentes = await _setorService.FindAllByYear();
             var setores = new List<Setor>();
             var setoresOuNiveis = planilhas.Select(s => s.Nivel).DistinctBy(s => s);
             foreach (var nivel in setoresOuNiveis)
             {
+                var existe = setoresExistentes.FirstOrDefault(f => f.Nome.Contains(nivel));
+                if (existe != null)
+                {
+                    setores.Add(existe);
+                    continue;
+                }
+
                 var entSet = new Setor(nivel);
                 setores.Add(entSet);
                 await _setorService.CreateAsync(entSet);
@@ -119,6 +139,10 @@ namespace Validator.Application.Services
             var superiorEmails = planilhas.Where(w => w.EmailSuperior != null).Select(s => s.EmailSuperior).DistinctBy(s => s);
             foreach (var supEmail in superiorEmails)
             {
+                var usuarioExiste = usuariosExistentes.FirstOrDefault(f => f.Email == supEmail);
+                if (usuarioExiste != null)
+                    continue;
+
                 var supExiste = planilhas.FirstOrDefault(f => f.Email == supEmail);
                 if (supExiste != null)
                 {
@@ -135,7 +159,7 @@ namespace Validator.Application.Services
                 else
                 {
                     var supSemUsuario = planilhas.FirstOrDefault(f => f.EmailSuperior == supEmail);
-                    var supUsuario = new Usuario(Guid.NewGuid(), supSemUsuario.Nome, supSemUsuario.Email, null, false, null, "valgroup2022", supSemUsuario.CPF) ;
+                    var supUsuario = new Usuario(Guid.NewGuid(), supSemUsuario.Nome, supSemUsuario.Email, null, false, null, "valgroup2022", supSemUsuario.CPF);
                     supUsuario.ExecutarRegraPerfil();
                     superiores.Add(supUsuario);
                     await _usuarioService.CreateAsync(supUsuario);
@@ -146,6 +170,10 @@ namespace Validator.Application.Services
             var avaliados = planilhas.Where(w => !superiorEmails.Contains(w.Email));
             foreach (var avaliado in avaliados)
             {
+                var usuarioExiste = usuariosExistentes.FirstOrDefault(f => f.Email == avaliado.Email);
+                if (usuarioExiste != null)
+                    continue;
+
                 var usuario = new Usuario(Guid.NewGuid(), avaliado.Nome, avaliado.Email, avaliado.EmailSuperior, false, avaliado.Nivel, "valgroup2022", avaliado.CPF);
                 var setorId = setores.First(f => f.Nome == avaliado.Nivel).Id;
                 var divisaoId = divisoes.First(f => f.Nome == avaliado.Unidade).Id;

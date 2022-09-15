@@ -29,6 +29,8 @@ namespace Validator.Data.Contexto
 
             modelBuilder.Entity<Parametro>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
             modelBuilder.Entity<Processo>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
+            modelBuilder.Entity<Setor>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
+            modelBuilder.Entity<Divisao>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
 
             base.OnModelCreating(modelBuilder);
 

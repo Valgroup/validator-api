@@ -15,6 +15,7 @@ namespace Validator.Domain.Interfaces.Repositories
         Task<IPagedResult<UsuarioSubordinadoDto>> ObterSubordinados(PaginationBaseCommand command);
         Task<UsuarioDto> ObterDetalhes(Guid id);
         Task<IPagedResult<UsuarioAprovacaoSubordinadoDto>> ObterAprovacaoSubordinados(AprovacaoSubordinadosCommand command);
+        Task<IEnumerable<UsuarioDto>> TodosPorAno();
               
 
     }

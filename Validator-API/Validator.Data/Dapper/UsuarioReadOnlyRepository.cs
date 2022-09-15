@@ -23,7 +23,7 @@ namespace Validator.Data.Dapper
         {
             var pagedResult = await Todos(new UsuarioAdmConsultaCommand { Page = command.Page, QueryNome = command.QueryNome, Take = command.Take });
 
-            var avaliadores = pagedResult.Records.Select(s => new AvaliadorDto { AvaliadorId = s.Id, Cargo = s.Cargo, Divisao = s.Unidade, Nome = s.Nome, Setor = s.Setor, Total = s.Total});
+            var avaliadores = pagedResult.Records.Select(s => new AvaliadorDto { AvaliadorId = s.Id, Cargo = s.Cargo, Divisao = s.Unidade, Nome = s.Nome, Setor = s.Setor, Total = s.Total });
 
             return new PagedResult<AvaliadorDto>()
             {
@@ -287,6 +287,14 @@ namespace Validator.Data.Dapper
             };
 
 
+        }
+
+        public async Task<IEnumerable<UsuarioDto>> TodosPorAno()
+        {
+            using var cn = CnRead;
+            var usuario = await _userResolver.GetAuthenticateAsync();
+
+            return await cn.QueryAsync<UsuarioDto>(" SELECT Id, Email FROM Usuarios WHERE AnoBaseId = @AnoBaseId AND Deleted = 0 ", new { AnoBaseId = usuario.AnoBaseId });
         }
     }
 }
