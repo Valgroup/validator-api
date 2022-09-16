@@ -223,6 +223,12 @@ namespace Validator.Data.Dapper
 	                            D.Nome AS Unidade,
 	                            U.Cargo,
 	                            SUP.Nome AS Superior,
+                                CASE WHEN U.Perfil = 0 THEN 'Diretor'
+		                                     WHEN U.Perfil = 1 THEN 'Administrador'
+			                                 WHEN U.Perfil = 2 THEN 'Avaliado'
+			                                 WHEN U.Perfil = 3 THEN 'Aprovador'
+			                                 WHEN U.Perfil = 4 THEN 'Avaliado/Aprovador'
+		                                END AS PerfilNome,
 	                            COUNT(1) OVER() AS Total 
                             FROM Usuarios U
                             INNER JOIN AnoBases A ON A.AnoBaseId = U.AnoBaseId AND A.Deleted = 0

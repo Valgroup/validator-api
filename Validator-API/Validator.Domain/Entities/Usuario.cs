@@ -85,23 +85,25 @@ namespace Validator.Domain.Entities
             return Senha == CryptoMD5(senha);
         }
 
-        public void InformarDadosExtras(Guid setorId, Guid divisaoId, Guid? superiorId)
+        public void InformarDadosExtras(Guid setorId, Guid divisaoId)
         {
             SetorId = setorId;
             DivisaoId = divisaoId;
-            SuperiorId = superiorId;
+            
         }
 
-
-        public void ExecutarRegraPerfil()
+        public void ExecutarRegraPerfil(bool existeComoSuperior, Usuario? usuario)
         {
-            if (EhDiretor)
+            SuperiorId = usuario?.Id;
+            EmailSuperior = usuario?.Email;
+
+            if (EhDiretor && string.IsNullOrEmpty(EmailSuperior))
             {
-                Perfil = EPerfilUsuario.Diretor;
+                Perfil = EPerfilUsuario.Aprovador;
                 return;
             }
 
-            if (Email == EmailSuperior)
+            if (existeComoSuperior)
             {
                 Perfil = EPerfilUsuario.Ambos;
                 return;
