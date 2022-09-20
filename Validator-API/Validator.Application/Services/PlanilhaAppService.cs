@@ -142,8 +142,11 @@ namespace Validator.Application.Services
                     var emailSuperior = table.Rows[i][8]?.ToString();
                     var direcao = table.Rows[i][9]?.ToString();
 
+                    if (string.IsNullOrEmpty(nome) && string.IsNullOrEmpty(email) && string.IsNullOrEmpty(cpf))
+                        continue;
+
                     DateTime? dataAdm = null;
-                    if (!dataAdmissao.Contains("-"))
+                    if (!dataAdmissao.Contains('-') && !string.IsNullOrEmpty(dataAdmissao))
                         dataAdm = Convert.ToDateTime(dataAdmissao);
 
                     var planilha = todas.FirstOrDefault(f => f.Email == email);
@@ -228,7 +231,7 @@ namespace Validator.Application.Services
                     ws.Cell($"D{linha}").Value = item.Status;
 
                     var linhaEstilo = ws.Range($"A{linha}:D{linha}");
-                    
+
                     linhaEstilo.Style.Border.TopBorder = XLBorderStyleValues.Thin;
                     linhaEstilo.Style.Border.TopBorderColor = XLColor.Black;
                     linhaEstilo.Style.Border.BottomBorder = XLBorderStyleValues.Thin;

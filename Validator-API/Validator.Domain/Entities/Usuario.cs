@@ -97,7 +97,7 @@ namespace Validator.Domain.Entities
             SuperiorId = usuario?.Id;
             EmailSuperior = usuario?.Email;
 
-            if (EhDiretor && string.IsNullOrEmpty(EmailSuperior))
+            if (EhDiretor)
             {
                 Perfil = EPerfilUsuario.Aprovador;
                 return;

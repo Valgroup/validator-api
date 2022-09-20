@@ -3,6 +3,7 @@ using Validator.Data.Dapper;
 using Validator.Domain.Commands.Dashes;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Interfaces;
+using Validator.Domain.Dtos;
 using Validator.Domain.Dtos.Dashes;
 using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
@@ -20,9 +21,10 @@ namespace Validator.Application.Services
         private readonly ISetorService _setorService;
         private readonly IUsuarioService _usuarioService;
         private readonly IUsuarioReadOnlyRepository _usuarioReadOnlyRepository;
+        private readonly ITemplateRazorService _templateRazorService;
         public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService, IDashReadOnlyRepository dashReadOnlyRepository,
             IProcessoService processoService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, IDivisaoService divisaoService,
-            ISetorService setorService, IUsuarioService usuarioService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository) : base(unitOfWork)
+            ISetorService setorService, IUsuarioService usuarioService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository, ITemplateRazorService templateRazorService) : base(unitOfWork)
         {
             _parametroService = parametroService;
             _dashReadOnlyRepository = dashReadOnlyRepository;
@@ -32,6 +34,7 @@ namespace Validator.Application.Services
             _setorService = setorService;
             _usuarioService = usuarioService;
             _usuarioReadOnlyRepository = usuarioReadOnlyRepository;
+            _templateRazorService = templateRazorService;
         }
 
         public async Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command)
@@ -191,6 +194,21 @@ namespace Validator.Application.Services
         public async Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command)
         {
             return await _dashReadOnlyRepository.ObterResultados(command);
+        }
+
+        private void EnvairEmailAcesso(List<Usuario> usuarios)
+        {
+
+            foreach (var usuario in usuarios)
+            {
+                var emailDto = new EmailDto
+                {
+                    EmailContato = "email-a-decidir@valgroupco.com",
+                    Telefone = "Ramal - 1111",
+                    Nome = usuario.Nome,
+                    Senha = usuario.Id.ToString().Split("-")[0].ToLower()
+                };
+            }
         }
     }
 }

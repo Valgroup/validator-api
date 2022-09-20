@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Validator.API.Filter;
 using Validator.API.Middlewares;
 using Validator.API.Resolvers;
+using Validator.API.Services;
 using Validator.Application.Interfaces;
 using Validator.Application.Services;
 using Validator.Data.Contexto;
@@ -26,6 +27,7 @@ builder.Services.AddTransient<IPlanilhaAppService, PlanilhaAppService>();
 builder.Services.AddTransient<IDashAppService, DashAppService>();
 builder.Services.AddTransient<IAuthAppService, AuthAppService>();
 builder.Services.AddTransient<IUsuarioAppService, UsuarioAppService>();
+builder.Services.AddTransient<ITemplateRazorService, TemplateRazorService>();
 
 //DOMAIN
 builder.Services.AddTransient<IPlanilhaService, PlanilhaService>();
@@ -49,6 +51,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ValidatorContext>();
 builder.Services.AddTransient<IUserResolver, WebApiResolver>();
+
+builder.Services.AddRazorPages();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -82,6 +86,10 @@ app.UseCors(o =>
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapControllerRoute(name: "default", pattern: "{controller=Email}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.UseMiddleware<ExceptionGlobalHandlerMiddleware>();
 
