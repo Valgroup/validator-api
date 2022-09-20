@@ -39,6 +39,13 @@ namespace Validator.Data.Dapper
                                                           ORDER BY S.Nome ");
         }
 
+        public async Task<bool> TemDadosExportacao()
+        {
+            using var cn = CnRead;
+            var dados = await cn.QueryAsync<Guid>("SELECT TOP 1 UsuarioId FROM UsuarioAvaliador");
+            return dados.Any();
+        }
+
         public async Task<bool> TemPendencias()
         {
             using var cn = CnRead;

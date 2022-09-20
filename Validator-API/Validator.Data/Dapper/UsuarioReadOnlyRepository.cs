@@ -300,7 +300,7 @@ namespace Validator.Data.Dapper
             using var cn = CnRead;
             var usuario = await _userResolver.GetAuthenticateAsync();
 
-            return await cn.QueryAsync<UsuarioDto>(" SELECT Id, Email FROM Usuarios WHERE AnoBaseId = @AnoBaseId AND Deleted = 0 ", new { AnoBaseId = usuario.AnoBaseId });
+            return await cn.QueryAsync<UsuarioDto>(" SELECT Id, Email FROM Usuarios WHERE AnoBaseId = @AnoBaseId ", new { AnoBaseId = usuario.AnoBaseId });
         }
     }
 }

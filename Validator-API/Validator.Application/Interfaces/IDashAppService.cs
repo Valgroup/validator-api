@@ -17,5 +17,7 @@ namespace Validator.Application.Interfaces
         Task<ParametroDto> ObterParametros();
 
         Task<ValidationResult> IniciarProcesso();
+
+        Task<ValidationResult> ExcluirProcessoAnoAtual();
     }
 }

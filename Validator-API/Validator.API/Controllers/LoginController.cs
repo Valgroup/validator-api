@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Validator.Application.Interfaces;
 using Validator.Domain.Commands.Logins;
+using Validator.Domain.Core.Models;
 
 namespace Validator.API.Controllers
 {
@@ -35,5 +36,14 @@ namespace Validator.API.Controllers
             }
            
         }
+
+        [HttpGet, Route("Permissoes")]
+        [ProducesResponseType(typeof(PermissaoJwt), 200)]
+        public async Task<IActionResult> Get()
+        {
+            return Ok(await _authAppService.Permissao());
+        }
+
+
     }
 }

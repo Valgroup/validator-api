@@ -3,6 +3,7 @@ using Validator.API.Filter;
 using Validator.API.Middlewares;
 using Validator.API.Resolvers;
 using Validator.API.Services;
+using Validator.Application.Emails;
 using Validator.Application.Interfaces;
 using Validator.Application.Services;
 using Validator.Data.Contexto;
@@ -28,6 +29,7 @@ builder.Services.AddTransient<IDashAppService, DashAppService>();
 builder.Services.AddTransient<IAuthAppService, AuthAppService>();
 builder.Services.AddTransient<IUsuarioAppService, UsuarioAppService>();
 builder.Services.AddTransient<ITemplateRazorService, TemplateRazorService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 //DOMAIN
 builder.Services.AddTransient<IPlanilhaService, PlanilhaService>();

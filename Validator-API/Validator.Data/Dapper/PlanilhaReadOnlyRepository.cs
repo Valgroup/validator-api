@@ -19,6 +19,59 @@ namespace Validator.Data.Dapper
             _userResolver = userResolver;
         }
 
+        public async Task ExcluirProcessoAnoAtual(Guid anoBaseId)
+        {
+            using var cn = CnRead;
+
+            await cn.ExecuteAsync(@" DELETE FROM UsuarioAvaliador WHERE UsuarioAvaliador.UsuarioId IN (SELECT U.Id FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
+                                     DELETE FROM Usuarios WHERE Usuarios.AnoBaseId = @AnoBaseId AND Usuarios.Perfil != 1
+                                     DELETE FROM Setor WHERE Setor.Id NOT IN (SELECT U.SetorId FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
+                                     DELETE FROM Divisao WHERE Divisao.Id NOT IN (SELECT U.DivisaoId FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
+                                     DELETE FROM Parametro WHERE Parametro.AnoBaseId = @AnoBaseId
+                                     DELETE FROM Planilhas WHERE Planilhas.AnoBaseId = @AnoBaseId
+                                     DELETE FROM Processos WHERE Processos.AnoBaseId = @AnoBaseId ", new { AnoBaseId = anoBaseId });
+
+
+        }
+
+        public async Task<IPagedResult<PlanilhaDto>> ListarDadosCarregados(PaginationBaseCommand command)
+        {
+            using var cn = CnRead;
+
+            var sbQry = new StringBuilder(@"SELECT
+	                                            *,
+	                                        COUNT(1) OVER() AS Total
+                                            FROM Planilhas
+                                            WHERE
+                                            EhValido = 1 ");
+
+            if (!string.IsNullOrEmpty(command.QueryNome))
+            {
+                sbQry.Append(@"AND (
+	                                Nome LIKE @WhereLike OR
+	                                Email LIKE @WhereLike OR
+	                                Unidade LIKE @WhereLike OR
+	                                Cargo LIKE @WhereLike OR
+	                                Nivel LIKE @WhereLike OR
+	                                CentroCusto LIKE @WhereLike OR
+	                                NumeroCentroCusto LIKE @WhereLike OR
+	                                SuperiorImediato LIKE @WhereLike OR
+	                                EmailSuperior LIKE @WhereLike OR
+	                                CPF LIKE @WhereLike ) ");
+            }
+
+            sbQry.Append(" ORDER BY Nome OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
+
+            var planilhas = await cn.QueryAsync<PlanilhaDto>(sbQry.ToString(), new { command.Skip, command.Take, WhereLike = $"%{command.QueryNome}%" });
+
+            return new PagedResult<PlanilhaDto>
+            {
+                Records = planilhas,
+                RecordsFiltered = planilhas.Count(),
+                RecordsTotal = planilhas.Any() ? planilhas.FirstOrDefault().Total : 0
+            };
+        }
+
         public async Task<IPagedResult<PlanilhaDto>> ListarPendencias(PaginationBaseCommand command)
         {
             using var cn = CnRead;

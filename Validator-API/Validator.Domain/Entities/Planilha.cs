@@ -75,19 +75,19 @@ namespace Validator.Domain.Entities
             if (!string.IsNullOrEmpty(Email))
             {
                 if (!ValidadorHelper.ValidarEmail(Email))
-                    validacoes.Add("E-mail inválido");
+                    validacoes.Add("E-mail do Usuário inválido");
             }
 
             if (string.IsNullOrEmpty(Nivel))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nivel)));
 
-            if (!string.IsNullOrEmpty(Nivel) && !Nivel.Contains("Diretor"))
+            if (!string.IsNullOrEmpty(Direcao) && !Direcao.Contains('x'))
             {
                 if (string.IsNullOrEmpty(SuperiorImediato))
                     validacoes.Add(MensagemResource.EhObrigatorio("Superior Imediato"));
 
                 if (string.IsNullOrEmpty(EmailSuperior))
-                    validacoes.Add(MensagemResource.EhObrigatorio("E-mail Superior"));
+                    validacoes.Add(MensagemResource.EhObrigatorio("E-mail do Superior"));
 
                 if (!string.IsNullOrEmpty(EmailSuperior))
                 {
