@@ -11,6 +11,8 @@ namespace Validator.Domain.Core.Models
         public string DivisaoNome { get; set; }
         public string Nome { get; set; }
         public string Email { get; set; }
+        public string NomeSuperior { get; set; }
+        public string EmailSuperior { get; set; }
         public EPerfilUsuario Perfil { get; set; }
         public string PerfilNome { get { return Perfil.ToString(); } }
         public PermissaoJwt Permissao { get; set; }

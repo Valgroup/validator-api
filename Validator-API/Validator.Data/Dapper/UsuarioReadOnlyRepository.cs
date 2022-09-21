@@ -270,6 +270,9 @@ namespace Validator.Data.Dapper
             if (usuario.SuperiorId.HasValue)
                 qrySb.Append(" AND U.Id != @SuperiorId ");
 
+            if (command.UsuarioId.HasValue)
+                qrySb.Append(" AND U.Id != @UsuarioSubstituidoId ");
+
             if (command.DivisaoId.HasValue)
                 qrySb.Append(" AND D.Id = @DivisaoId ");
 
@@ -305,7 +308,8 @@ namespace Validator.Data.Dapper
                 Take = command.Take,
                 UsuarioId = usuario.Id,
                 SuperiorId = usuario.SuperiorId,
-                AvaliadorAntigoId = avaliadorAntigoId
+                AvaliadorAntigoId = avaliadorAntigoId,
+                UsuarioSubstituidoId = command.UsuarioId, //ESSE É USUÁRIO QUE ESTA SENDO SUBSTITUIDO O SEU AVALIADOR
 
             });
 

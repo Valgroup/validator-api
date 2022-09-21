@@ -49,6 +49,8 @@ namespace Validator.Application.Services
             {
                 Nome = usuario.Nome,
                 Email = usuario.Email,
+                EmailSuperior = usuario.EmailSuperior,
+                NomeSuperior = usuario?.Superior?.Nome,
                 Id = usuario.Id,
                 Perfil = usuario.Perfil,
                 Permissao = new PermissaoJwt(),

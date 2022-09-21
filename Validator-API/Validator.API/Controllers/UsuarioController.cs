@@ -44,7 +44,7 @@ namespace Validator.API.Controllers
         [HttpPost, Route("SugestaoAvaliadores")]
         public async Task<IActionResult> SugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command)
         {
-            return Ok(await _usuarioReadOnlyRepository.ObterSugestaoAvaliadores(command));
+            return Ok(await _usuarioReadOnlyRepository.ObterSugestaoAvaliadores(command, command.UsuarioId));
         }
 
         [HttpPost, Route("EscolherAvaliadores")]
@@ -68,7 +68,8 @@ namespace Validator.API.Controllers
                 DivisaoId = command.DivisaoId,
                 Page = command.Page,
                 QueryNome = command.QueryNome,
-                Take = command.Take
+                Take = command.Take,
+                UsuarioId = command.UsuarioId
             }, command.AvaliadorId);
 
             var dto = new SubstiuirAvaliadorDto
