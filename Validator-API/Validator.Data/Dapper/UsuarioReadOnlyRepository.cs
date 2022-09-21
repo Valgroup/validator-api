@@ -125,6 +125,48 @@ namespace Validator.Data.Dapper
 
         }
 
+        public async Task<IPagedResult<AvaliadorDto>> ObterAvaliadoresDetalhes(Guid avaliadoId)
+        {
+            using var cn = CnRead;
+
+            var qrySb = new StringBuilder();
+
+            qrySb.Append(@"SELECT 
+		                        U.Nome,
+                                UA.AvaliadorId,
+		                        S.Nome AS Setor,
+		                        D.Nome AS Divisao,
+		                        U.Cargo,
+                                COUNT(1) OVER() AS Total
+                          FROM UsuarioAvaliador UA
+                          INNER JOIN Usuarios U ON U.Id = UA.AvaliadorId
+                          INNER JOIN Setor S ON S.Id = U.SetorId
+                          INNER JOIN Divisao D ON D.Id = U.DivisaoId
+                          WHERE
+                          UA.UsuarioId = @UsuarioId  ");
+
+            qrySb.Append("ORDER BY U.Nome ");
+            qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
+
+            var user = await _userResolver.GetAuthenticateAsync();
+            var usuarios = await cn.QueryAsync<AvaliadorDto>(qrySb.ToString(), new
+            {
+                AnoBaseId = user.AnoBaseId,
+                Skip = 0,
+                Take = 10,
+                UsuarioId = avaliadoId
+            });
+
+            int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;
+
+            return new PagedResult<AvaliadorDto>
+            {
+                Records = usuarios,
+                RecordsTotal = total,
+                RecordsFiltered = 10
+            };
+        }
+
         public async Task<UsuarioDto> ObterDetalhes(Guid id)
         {
             using var cn = CnRead;
@@ -158,7 +200,7 @@ namespace Validator.Data.Dapper
                                 U.Nome,
 	                            U.Email,
 	                            S.Nome AS Setor,
-	                            D.Nome AS Unidade,
+	                            D.Nome AS Divisao,
 	                            CASE WHEN UA.Status = 0 THEN 'Pendente'
 		                             WHEN UA.Status = 1 THEN 'Aprovado'
                                      WHEN UA.Status = 2 THEN 'Enviado'
@@ -195,15 +237,86 @@ namespace Validator.Data.Dapper
             };
         }
 
-        public async Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command)
+        public async Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command, Guid? avaliadorAntigoId = null)
         {
-            var usuarios = await Todos(new UsuarioAdmConsultaCommand { DivisaoId = command.DivisaoId, Page = command.Page, QueryNome = command.QueryNome, Take = command.Take });
+            using var cn = CnRead;
+            var usuario = await _userResolver.GetAuthenticateAsync();
+
+            var qrySb = new StringBuilder();
+
+            qrySb.Append(@"SELECT 
+	                            U.Id,
+                                U.Nome,
+	                            U.Email,
+	                            S.Nome AS Setor,
+	                            D.Nome AS Unidade,
+	                            U.Cargo,
+	                            SUP.Nome AS Superior,
+                                CASE WHEN U.Perfil = 0 THEN 'Diretor'
+		                                     WHEN U.Perfil = 1 THEN 'Administrador'
+			                                 WHEN U.Perfil = 2 THEN 'Avaliado'
+			                                 WHEN U.Perfil = 3 THEN 'Aprovador'
+			                                 WHEN U.Perfil = 4 THEN 'Avaliado/Aprovador'
+		                                END AS PerfilNome,
+	                            COUNT(1) OVER() AS Total 
+                            FROM Usuarios U
+                            INNER JOIN AnoBases A ON A.AnoBaseId = U.AnoBaseId AND A.Deleted = 0
+                            INNER JOIN Setor S ON S.Id = U.SetorId
+                            INNER JOIN Divisao D ON D.Id = U.DivisaoId
+                            LEFT JOIN Usuarios SUP ON SUP.Id = U.SuperiorId
+                            WHERE
+                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Deleted = 0 AND U.Id != @UsuarioId AND U.Perfil = 2 ");
+
+            if (usuario.SuperiorId.HasValue)
+                qrySb.Append(" AND U.Id != @SuperiorId ");
+
+            if (command.DivisaoId.HasValue)
+                qrySb.Append(" AND D.Id = @DivisaoId ");
+
+            if (avaliadorAntigoId.HasValue)
+                qrySb.Append(" AND U.Id != @AvaliadorAntigoId ");
+
+            if (usuario.Perfil != Domain.Core.Enums.EPerfilUsuario.Administrador)
+            {
+                var divisoes = new List<string> { "SP1", "MG2" };
+                if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+                {
+                    qrySb.Append(" AND D.Nome IN ('SP1', 'MG2') ");
+                }
+                else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+                {
+                    qrySb.Append(" AND D.Nome NOT IN ('SP1', 'MG2') ");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(command.QueryNome))
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome @WhereLike OR D.Nome @WhereLike OR SUP.Nome @WhereLike) ");
+
+            qrySb.Append("ORDER BY U.Nome ");
+            qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
+
+            var yearId = await _userResolver.GetYearIdAsync();
+            var usuarios = await cn.QueryAsync<UsuarioDto>(qrySb.ToString(), new
+            {
+                AnoBaseId = yearId,
+                DivisaoId = command.DivisaoId,
+                WhereLike = $"%{command.QueryNome}%",
+                Skip = command.Skip,
+                Take = command.Take,
+                UsuarioId = usuario.Id,
+                SuperiorId = usuario.SuperiorId,
+                AvaliadorAntigoId = avaliadorAntigoId
+
+            });
+
+            int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;
+
 
             return new PagedResult<AvaliadorDto>
             {
-                RecordsFiltered = usuarios.RecordsFiltered,
-                RecordsTotal = usuarios.RecordsTotal,
-                Records = usuarios.Records.Select(s => new AvaliadorDto { AvaliadorId = s.Id, Cargo = s.Cargo, Divisao = s.Unidade, Nome = s.Nome, Setor = s.Setor, Total = s.Total })
+                RecordsFiltered = command.Take,
+                RecordsTotal = total,
+                Records = usuarios.Select(s => new AvaliadorDto { AvaliadorId = s.Id, Cargo = s.Cargo, Divisao = s.Unidade, Nome = s.Nome, Setor = s.Setor, Total = s.Total })
             };
 
         }
@@ -264,7 +377,7 @@ namespace Validator.Data.Dapper
             }
 
             if (!string.IsNullOrEmpty(command.QueryNome))
-                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome @WhereLike OR D.Nome @WhereLike OR SUP.Nome @WhereLike) ");
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike) ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");

@@ -11,7 +11,7 @@ namespace Validator.Domain.Entities
         {
             UsuarioId = usuarioId;
             AvaliadorId = avaliadorId;
-            Status = EStatuAvaliador.Enviada;
+            Status = EStatuAvaliador.Pendente;
             Id = NewId;
         }
 

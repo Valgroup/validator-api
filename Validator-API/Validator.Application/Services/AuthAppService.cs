@@ -123,10 +123,18 @@ namespace Validator.Application.Services
         public async Task<PermissaoJwt> Permissao(Usuario? usuario = null)
         {
             bool liberaProcesso = false;
+            bool habilitarParametros = true;
+            bool liberarDocumento = true;
             var processo = await _processoService.GetByCurrentYear();
             if (processo != null && processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.SemPendencia)
                 liberaProcesso = true;
 
+            if (processo != null && processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.Inicializada)
+            {
+                liberarDocumento = false;
+                habilitarParametros = false;
+            }
+           
             EPerfilUsuario perfil;
             if (usuario == null)
             {
@@ -156,11 +164,11 @@ namespace Validator.Application.Services
                 case Domain.Core.Enums.EPerfilUsuario.Administrador:
                     return new PermissaoJwt()
                     {
-                        Documento = liberaProcesso,
+                        Documento = liberarDocumento,
                         LiberarProcesso = liberaProcesso,
-                        LimparBase = false,
+                        LimparBase = true,
                         ConsutarUsuarios = true,
-                        HabilitarParametros = !liberaProcesso,
+                        HabilitarParametros = habilitarParametros,
                         Download = download
                     };
 

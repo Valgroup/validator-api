@@ -35,6 +35,12 @@ namespace Validator.API.Controllers
             return Ok(await _usuarioReadOnlyRepository.ObterAvaliadores(command));
         }
 
+        [HttpGet, Route("SugestaoDetalhes/{usuarioId}")]
+        public async Task<IActionResult> SugestaoDetalhes(Guid usuarioId)
+        {
+            return Ok(await _usuarioReadOnlyRepository.ObterAvaliadoresDetalhes(usuarioId));
+        }
+
         [HttpPost, Route("SugestaoAvaliadores")]
         public async Task<IActionResult> SugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command)
         {
@@ -57,7 +63,7 @@ namespace Validator.API.Controllers
         {
             var avaliadorSubstituido = await _usuarioReadOnlyRepository.ObterDetalhes(command.AvaliadorId);
 
-            var todos = await _usuarioReadOnlyRepository.Todos(new UsuarioAdmConsultaCommand
+            var todos = await _usuarioReadOnlyRepository.ObterSugestaoAvaliadores(new SugestaoAvaliadoresConsultaCommand
             {
                 DivisaoId = command.DivisaoId,
                 Page = command.Page,
@@ -69,7 +75,7 @@ namespace Validator.API.Controllers
             {
                 AvaliadorAntigoId = command.AvaliadorId,
                 AvaliadorAntigoNome = avaliadorSubstituido.Nome,
-                Records = todos.Records.Select(s => new AvaliadorDto { AvaliadorId = s.Id, Cargo = s.Cargo, Divisao = s.Unidade, Nome = s.Nome, Setor = s.Setor, Total = s.Total }),
+                Records = todos.Records.Select(s => new AvaliadorDto { AvaliadorId = s.AvaliadorId, Cargo = s.Cargo, Divisao = s.Divisao, Nome = s.Nome, Setor = s.Setor, Total = s.Total }),
                 RecordsFiltered = todos.RecordsFiltered,
                 RecordsTotal = todos.RecordsTotal
             };
@@ -101,10 +107,20 @@ namespace Validator.API.Controllers
             return Ok(await _usuarioReadOnlyRepository.ObterAprovacaoSubordinados(command));
         }
 
-        [HttpPut, Route("AprovarSubordinado/{subordinadoId}")]
-        public async Task<IActionResult> AprovarSubordinado(Guid subordinadoId)
+        [HttpPut, Route("AprovarSubordinados")]
+        public async Task<IActionResult> AprovarSubordinados(List<Guid> usuarioIds)
         {
-            var result = await _usuarioAppService.AprovarSubordinado(subordinadoId);
+            var result = await _usuarioAppService.AprovarSubordinado(usuarioIds);
+            if (result.IsValid)
+                return await StatusCodeOK(result);
+
+            return await EntityValidation(result);
+        }
+
+        [HttpPut, Route("AprovarSubordinado/{usuarioId}")]
+        public async Task<IActionResult> AprovarSubordinado(Guid usuarioId)
+        {
+            var result = await _usuarioAppService.AprovarSubordinado(new List<Guid> { usuarioId });
             if (result.IsValid)
                 return await StatusCodeOK(result);
 

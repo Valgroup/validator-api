@@ -106,15 +106,18 @@ namespace Validator.Application.Services
             return ValidationResult;
         }
 
-        public async Task<ValidationResult> AprovarSubordinado(Guid subordinadoId)
+        public async Task<ValidationResult> AprovarSubordinado(List<Guid> usuarioIds)
         {
-            var sugestoes = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == subordinadoId);
-            foreach (var item in sugestoes)
+            foreach (var usuarioId in usuarioIds)
             {
-                item.Aprovar();
-                _usuarioAvaliadorService.Update(item);
+                var sugestoes = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == usuarioId);
+                foreach (var item in sugestoes)
+                {
+                    item.Aprovar();
+                    _usuarioAvaliadorService.Update(item);
+                }
             }
-
+            
             await CommitAsync();
 
             return ValidationResult;

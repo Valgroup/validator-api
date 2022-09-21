@@ -46,9 +46,14 @@ namespace Validator.Application.Services
 
         public async Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command)
         {
+            if (command.QtdeSugestaoMax == 0 || command.QtdeSugestaoMin == 0 || command.QtdeAvaliador == 0)
+            {
+                return ValidationResult;
+            }
+
             if (command.QtdeSugestaoMin > command.QtdeSugestaoMax)
             {
-                ValidationResult.Add("Quantidade Mínima não pode ser maoir que a Quantidade Máxima");
+                ValidationResult.Add("Quantidade Mínima não pode ser maior que a Quantidade Máxima");
                 return ValidationResult;
             }
 
@@ -87,7 +92,7 @@ namespace Validator.Application.Services
             var user = await _userResolver.GetAuthenticateAsync();
             if (user != null && user.Perfil == Domain.Core.Enums.EPerfilUsuario.Administrador)
             {
-               await _planilhaReadOnlyRepository.ExcluirProcessoAnoAtual(user.AnoBaseId);
+                await _planilhaReadOnlyRepository.ExcluirProcessoAnoAtual(user.AnoBaseId);
             }
             else
             {
@@ -144,17 +149,17 @@ namespace Validator.Application.Services
 
             var setoresExistentes = await _setorService.FindAllByYear();
             var setores = new List<Setor>();
-            var setoresOuNiveis = planilhas.Select(s => s.Nivel).DistinctBy(s => s);
-            foreach (var nivel in setoresOuNiveis)
+            var setoresOuNiveis = planilhas.Select(s => s.CentroCusto).DistinctBy(s => s);
+            foreach (var centroCusto in setoresOuNiveis)
             {
-                var existe = setoresExistentes.FirstOrDefault(f => f.Nome.Contains(nivel));
+                var existe = setoresExistentes.FirstOrDefault(f => f.Nome.Contains(centroCusto));
                 if (existe != null)
                 {
                     setores.Add(existe);
                     continue;
                 }
 
-                var entSet = new Setor(nivel);
+                var entSet = new Setor(centroCusto);
                 setores.Add(entSet);
                 await _setorService.CreateAsync(entSet);
             }
@@ -170,7 +175,7 @@ namespace Validator.Application.Services
                 var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x');
                 var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF);
 
-                var setorId = setores.First(f => f.Nome == linha.Nivel).Id;
+                var setorId = setores.First(f => f.Nome == linha.CentroCusto).Id;
                 var divisaoId = divisoes.First(f => f.Nome == linha.Unidade).Id;
                 usuario.InformarDadosExtras(setorId, divisaoId);
 
