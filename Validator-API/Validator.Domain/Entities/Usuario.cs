@@ -89,7 +89,7 @@ namespace Validator.Domain.Entities
         {
             SetorId = setorId;
             DivisaoId = divisaoId;
-            
+
         }
 
         public void ExecutarRegraPerfil(bool existeComoSuperior, Usuario? usuario)

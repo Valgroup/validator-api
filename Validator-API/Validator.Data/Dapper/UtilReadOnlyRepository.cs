@@ -42,7 +42,7 @@ namespace Validator.Data.Dapper
         public async Task<bool> TemDadosExportacao()
         {
             using var cn = CnRead;
-            var dados = await cn.QueryAsync<Guid>("SELECT TOP 1 UsuarioId FROM UsuarioAvaliador");
+            var dados = await cn.QueryAsync<Guid>("SELECT TOP 1 UsuarioId FROM UsuarioAvaliador WHERE Status = 1 ");
             return dados.Any();
         }
 
@@ -57,6 +57,13 @@ namespace Validator.Data.Dapper
             return pendencias.Any();
 
 
+        }
+
+        public async Task<bool> TemSugestaoEnviadas(Guid usuarioId)
+        {
+            using var cn = CnRead;
+            var sugestoes = await cn.QueryAsync<Guid>(@"SELECT Id FROM UsuarioAvaliador WHERE UsuarioId = @UsuarioId ", new { UsuarioId = usuarioId });
+            return sugestoes.Any();
         }
     }
 }

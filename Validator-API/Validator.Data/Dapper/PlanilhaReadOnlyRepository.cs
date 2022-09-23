@@ -126,7 +126,7 @@ namespace Validator.Data.Dapper
                                                             INNER JOIN Usuarios U ON U.Id = UA.UsuarioId
                                                             INNER JOIN Usuarios UAV ON UAV.Id = UA.AvaliadorId
                                                             WHERE
-                                                            U.AnoBaseId = @AnoBaseId ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
+                                                            U.AnoBaseId = @AnoBaseId AND UA.Status = 1 ", new { AnoBaseId = await _userResolver.GetYearIdAsync() }); ;
         }
 
         public async Task<IEnumerable<Planilha>> ObterTodas()

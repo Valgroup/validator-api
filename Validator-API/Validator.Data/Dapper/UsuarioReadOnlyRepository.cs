@@ -213,7 +213,7 @@ namespace Validator.Data.Dapper
                             INNER JOIN UsuarioAvaliador UA ON UA.UsuarioId = U.Id
                             WHERE
                             A.AnoBaseId = @AnoBaseId
-                            AND U.SuperiorId = @SuperiorId ");
+                            AND U.SuperiorId = @SuperiorId GROUP BY U.Id, U.Nome, U.EmaiL, S.Nome, D.Nome, UA.Status ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
@@ -346,6 +346,9 @@ namespace Validator.Data.Dapper
 			                                 WHEN U.Perfil = 3 THEN 'Aprovador'
 			                                 WHEN U.Perfil = 4 THEN 'Avaliado/Aprovador'
 		                                END AS PerfilNome,
+                                CASE WHEN U.Deleted = 0 THEN 'Ativo'
+		                                     WHEN U.Deleted = 1 THEN 'Inativo'
+			                            END AS Status,
 	                            COUNT(1) OVER() AS Total 
                             FROM Usuarios U
                             INNER JOIN AnoBases A ON A.AnoBaseId = U.AnoBaseId AND A.Deleted = 0
@@ -381,7 +384,7 @@ namespace Validator.Data.Dapper
             }
 
             if (!string.IsNullOrEmpty(command.QueryNome))
-                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike) ");
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike OR U.Cargo LIKE @WhereLike OR U.Documento LIKE @WhereLike) ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");

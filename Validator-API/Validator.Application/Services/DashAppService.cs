@@ -25,6 +25,7 @@ namespace Validator.Application.Services
         private readonly ITemplateRazorService _templateRazorService;
         private readonly IEmailService _emailService;
         private readonly IUserResolver _userResolver;
+     
         public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService, IDashReadOnlyRepository dashReadOnlyRepository,
             IProcessoService processoService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, IDivisaoService divisaoService,
             ISetorService setorService, IUsuarioService usuarioService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository,
@@ -72,12 +73,12 @@ namespace Validator.Application.Services
             var parametro = await _parametroService.GetByCurrentYear();
             if (parametro != null)
             {
-                parametro.Editar(command.QtdeAvaliador, command.QtdeSugestaoMin, command.QtdeSugestaoMax);
+                parametro.Editar(command.QtdeAvaliador, command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.QtdDiaFinaliza);
                 ValidationResult.Add(_parametroService.Update(parametro));
             }
             else
             {
-                parametro = new Parametro(command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.QtdeAvaliador);
+                parametro = new Parametro(command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.QtdeAvaliador, command.QtdDiaFinaliza);
                 ValidationResult.Add(await _parametroService.CreateAsync(parametro));
             }
 
@@ -127,6 +128,32 @@ namespace Validator.Application.Services
                 ValidationResult.Add("O processo já está finalizado!");
                 return ValidationResult;
             }
+
+            var parametros = await _parametroService.GetByCurrentYear();
+            if (parametros == null)
+            {
+                ValidationResult.Add("Não existe parâmetros para iniciar o Processo!");
+                return ValidationResult;
+            }
+
+            if (parametros.QtdeSugestaoMin == 0)
+            {
+                ValidationResult.Add("Quantidade Miníma do paramêtro tem que ser maior que zero!");
+                return ValidationResult;
+            }
+
+            if (parametros.QtdeSugestaoMax == 0)
+            {
+                ValidationResult.Add("Quantidade Máxima do paramêtro tem que ser maior que zero!");
+                return ValidationResult;
+            }
+
+            if (parametros.QtdeAvaliador == 0)
+            {
+                ValidationResult.Add("Quantidade de Avaliadores do paramêtro tem que ser maior que zero!");
+                return ValidationResult;
+            }
+
 
             var usuariosExistentes = await _usuarioReadOnlyRepository.TodosPorAno();
             var planilhas = await _planilhaReadOnlyRepository.ObterTodas();

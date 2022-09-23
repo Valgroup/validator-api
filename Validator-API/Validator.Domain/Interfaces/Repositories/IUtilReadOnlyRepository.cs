@@ -8,6 +8,7 @@ namespace Validator.Domain.Interfaces.Repositories
         Task<IEnumerable<SelectedItemDto>> ObterTodasDivisoes();
         Task<bool> TemPendencias();
         Task<bool> TemDadosExportacao();
+        Task<bool> TemSugestaoEnviadas(Guid usuarioId);
         
     }
 }

@@ -27,6 +27,7 @@ namespace Validator.Domain.Core.Models
             ConsutarUsuarios = true;
             LiberarProcesso = true;
             Download = false;
+            SugestaoEnviada = false;
         }
 
         public bool LimparBase { get; set; }
@@ -35,5 +36,6 @@ namespace Validator.Domain.Core.Models
         public bool LiberarProcesso { get; set; }
         public bool HabilitarParametros { get; set; }
         public bool Download { get; set; }
+        public bool SugestaoEnviada { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace Validator.Application.Services
 
         public async Task<LoginResultCommand> Autenticar(LoginCommand command)
         {
-            var usuario = await _usuarioService.Find(f => f.Email == command.Email);
+            var usuario = await _usuarioService.Find(f => f.Email == command.Email && !f.Deleted);
             if (usuario == null)
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 
@@ -138,14 +138,17 @@ namespace Validator.Application.Services
             }
            
             EPerfilUsuario perfil;
+            Guid usuarioId;
             if (usuario == null)
             {
                 var user = await _userResolver.GetAuthenticateAsync();
                 perfil = user.Perfil;
+                usuarioId = user.Id;
             }
             else
             {
                 perfil = usuario.Perfil;
+                usuarioId = usuario.Id;
             }
 
             var download = await _utilReadOnlyRepository.TemDadosExportacao();
@@ -181,7 +184,8 @@ namespace Validator.Application.Services
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = false,
-                        HabilitarParametros = false
+                        HabilitarParametros = false,
+                        SugestaoEnviada = await _utilReadOnlyRepository.TemSugestaoEnviadas(usuarioId)
                     };
 
                 case Domain.Core.Enums.EPerfilUsuario.Aprovador:
@@ -201,7 +205,8 @@ namespace Validator.Application.Services
                         LiberarProcesso = liberaProcesso,
                         LimparBase = false,
                         ConsutarUsuarios = false,
-                        HabilitarParametros = false
+                        HabilitarParametros = false,
+                        SugestaoEnviada = await _utilReadOnlyRepository.TemSugestaoEnviadas(usuarioId)
                     };
 
                 default:
