@@ -25,7 +25,7 @@ namespace Validator.Application.Services
         private readonly ITemplateRazorService _templateRazorService;
         private readonly IEmailService _emailService;
         private readonly IUserResolver _userResolver;
-     
+
         public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService, IDashReadOnlyRepository dashReadOnlyRepository,
             IProcessoService processoService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, IDivisaoService divisaoService,
             ISetorService setorService, IUsuarioService usuarioService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository,
@@ -70,15 +70,27 @@ namespace Validator.Application.Services
                 return ValidationResult;
             }
 
+            if (command.DhFinalizacao.HasValue)
+            {
+                var dh = DateTime.Now;
+                var df = command.DhFinalizacao.Value;
+                var dhFinal = new DateTime(df.Year, df.Month, df.Day);
+                if (dhFinal.Date < dh.Date)
+                {
+                    ValidationResult.Add("A data da finalização do processo não poder menor do que o dia de hoje!");
+                    return ValidationResult;
+                }
+            }
+           
             var parametro = await _parametroService.GetByCurrentYear();
             if (parametro != null)
             {
-                parametro.Editar(command.QtdeAvaliador, command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.QtdDiaFinaliza);
+                parametro.Editar(command.QtdeAvaliador, command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.DhFinalizacao);
                 ValidationResult.Add(_parametroService.Update(parametro));
             }
             else
             {
-                parametro = new Parametro(command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.QtdeAvaliador, command.QtdDiaFinaliza);
+                parametro = new Parametro(command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.QtdeAvaliador, command.DhFinalizacao);
                 ValidationResult.Add(await _parametroService.CreateAsync(parametro));
             }
 

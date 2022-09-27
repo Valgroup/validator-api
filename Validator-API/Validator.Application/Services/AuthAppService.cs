@@ -28,7 +28,7 @@ namespace Validator.Application.Services
 
         public async Task<LoginResultCommand> Autenticar(LoginCommand command)
         {
-            var usuario = await _usuarioService.Find(f => f.Email == command.Email && !f.Deleted);
+            var usuario = await _usuarioService.Find(f => f.Email == command.Email && f.Ativo);
             if (usuario == null)
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 

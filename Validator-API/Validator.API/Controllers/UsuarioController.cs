@@ -137,5 +137,16 @@ namespace Validator.API.Controllers
 
             return await EntityValidation(result);
         }
+
+        [HttpPut, Route("AtivarOuDesativar/{usuarioId}")]
+        public async Task<IActionResult> AprovarSubordinado(Guid usuarioId, UsuarioAtivarDesativarCommand command)
+        {
+            var result = await _usuarioAppService.AtivarOuDesativar(usuarioId, command.Ativo);
+            if (result.IsValid)
+                return await StatusCodeOK(result);
+
+            return await EntityValidation(result);
+        }
+
     }
 }

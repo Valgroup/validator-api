@@ -56,9 +56,12 @@ namespace Validator.Data.Dapper
                             WHERE
                             U.AnoBaseId = @AnoBaseId
                             AND U.SuperiorId = @SuperiorId
-                            AND UA.UsuarioId = @SubordinadoId
-                            ORDER BY 
-                            U.Nome ");
+                            AND UA.UsuarioId = @SubordinadoId ");
+
+            if (!string.IsNullOrEmpty(command.QueryNome))
+                qrySb.Append(" AND ( U.Nome LIKE @WhereLike OR US.Nome LIKE @WhereLike OR S.Nome @WhereLike OR D.Nome @WhereLike ) ");
+
+            qrySb.Append(" ORDER BY U.Nome ");
 
             qrySb.Append(" OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
 
@@ -69,7 +72,8 @@ namespace Validator.Data.Dapper
                 Skip = command.Skip,
                 Take = command.Take,
                 SuperiorId = user.Id,
-                SubordinadoId = command.SubordinadoId
+                SubordinadoId = command.SubordinadoId,
+                WhereLike = $"%{command.QueryNome}%"
             });
 
             int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;
@@ -184,7 +188,7 @@ namespace Validator.Data.Dapper
 	                                                                        U.Perfil,
 	                                                                        U.AnoBaseId
                                                                         FROM Usuarios U
-                                                                        INNER JOIN AnoBases A ON A.AnoBaseId = U.AnoBaseId AND A.Deleted = 0
+                                                                        INNER JOIN AnoBases A ON A.AnoBaseId = U.AnoBaseId AND A.Ativo = 1
                                                                         WHERE
                                                                         Id = @Id ", new { Id = id });
         }
@@ -265,7 +269,7 @@ namespace Validator.Data.Dapper
                             INNER JOIN Divisao D ON D.Id = U.DivisaoId
                             LEFT JOIN Usuarios SUP ON SUP.Id = U.SuperiorId
                             WHERE
-                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Deleted = 0 AND U.Id != @UsuarioId AND U.Perfil = 2 ");
+                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Ativo = 1 AND U.Id != @UsuarioId AND U.Perfil = 2 ");
 
             if (usuario.SuperiorId.HasValue)
                 qrySb.Append(" AND U.Id != @SuperiorId ");
@@ -346,8 +350,8 @@ namespace Validator.Data.Dapper
 			                                 WHEN U.Perfil = 3 THEN 'Aprovador'
 			                                 WHEN U.Perfil = 4 THEN 'Avaliado/Aprovador'
 		                                END AS PerfilNome,
-                                CASE WHEN U.Deleted = 0 THEN 'Ativo'
-		                                     WHEN U.Deleted = 1 THEN 'Inativo'
+                                CASE WHEN U.Ativo = 1 THEN 'Ativo'
+		                                     WHEN U.Ativo = 0 THEN 'Inativo'
 			                            END AS Status,
 	                            COUNT(1) OVER() AS Total 
                             FROM Usuarios U
@@ -356,7 +360,7 @@ namespace Validator.Data.Dapper
                             INNER JOIN Divisao D ON D.Id = U.DivisaoId
                             LEFT JOIN Usuarios SUP ON SUP.Id = U.SuperiorId
                             WHERE
-                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Deleted = 0 AND U.Id != @UsuarioId ");
+                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Id != @UsuarioId ");
 
             if (usuario.SuperiorId.HasValue)
                 qrySb.Append(" AND SUP.Id != @SuperiorId ");

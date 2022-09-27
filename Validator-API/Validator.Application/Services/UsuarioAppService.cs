@@ -123,5 +123,30 @@ namespace Validator.Application.Services
             return ValidationResult;
         }
 
+        public async Task<ValidationResult> AtivarOuDesativar(Guid usuarioId, bool valor)
+        {
+            var usuario = await _usuarioService.GetByIdAsync(usuarioId);
+            if (usuario == null)
+            {
+                ValidationResult.Add("Usuário não encontrado");
+                return ValidationResult;
+                   
+            }
+
+            if (usuario.Perfil == Domain.Core.Enums.EPerfilUsuario.Administrador)
+            {
+                ValidationResult.Add("Usuário Administradores não pode ser desativados");
+                return ValidationResult;
+            }
+
+            //COMO SE FOSSE O DELETE
+            usuario.AtivartOuDesativar(valor);
+
+            _usuarioService.Update(usuario);
+
+            await CommitAsync();
+
+            return ValidationResult;
+        }
     }
 }

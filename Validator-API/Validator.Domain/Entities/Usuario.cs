@@ -20,6 +20,7 @@ namespace Validator.Domain.Entities
             Cargo = cargo;
             Senha = CryptoMD5(senha);
             Documento = documento;
+            Ativo = true;
         }
 
         public Guid Id { get; private set; }
@@ -36,6 +37,7 @@ namespace Validator.Domain.Entities
         public string? Documento { get; private set; }
         public bool EhDiretor { get; private set; }
         public bool Deleted { get; set; }
+        public bool Ativo { get; private set; }
         public virtual Divisao? Divisao { get; private set; }
         public virtual Setor? Setor { get; private set; }
         public virtual Usuario? Superior { get; private set; }
@@ -111,6 +113,11 @@ namespace Validator.Domain.Entities
 
             Perfil = EPerfilUsuario.Avaliado;
 
+        }
+
+        public void AtivartOuDesativar(bool valor)
+        {
+            Ativo = valor;
         }
     }
 }

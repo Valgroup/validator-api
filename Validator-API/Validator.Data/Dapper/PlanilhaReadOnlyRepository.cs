@@ -116,11 +116,11 @@ namespace Validator.Data.Dapper
 
             return await cn.QueryAsync<PlanilhaExtraiDto>(@"SELECT 
                                                                 U.Documento AS CPFAvaliado,
-	                                                            CASE WHEN UAV.Deleted = 0 THEN UAV.Documento
-		                                                             WHEN UAV.Deleted = 1 THEN 'Inativo' END AS CPFAvaliador,
+	                                                            CASE WHEN UAV.Ativo = 1 THEN UAV.Documento
+		                                                             WHEN UAV.Ativo = 0 THEN 'Inativo' END AS CPFAvaliador,
 	                                                            CASE WHEN U.SuperiorId != UA.AvaliadorId THEN 'PAR' END AS Tipo,
-	                                                            CASE WHEN U.Deleted = 0 THEN 'Ativo'
-		                                                             WHEN U.Deleted = 1 THEN 'Inativo' END AS Status
+	                                                            CASE WHEN U.Ativo = 1 THEN 'Ativo'
+		                                                             WHEN U.Ativo = 0 THEN 'Inativo' END AS Status
 
                                                             FROM UsuarioAvaliador UA
                                                             INNER JOIN Usuarios U ON U.Id = UA.UsuarioId

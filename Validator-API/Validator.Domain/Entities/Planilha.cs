@@ -81,7 +81,7 @@ namespace Validator.Domain.Entities
             if (string.IsNullOrEmpty(Nivel))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nivel)));
 
-            if (!string.IsNullOrEmpty(Direcao) && !Direcao.Contains('x'))
+            if (string.IsNullOrEmpty(Direcao))
             {
                 if (string.IsNullOrEmpty(SuperiorImediato))
                     validacoes.Add(MensagemResource.EhObrigatorio("Superior Imediato"));

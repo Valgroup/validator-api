@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Validator.Data.Contexto;
 
@@ -11,9 +12,10 @@ using Validator.Data.Contexto;
 namespace Validator.Data.Migrations
 {
     [DbContext(typeof(ValidatorContext))]
-    partial class ValidatorContextModelSnapshot : ModelSnapshot
+    [Migration("20220926122508_V_1_0_14")]
+    partial class V_1_0_14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,9 +219,6 @@ namespace Validator.Data.Migrations
 
                     b.Property<Guid>("AnoBaseId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("AzureId")
                         .HasColumnType("uniqueidentifier");

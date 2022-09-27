@@ -7,15 +7,13 @@ namespace Validator.Domain.Entities
     {
         protected Parametro() { }
 
-        public Parametro(int qtdeSugestaoMin, int qtdeSugestaoMax, int qtdeAvaliador, int qtdDiaFinaliza)
+        public Parametro(int qtdeSugestaoMin, int qtdeSugestaoMax, int qtdeAvaliador, DateTime? dhFinalizacao)
         {
             Id = NewId;
             QtdeSugestaoMin = qtdeSugestaoMin;
             QtdeSugestaoMax = qtdeSugestaoMax;
             QtdeAvaliador = qtdeAvaliador;
-            QtdDiaFinaliza = qtdDiaFinaliza;
-
-            CalcularDataFinalizacao();
+            GerarDataFinalizacao(dhFinalizacao);
         }
 
         public Guid Id { get; private set; }
@@ -25,23 +23,26 @@ namespace Validator.Domain.Entities
         public int QtdDiaFinaliza { get; private set; }
         public DateTime DhFinalizacao { get; private set; }
 
-        public void Editar(int qtdeAvaliador, int qtdeSugestaoMin, int qtdeSugestaoMax, int qtdDiaFinaliza)
+        public void Editar(int qtdeAvaliador, int qtdeSugestaoMin, int qtdeSugestaoMax, DateTime? dhFinalizacao)
         {
             QtdeAvaliador = qtdeAvaliador;
             QtdeSugestaoMin = qtdeSugestaoMin;
             QtdeSugestaoMax = qtdeSugestaoMax;
-            QtdDiaFinaliza = qtdDiaFinaliza;
-
-            CalcularDataFinalizacao();
+            GerarDataFinalizacao(dhFinalizacao);
+            
         }
 
-        private void CalcularDataFinalizacao()
+        private void GerarDataFinalizacao(DateTime? dhFinalizacao)
         {
-            var dh = DateTime.Now;
-            if (QtdDiaFinaliza > 0)
-                dh = dh.AddDays(QtdDiaFinaliza);
-
-            DhFinalizacao = new DateTime(dh.Year, dh.Month, dh.Day, 23, 59, 59);
+            if (dhFinalizacao.HasValue)
+            {
+                DhFinalizacao = new DateTime(dhFinalizacao.Value.Year, dhFinalizacao.Value.Month, dhFinalizacao.Value.Day, 23, 59, 59);
+            }
+            else
+            {
+                var dh = DateTime.Now;
+                DhFinalizacao = new DateTime(dh.Year, dh.Month, dh.Day, 23, 59, 59);
+            }
         }
     }
 }
