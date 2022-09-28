@@ -43,6 +43,9 @@ namespace Validator.Data.Dapper
 	                            UA.AvaliadorId AS Id,
 	                            U.Nome AS Subordinado,
 	                            US.Nome AS SugestaoAvaliador,
+                                CASE WHEN US.Ativo = 1 THEN 'Ativo'
+		                             WHEN US.Ativo = 0 THEN 'Inativo'
+			                         END AS StatusAvaliador,
 	                            S.Nome AS Setor,
 	                            D.Nome AS Unidade,
 	                            (SELECT COUNT(1) FROM UsuarioAvaliador UAQ WHERE UAQ.AvaliadorId = US.Id) QtdeSugestao,

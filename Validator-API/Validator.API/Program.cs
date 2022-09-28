@@ -40,6 +40,7 @@ builder.Services.AddTransient<IProcessoService, ProcessoService>();
 builder.Services.AddTransient<IUsuarioAvaliadorService, UsuarioAvaliadorService>();
 builder.Services.AddTransient<IDivisaoService, DivisaoService>();
 builder.Services.AddTransient<ISetorService, SetorService>();
+builder.Services.AddTransient<IProgressoService, ProgressoService>();
 //DOMAIN
 
 //DATA

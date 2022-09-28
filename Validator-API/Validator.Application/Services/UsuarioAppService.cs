@@ -15,16 +15,18 @@ namespace Validator.Application.Services
         private readonly IUserResolver _userResolver;
         private readonly IUsuarioAvaliadorService _usuarioAvaliadorService;
         private readonly IUsuarioReadOnlyRepository _usuarioReadOnlyRepository;
+        private readonly IProgressoService _progressoService;
         public UsuarioAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService,
             IParametroService parametroService,
             IUserResolver userResolver,
-            IUsuarioAvaliadorService usuarioAvaliadorService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository) : base(unitOfWork)
+            IUsuarioAvaliadorService usuarioAvaliadorService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository, IProgressoService progressoService) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
             _parametroService = parametroService;
             _userResolver = userResolver;
             _usuarioAvaliadorService = usuarioAvaliadorService;
             _usuarioReadOnlyRepository = usuarioReadOnlyRepository;
+            _progressoService = progressoService;
         }
 
         public async Task<ValidationResult> DeleteAsync(Guid id)
@@ -76,6 +78,9 @@ namespace Validator.Application.Services
                 await _usuarioAvaliadorService.CreateAsync(usuarioAvaliador);
             }
 
+            var progresso = new Progresso(userAuth.Id, Domain.Core.Enums.EStatuAvaliador.Enviada);
+            await _progressoService.CreateAsync(progresso);
+
             await CommitAsync();
 
             return ValidationResult;
@@ -116,6 +121,9 @@ namespace Validator.Application.Services
                     item.Aprovar();
                     _usuarioAvaliadorService.Update(item);
                 }
+
+                var progresso = new Progresso(usuarioId, Domain.Core.Enums.EStatuAvaliador.Confirmada);
+                await _progressoService.CreateAsync(progresso);
             }
             
             await CommitAsync();

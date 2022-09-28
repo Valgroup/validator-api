@@ -81,6 +81,9 @@ namespace Validator.Domain.Entities
             if (string.IsNullOrEmpty(Nivel))
                 validacoes.Add(MensagemResource.EhObrigatorio(nameof(Nivel)));
 
+            if (string.IsNullOrEmpty(CentroCusto))
+                validacoes.Add(MensagemResource.EhObrigatorio("Centro de Custo"));
+
             if (string.IsNullOrEmpty(Direcao))
             {
                 if (string.IsNullOrEmpty(SuperiorImediato))

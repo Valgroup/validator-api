@@ -7,5 +7,6 @@ namespace Validator.Domain.Dtos.Dashes
         public int QtdStatus { get; set; }
         public string StatusNome { get; set; }
         public int Total { get; set; }
+        public int QtdUsuarios { get; set; }
     }
 }

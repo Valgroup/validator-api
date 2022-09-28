@@ -51,7 +51,7 @@ namespace Validator.API.Controllers
             catch(Exception e)
             {
                 var res = new ValidationResult();
-                res.Add($"Ocorreu um erro ao processo a planilha verifique se existe todas as colunas necessária");
+                res.Add($"Ocorreu um erro ao processar a planilha, verifique se existe todas as colunas necessárias");
                 return await EntityValidation(res);
             }
             

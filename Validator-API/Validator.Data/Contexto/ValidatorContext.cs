@@ -26,12 +26,13 @@ namespace Validator.Data.Contexto
             modelBuilder.ApplyConfiguration(new ParametroMap());
             modelBuilder.ApplyConfiguration(new UsuarioAvaliadorMap());
             modelBuilder.ApplyConfiguration(new ProcessoMap());
+            modelBuilder.ApplyConfiguration(new ProgressoMap());
 
             modelBuilder.Entity<Parametro>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
             modelBuilder.Entity<Processo>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
             modelBuilder.Entity<Setor>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
             modelBuilder.Entity<Divisao>().HasQueryFilter(q => !q.AnoBase.Deleted && q.AnoBase.Ano == DateTime.Now.Year);
-
+          
             base.OnModelCreating(modelBuilder);
 
 

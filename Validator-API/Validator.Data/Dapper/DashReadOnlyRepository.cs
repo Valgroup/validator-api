@@ -36,38 +36,34 @@ namespace Validator.Data.Dapper
         public async Task<DashResultadosDto> ObterResultados(ConsultarResultadoCommand command)
         {
             using var cn = CnRead;
-
+                       
             var sbQry = new StringBuilder();
-            sbQry.Append(@"SELECT 
-                                COUNT(1) QtdStatus,
-	                            CASE 
-		                            WHEN Status = 0 THEN 'Enviada'
-		                            WHEN Status = 1 THEN 'Confirmada'
-		                            END StatusNome,
-	                               (SELECT COUNT(1) FROM UsuarioAvaliador) Total
-                                FROM UsuarioAvaliador UA
-                                INNER JOIN Usuarios U ON U.Id = UA.UsuarioId
-                                WHERE 1=1 ");
+            sbQry.Append($@"SELECT Id FROM Usuarios
+                            WHERE
+                            AnoBaseId = @AnoBaseId
+                            AND Perfil IN (2,4)");
 
             if (command.DivisaoId.HasValue)
-                sbQry.Append(" AND U.DivisaoId = @DivisaoId ");
+                sbQry.Append(" AND DivisaoId = @DivisaoId ");
 
             if (command.SetorId.HasValue)
-                sbQry.Append(" AND U.SetorId = @SetorId ");
-
-            sbQry.Append(" GROUP BY Status ");
-
-            var resultado = await cn.QueryAsync<DashResultadoQueryDto>(sbQry.ToString(), new { command.DivisaoId, command.SetorId });
+                sbQry.Append(" AND SetorId = @SetorId ");
 
             var dashResultado = new DashResultadosDto();
 
-            var enviada = resultado.FirstOrDefault(f => f.StatusNome == Domain.Core.Enums.EStatuAvaliador.Enviada.ToString());
-            if (enviada != null && enviada.Total > 0)
-                dashResultado.SugestaoEnviadas = (enviada.QtdStatus * 100) / enviada.Total;
+            var usuariosIds = await cn.QueryAsync<Guid>(sbQry.ToString(), new { command.DivisaoId, command.SetorId, AnoBaseId = await _userResolver.GetYearIdAsync() });
+            if (usuariosIds.Any())
+            {
+                var ids = usuariosIds.Select(s => $"'{s}'");
+                var whereInUsuario = $" UsuarioId IN ({string.Join(',', ids)}) ";
+                var totalUsarios = usuariosIds.Count();
+                var qtdEnviadas = await cn.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(1) Qtd FROM Progresso WHERE {whereInUsuario} AND Status = 2");
+                var qtdConfirmadas = await cn.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(1) Qtd FROM Progresso WHERE {whereInUsuario} AND Status = 1");
 
-            var confirmada = resultado.FirstOrDefault(f => f.StatusNome == Domain.Core.Enums.EStatuAvaliador.Confirmada.ToString());
-            if (confirmada != null && confirmada.Total > 0)
-                dashResultado.AvaliadoresConfirmados = (confirmada.QtdStatus * 100) / confirmada.Total;
+                dashResultado.SugestaoEnviadas = (qtdEnviadas * 100) / totalUsarios;
+                dashResultado.AvaliadoresConfirmados = (qtdConfirmadas * 100) / totalUsarios;
+            }
+
 
             return dashResultado;
 

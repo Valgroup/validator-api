@@ -23,7 +23,8 @@ namespace Validator.Data.Dapper
         {
             using var cn = CnRead;
 
-            await cn.ExecuteAsync(@" DELETE FROM UsuarioAvaliador WHERE UsuarioAvaliador.UsuarioId IN (SELECT U.Id FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
+            await cn.ExecuteAsync(@" DELETE FROM Progresso WHERE AnoBaseId = @AnoBaseId
+                                     DELETE FROM UsuarioAvaliador WHERE UsuarioAvaliador.UsuarioId IN (SELECT U.Id FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
                                      DELETE FROM Usuarios WHERE Usuarios.AnoBaseId = @AnoBaseId AND Usuarios.Perfil != 1
                                      DELETE FROM Setor WHERE Setor.Id NOT IN (SELECT U.SetorId FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
                                      DELETE FROM Divisao WHERE Divisao.Id NOT IN (SELECT U.DivisaoId FROM Usuarios U WHERE U.AnoBaseId = @AnoBaseId )
