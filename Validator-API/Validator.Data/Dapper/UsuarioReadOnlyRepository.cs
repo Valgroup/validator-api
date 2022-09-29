@@ -220,7 +220,12 @@ namespace Validator.Data.Dapper
                             INNER JOIN UsuarioAvaliador UA ON UA.UsuarioId = U.Id
                             WHERE
                             A.AnoBaseId = @AnoBaseId
-                            AND U.SuperiorId = @SuperiorId GROUP BY U.Id, U.Nome, U.EmaiL, S.Nome, D.Nome, UA.Status ");
+                            AND U.SuperiorId = @SuperiorId  ");
+
+            if (!string.IsNullOrEmpty(command.QueryNome))
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike) ");
+
+            qrySb.Append(" GROUP BY U.Id, U.Nome, U.EmaiL, S.Nome, D.Nome, UA.Status ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
@@ -231,7 +236,8 @@ namespace Validator.Data.Dapper
                 AnoBaseId = user.AnoBaseId,
                 SuperiorId = user.Id,
                 Skip = command.Skip,
-                Take = command.Take
+                Take = command.Take,
+                WhereLike = $"%{command.QueryNome}%"
             });
 
             int total = usuarios.FirstOrDefault() != null ? usuarios.FirstOrDefault().Total : 0;
@@ -300,7 +306,7 @@ namespace Validator.Data.Dapper
             }
 
             if (!string.IsNullOrEmpty(command.QueryNome))
-                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome @WhereLike OR D.Nome @WhereLike OR SUP.Nome @WhereLike) ");
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike) ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
