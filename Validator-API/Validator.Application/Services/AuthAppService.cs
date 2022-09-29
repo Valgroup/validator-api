@@ -14,16 +14,19 @@ namespace Validator.Application.Services
     {
         private readonly IUsuarioService _usuarioService;
         private readonly IProcessoService _processoService;
+        private readonly IParametroService _parametroService;
         private readonly IUtilReadOnlyRepository _utilReadOnlyRepository;
         private readonly IUserResolver _userResolver;
+
         public AuthAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService,
             IProcessoService processoService,
-            IUtilReadOnlyRepository utilReadOnlyRepository, IUserResolver userResolver) : base(unitOfWork)
+            IUtilReadOnlyRepository utilReadOnlyRepository, IUserResolver userResolver, IParametroService parametroService) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
             _processoService = processoService;
             _utilReadOnlyRepository = utilReadOnlyRepository;
             _userResolver = userResolver;
+            _parametroService = parametroService;
         }
 
         public async Task<LoginResultCommand> Autenticar(LoginCommand command)
@@ -42,6 +45,16 @@ namespace Validator.Application.Services
             var processo = await _processoService.GetByCurrentYear();
             if (processo != null && processo.Situacao == Domain.Core.Enums.ESituacaoProcesso.SemPendencia)
                 liberaProcesso = true;
+
+            var parametros = await _parametroService.GetByCurrentYear();
+
+            if (parametros != null && usuario.Perfil != EPerfilUsuario.Administrador)
+            {
+                var dh = DateTime.Now;
+                var dhHoje = new DateTime(dh.Year, dh.Month, dh.Day, 23, 59, 50);
+                if (parametros.DhFinalizacao < dhHoje)
+                    return new LoginResultCommand { IsValid = false, Message = $"Oops... A etapa de escolha finalizou em {parametros.DhFinalizacao.ToShortDateString()}! Caso tenha alguma demanda sobre este assunto, acione o RH!" };
+            }
 
             var download = await _utilReadOnlyRepository.TemDadosExportacao();
 
@@ -136,7 +149,7 @@ namespace Validator.Application.Services
                 liberarDocumento = false;
                 habilitarParametros = false;
             }
-           
+
             EPerfilUsuario perfil;
             Guid usuarioId;
             if (usuario == null)

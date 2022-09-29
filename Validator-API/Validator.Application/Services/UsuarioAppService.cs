@@ -55,7 +55,7 @@ namespace Validator.Application.Services
         public async Task<ValidationResult> EscolherAvaliadores(List<Guid> ids)
         {
             var parametro = await _parametroService.GetByCurrentYear();
-            if (ids.Count > parametro.QtdeSugestaoMax || ids.Count < parametro.QtdeSugestaoMin)
+            if (ids.Count > parametro.QtdeAvaliador)
             {
                 ValidationResult.Add($"Só é permitido escolher {parametro.QtdeAvaliador} avaliadores");
                 return ValidationResult;

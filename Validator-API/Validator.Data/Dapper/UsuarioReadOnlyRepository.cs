@@ -280,6 +280,8 @@ namespace Validator.Data.Dapper
                             WHERE
                             A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Ativo = 1 AND U.Id != @UsuarioId AND U.Perfil = 2 ");
 
+            qrySb.Append(" AND U.Id NOT IN (SELECT UAD.AvaliadorId FROM UsuarioAvaliador UAD WHERE UAD.UsuarioId = @UsuarioId ) ");
+
             if (usuario.SuperiorId.HasValue)
                 qrySb.Append(" AND U.Id != @SuperiorId ");
 
@@ -306,7 +308,7 @@ namespace Validator.Data.Dapper
             }
 
             if (!string.IsNullOrEmpty(command.QueryNome))
-                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike) ");
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike OR U.Cargo LIKE @WhereLike ) ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");

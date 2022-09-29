@@ -23,7 +23,6 @@ namespace Validator.Data.Dapper
 	                                                            D.Nome AS Text
                                                            FROM Usuarios U
                                                            INNER JOIN Divisao D ON D.Id = U.DivisaoId
-                                                           INNER JOIN UsuarioAvaliador UA ON UA.UsuarioId = U.Id OR UA.AvaliadorId = U.Id
                                                            ORDER BY D.Nome ");
         }
 
@@ -35,7 +34,6 @@ namespace Validator.Data.Dapper
 	                                                            S.Nome AS Text
                                                           FROM Usuarios U
                                                           INNER JOIN Setor S ON S.Id = U.SetorId
-                                                          INNER JOIN UsuarioAvaliador UA ON UA.UsuarioId = U.Id OR UA.AvaliadorId = U.Id
                                                           ORDER BY S.Nome ");
         }
 

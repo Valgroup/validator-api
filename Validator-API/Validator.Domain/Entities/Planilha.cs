@@ -114,6 +114,7 @@ namespace Validator.Domain.Entities
             Cargo = command.Nivel;
             SuperiorImediato = command.SuperiorImediato.ClearCaracters(new char[] { '-' });
             EmailSuperior = command.EmailSuperior.ClearCaracters(new char[] { '-' });
+            CentroCusto = command.CentroCusto;
 
             Validar();
 
