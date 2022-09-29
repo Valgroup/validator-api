@@ -55,17 +55,12 @@ namespace Validator.Application.Services
         public async Task<ValidationResult> EscolherAvaliadores(List<Guid> ids)
         {
             var parametro = await _parametroService.GetByCurrentYear();
-            if (ids.Count > parametro.QtdeSugestaoMax)
+            if (ids.Count > parametro.QtdeAvaliador)
             {
                 ValidationResult.Add($"Só é permitido escolher {parametro.QtdeSugestaoMax} avaliadores");
                 return ValidationResult;
             }
-            if (ids.Count < parametro.QtdeSugestaoMin)
-            {
-                ValidationResult.Add($"É necessário escolher mais que {parametro.QtdeSugestaoMin} avaliadores");
-                return ValidationResult;
-            }
-
+            
             var userAuth = await _userResolver.GetAuthenticateAsync();
 
             var avaliadoresExitentes = await _usuarioReadOnlyRepository.ObterAvaliadores(new AvaliadoresConsultaCommand { Take = 10 });
