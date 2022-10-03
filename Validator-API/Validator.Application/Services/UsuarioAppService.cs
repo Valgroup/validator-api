@@ -55,12 +55,19 @@ namespace Validator.Application.Services
         public async Task<ValidationResult> EscolherAvaliadores(List<Guid> ids)
         {
             var parametro = await _parametroService.GetByCurrentYear();
-            if (ids.Count > parametro.QtdeAvaliador)
+
+            if (ids.Count < parametro.QtdeSugestaoMin)
             {
-                ValidationResult.Add($"Só é permitido escolher {parametro.QtdeSugestaoMax} avaliadores");
+                ValidationResult.Add($"Só é permitido escolher a quantidade miníma de {parametro.QtdeSugestaoMin} avaliadores");
                 return ValidationResult;
             }
-            
+
+            if (ids.Count > parametro.QtdeSugestaoMax)
+            {
+                ValidationResult.Add($"Só é permitido escolher a quantidade máxima de {parametro.QtdeSugestaoMin} avaliadores");
+                return ValidationResult;
+            }
+
             var userAuth = await _userResolver.GetAuthenticateAsync();
 
             var avaliadoresExitentes = await _usuarioReadOnlyRepository.ObterAvaliadores(new AvaliadoresConsultaCommand { Take = 10 });
@@ -113,11 +120,32 @@ namespace Validator.Application.Services
 
         public async Task<ValidationResult> AprovarSubordinado(List<Guid> usuarioIds)
         {
+            var parametros = await _parametroService.GetByCurrentYear();
+            int qtdAvaliadores = parametros.QtdeAvaliador;
             foreach (var usuarioId in usuarioIds)
             {
                 var sugestoes = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == usuarioId);
+                if (sugestoes.Count() > qtdAvaliadores)
+                {
+                    var usuario = await _usuarioReadOnlyRepository.ObterDetalhes(usuarioId);
+                    ValidationResult.Add($"Quantidade avaliadores para {usuario.Nome} ultrapassou o limite de {qtdAvaliadores} Avalidadores");
+                    return ValidationResult;
+                }
+
                 foreach (var item in sugestoes)
                 {
+                    if (!item.Usuario.Ativo)
+                    {
+                        ValidationResult.Add($"Não foi possível aprovar as avaliações de {item.Usuario.Nome} pois o mesmo está desativado");
+                        return ValidationResult;
+                    }
+
+                    if (!item.Avaliador.Ativo)
+                    {
+                        ValidationResult.Add($"Não foi possível aprovar as avaliações de {item.Usuario.Nome} pois o avaliador {item.Avaliador.Nome} está desativado");
+                        return ValidationResult;
+                    }
+
                     item.Aprovar();
                     _usuarioAvaliadorService.Update(item);
                 }
@@ -155,6 +183,43 @@ namespace Validator.Application.Services
             await CommitAsync();
 
             return ValidationResult;
+        }
+
+        public async Task<ValidationResult> ExcluirAvaliador(ExcluirSugestaoAvaliadoCommand command)
+        {
+            var usuarioAvaliador = await _usuarioAvaliadorService.Find(f => f.UsuarioId == command.AvaliadoId && f.AvaliadorId == command.AvaliadorId);
+            if (usuarioAvaliador == null)
+            {
+                ValidationResult.Add("Sugestão não encontrada");
+                return ValidationResult;
+            }
+
+            _usuarioAvaliadorService.Delete(usuarioAvaliador);
+
+            await CommitAsync();
+
+            return ValidationResult;
+        }
+
+        public async Task<ValidationResult> AdicionarAvaliador(AdicionarAvaliadorCommand command)
+        {
+            var avaliadores = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == command.AvaliadorId);
+            var avaliador = avaliadores.FirstOrDefault(a => a.AvaliadorId == command.AvaliadorId);
+            if (avaliador != null)
+            {
+                var usuario = await _usuarioReadOnlyRepository.ObterDetalhes(command.AvaliadorId);
+                ValidationResult.Add($"O Avaliador {usuario.Nome} já foi escolhido para Avaliar esse Avaliado");
+                return ValidationResult;
+            }
+
+            var usuarioAvaliador = new UsuarioAvaliador(command.AvaliadoId, command.AvaliadorId);
+
+            await _usuarioAvaliadorService.CreateAsync(usuarioAvaliador);
+
+            await CommitAsync();
+
+            return ValidationResult;
+
         }
     }
 }

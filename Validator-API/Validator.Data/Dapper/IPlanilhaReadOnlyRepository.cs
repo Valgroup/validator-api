@@ -10,7 +10,7 @@ namespace Validator.Data.Dapper
     public interface IPlanilhaReadOnlyRepository
     {
         Task<IPagedResult<PlanilhaDto>> ListarPendencias(PaginationBaseCommand command);
-        Task<IPagedResult<PlanilhaDto>> ListarDadosCarregados(PaginationBaseCommand command);
+        Task<IPagedResult<PlanilhaListaDto>> ListarDadosCarregados(PaginationBaseCommand command);
         Task<IEnumerable<Planilha>> ObterTodas();
         Task<IEnumerable<PlanilhaExtraiDto>> ObterDadosExtracao();
         Task ExcluirProcessoAnoAtual(Guid anoBaseId);

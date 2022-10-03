@@ -94,6 +94,26 @@ namespace Validator.API.Controllers
             return await EntityValidation(result);
         }
 
+        [HttpPost, Route("AdicionarAvaliador")]
+        public async Task<IActionResult> AdicionarAvaliador(AdicionarAvaliadorCommand command)
+        {
+            var result = await _usuarioAppService.AdicionarAvaliador(command);
+            if (result.IsValid)
+                return await StatusCodeOK(result);
+
+            return await EntityValidation(result);
+        }
+
+        [HttpDelete, Route("ExcluirAvaliador")]
+        public async Task<IActionResult> ExcluirAvaliador(ExcluirSugestaoAvaliadoCommand command)
+        {
+            var result = await _usuarioAppService.ExcluirAvaliador(command);
+            if (result.IsValid)
+                return await StatusCodeOK(result);
+
+            return await EntityValidation(result);
+        }
+
         [HttpPost, Route("Subordinados")]
         [ProducesResponseType(typeof(PagedResult<UsuarioSubordinadoDto>), 200)]
         public async Task<IActionResult> Subordinados(PaginationBaseCommand command)

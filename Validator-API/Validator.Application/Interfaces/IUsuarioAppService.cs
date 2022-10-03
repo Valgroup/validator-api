@@ -15,5 +15,7 @@ namespace Validator.Application.Interfaces
         Task<ValidationResult> SubstituirAvaliador(SubstituirAvaliadorCommand command);
         Task<ValidationResult> AprovarSubordinado(List<Guid> usuarioIds);
         Task<ValidationResult> AtivarOuDesativar(Guid usuarioId, bool valor);
+        Task<ValidationResult> ExcluirAvaliador(ExcluirSugestaoAvaliadoCommand command);
+        Task<ValidationResult> AdicionarAvaliador(AdicionarAvaliadorCommand command);
     }
 }

@@ -35,7 +35,7 @@ namespace Validator.Data.Dapper
 
         }
 
-        public async Task<IPagedResult<PlanilhaDto>> ListarDadosCarregados(PaginationBaseCommand command)
+        public async Task<IPagedResult<PlanilhaListaDto>> ListarDadosCarregados(PaginationBaseCommand command)
         {
             using var cn = CnRead;
 
@@ -63,9 +63,9 @@ namespace Validator.Data.Dapper
 
             sbQry.Append(" ORDER BY Nome OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");
 
-            var planilhas = await cn.QueryAsync<PlanilhaDto>(sbQry.ToString(), new { command.Skip, command.Take, WhereLike = $"%{command.QueryNome}%" });
+            var planilhas = await cn.QueryAsync<PlanilhaListaDto>(sbQry.ToString(), new { command.Skip, command.Take, WhereLike = $"%{command.QueryNome}%" });
 
-            return new PagedResult<PlanilhaDto>
+            return new PagedResult<PlanilhaListaDto>
             {
                 Records = planilhas,
                 RecordsFiltered = planilhas.Count(),
