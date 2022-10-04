@@ -124,7 +124,7 @@ namespace Validator.Application.Services
             int qtdAvaliadores = parametros.QtdeAvaliador;
             foreach (var usuarioId in usuarioIds)
             {
-                var sugestoes = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == usuarioId);
+                var sugestoes = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == usuarioId, false);
                 if (sugestoes.Count() > qtdAvaliadores)
                 {
                     var usuario = await _usuarioReadOnlyRepository.ObterDetalhes(usuarioId);
@@ -203,7 +203,7 @@ namespace Validator.Application.Services
 
         public async Task<ValidationResult> AdicionarAvaliador(AdicionarAvaliadorCommand command)
         {
-            var avaliadores = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == command.AvaliadorId);
+            var avaliadores = await _usuarioAvaliadorService.FindAll(f => f.UsuarioId == command.AvaliadorId, false);
             var avaliador = avaliadores.FirstOrDefault(a => a.AvaliadorId == command.AvaliadorId);
             if (avaliador != null)
             {

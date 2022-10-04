@@ -105,9 +105,9 @@ namespace Validator.API.Controllers
         }
 
         [HttpDelete, Route("ExcluirAvaliador")]
-        public async Task<IActionResult> ExcluirAvaliador(ExcluirSugestaoAvaliadoCommand command)
+        public async Task<IActionResult> ExcluirAvaliador(Guid avaliadoId, Guid avaliadorId)
         {
-            var result = await _usuarioAppService.ExcluirAvaliador(command);
+            var result = await _usuarioAppService.ExcluirAvaliador(new ExcluirSugestaoAvaliadoCommand { AvaliadoId = avaliadoId, AvaliadorId = avaliadorId });
             if (result.IsValid)
                 return await StatusCodeOK(result);
 

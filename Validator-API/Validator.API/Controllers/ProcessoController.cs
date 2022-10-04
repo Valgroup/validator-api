@@ -24,7 +24,9 @@ namespace Validator.API.Controllers
         [HttpGet, Route("Inicializar")]
         public async Task<IActionResult> Inicializar()
         {
-            var result = await _dashAppService.IniciarProcesso();
+            var url = $"{Request.Scheme}://{Request.Host}"; 
+
+            var result = await _dashAppService.IniciarProcesso(url);
             if (result.IsValid)
                 return await StatusCodeOK(result);
 

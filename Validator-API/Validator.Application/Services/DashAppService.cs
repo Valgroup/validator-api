@@ -9,6 +9,7 @@ using Validator.Domain.Dtos.Dashes;
 using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
 using Validator.Domain.Interfaces.Repositories;
+using Validator.Service.Sendgrid;
 
 namespace Validator.Application.Services
 {
@@ -25,12 +26,13 @@ namespace Validator.Application.Services
         private readonly ITemplateRazorService _templateRazorService;
         private readonly IEmailService _emailService;
         private readonly IUserResolver _userResolver;
+        private readonly ISendGridService _sendgridService;
 
         public DashAppService(IUnitOfWork unitOfWork, IParametroService parametroService, IDashReadOnlyRepository dashReadOnlyRepository,
             IProcessoService processoService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, IDivisaoService divisaoService,
             ISetorService setorService, IUsuarioService usuarioService, IUsuarioReadOnlyRepository usuarioReadOnlyRepository,
             ITemplateRazorService templateRazorService,
-            IEmailService emailService, IUserResolver userResolver) : base(unitOfWork)
+            IEmailService emailService, IUserResolver userResolver, ISendGridService sendgridService) : base(unitOfWork)
         {
             _parametroService = parametroService;
             _dashReadOnlyRepository = dashReadOnlyRepository;
@@ -43,6 +45,7 @@ namespace Validator.Application.Services
             _templateRazorService = templateRazorService;
             _emailService = emailService;
             _userResolver = userResolver;
+            _sendgridService = sendgridService;
         }
 
         public async Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command)
@@ -81,7 +84,7 @@ namespace Validator.Application.Services
                     return ValidationResult;
                 }
             }
-           
+
             var parametro = await _parametroService.GetByCurrentYear();
             if (parametro != null)
             {
@@ -114,8 +117,11 @@ namespace Validator.Application.Services
             return ValidationResult;
         }
 
-        public async Task<ValidationResult> IniciarProcesso()
+        public async Task<ValidationResult> IniciarProcesso(string url)
         {
+
+           // await EnvairEmailAcesso(new List<Usuario> { new Usuario(Guid.NewGuid(), "João Ricardo Recanello", "joao.recanello_ext@valgrouco.com", "", false, "", "valgroup2022", "11111") }, url);
+
             var processo = await _processoService.GetByCurrentYear();
             if (processo == null)
             {
@@ -226,7 +232,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            //await EnvairEmailAcesso(usuarios);
+            // await EnvairEmailAcesso(usuarios, url);
 
             foreach (var usuario in usuarios)
             {
@@ -263,25 +269,25 @@ namespace Validator.Application.Services
             return await _dashReadOnlyRepository.ObterResultados(command);
         }
 
-        private async Task EnvairEmailAcesso(List<Usuario> usuarios)
+        private async Task EnvairEmailAcesso(List<Usuario> usuarios, string url)
         {
+            var parametro = await _parametroService.GetByCurrentYear();
 
             foreach (var usuario in usuarios)
             {
-                var emailDto = new EmailDto
+                var emailDto = new EmailAcessoDto
                 {
-                    EmailContato = "email-a-decidir@valgroupco.com",
-                    Telefone = "Ramal - 1111",
                     Nome = usuario.Nome,
-                    Senha = usuario.Id.ToString().Split("-")[0].ToLower()
+                    Senha = usuario.Id.ToString().Split("-")[0].ToLower(),
+                    Login = usuario.Email,
+                    Prazo = parametro.DhFinalizacao.ToShortDateString(),
+                    Link = url
                 };
 
-                var html = await _templateRazorService.BuilderHtmlAsString("Email/_BasicEmailTemplate", emailDto);
+                var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);
 
-                await _emailService.SendAsync(html, "joao.recanello_ext@valgroupco.com", "Acesso ao Avaliador");
+                await _sendgridService.SendAsync(usuario.Nome, "joao.recanello_ext@valgroupco.com", html, "Escolha dos Avaliadores");
                 break;
-
-
 
             }
         }

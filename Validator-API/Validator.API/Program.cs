@@ -16,6 +16,7 @@ using Validator.Domain.Core.Services;
 using Validator.Domain.Interfaces;
 using Validator.Domain.Interfaces.Repositories;
 using Validator.Domain.Services;
+using Validator.Service.Sendgrid;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ValidatorContext>();
 builder.Services.AddTransient<IUserResolver, WebApiResolver>();
+
+builder.Services.AddTransient<ISendGridService, SendGridService>();
 
 builder.Services.AddRazorPages();
 

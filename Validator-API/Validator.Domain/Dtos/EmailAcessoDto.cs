@@ -2,7 +2,7 @@
 {
     public class EmailAcessoDto
     {
-        public string Usuario { get; set; }
+        public string Nome { get; set; }
         public string Link { get; set; }
         public string Login { get; set; }
         public string Senha { get; set; }
