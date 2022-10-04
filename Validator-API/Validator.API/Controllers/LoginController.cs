@@ -19,6 +19,8 @@ namespace Validator.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(LoginResultCommand), 200)]
+        [ProducesResponseType(typeof(LoginResultCommand), 422)]
         public async Task<IActionResult> Post([FromBody] LoginCommand command)
         {
             try
@@ -36,6 +38,8 @@ namespace Validator.API.Controllers
             }
            
         }
+
+
 
         [HttpGet, Route("Permissoes")]
         [ProducesResponseType(typeof(PermissaoJwt), 200)]
