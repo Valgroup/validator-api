@@ -244,7 +244,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            await EnvairEmailAcesso(usuarios, url);
+            //await EnvairEmailAcesso(usuarios, url);
 
             foreach (var usuario in usuarios)
             {

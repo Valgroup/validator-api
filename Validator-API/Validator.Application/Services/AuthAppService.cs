@@ -145,7 +145,7 @@ namespace Validator.Application.Services
             var usuario = await _usuarioService.Find(f => f.Email == email && f.Ativo);
             if (usuario == null)
             {
-                ValidationResult.Add("Usuário ou senha inválidos");
+                ValidationResult.Add("E-mail não encontrado");
                 return ValidationResult;
             }
 

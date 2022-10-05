@@ -289,7 +289,7 @@ namespace Validator.Data.Dapper
                 }
                 else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
                 {
-                    qrySb.Append(" AND (U.Perfil = 2 OR U.EhGestor = 1 OR D.Nome NOT IN ('SP1', 'MG2')) ");
+                    qrySb.Append($" AND (U.Perfil = 2 OR U.EhGestor = 1 OR D.Nome IN ('{usuario.DivisaoNome}')) ");
                 }
             }
 
