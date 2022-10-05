@@ -21,6 +21,7 @@ namespace Validator.Data.Mappings
             builder.Property(c => c.SuperiorImediato).HasMaxLength(180);
             builder.Property(c => c.EmailSuperior).HasMaxLength(180);
             builder.Property(c => c.Direcao).HasMaxLength(120);
+            builder.Property(c => c.GestorCorporativo).HasMaxLength(120);
             builder.Property(c => c.Validacoes);
 
             builder.HasOne(c => c.AnoBase)

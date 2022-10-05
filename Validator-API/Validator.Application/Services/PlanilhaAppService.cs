@@ -141,6 +141,7 @@ namespace Validator.Application.Services
                     var superior = table.Rows[i][7]?.ToString();
                     var emailSuperior = table.Rows[i][8]?.ToString();
                     var direcao = table.Rows[i][9]?.ToString();
+                    var gestor = table.Rows[i][10]?.ToString();
 
                     if (string.IsNullOrEmpty(nome) && string.IsNullOrEmpty(email) && string.IsNullOrEmpty(cpf))
                         continue;
@@ -152,12 +153,12 @@ namespace Validator.Application.Services
                     var planilha = todas.FirstOrDefault(f => f.Email == email);
                     if (planilha != null)
                     {
-                        planilha.Alterar(unidade, nome, nivel, dataAdm, centroCusto, null, superior, emailSuperior, direcao, cpf, email);
+                        planilha.Alterar(unidade, nome, nivel, dataAdm, centroCusto, null, superior, emailSuperior, direcao, cpf, email, gestor);
                         planilhasAtualizar.Add(planilha);
                     }
                     else
                     {
-                        planilhas.Add(new Planilha(unidade, nome, email, nivel, dataAdm, centroCusto, null, superior, emailSuperior, direcao, cpf));
+                        planilhas.Add(new Planilha(unidade, nome, email, nivel, dataAdm, centroCusto, null, superior, emailSuperior, direcao, cpf, gestor));
                     }
                 }
 

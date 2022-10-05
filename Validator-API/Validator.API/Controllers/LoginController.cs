@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Validator.Application.Interfaces;
 using Validator.Domain.Commands.Logins;
+using Validator.Domain.Core;
 using Validator.Domain.Core.Models;
 
 namespace Validator.API.Controllers
@@ -36,7 +37,7 @@ namespace Validator.API.Controllers
 
                 return StatusCode(500, ex);
             }
-           
+
         }
 
 
@@ -46,6 +47,20 @@ namespace Validator.API.Controllers
         public async Task<IActionResult> Get()
         {
             return Ok(await _authAppService.Permissao());
+        }
+
+        [HttpGet, Route("RecuperarSenha")]
+        [ProducesResponseType(typeof(ValidationResult), 200)]
+        [ProducesResponseType(typeof(ValidationResult), 422)]
+        [AllowAnonymous]
+        public async Task<IActionResult> RecuperarSenha(string email)
+        {
+            var url = $"{Request.Scheme}://{Request.Host}";
+            var result = await _authAppService.RecuperarSenha(email, url);
+            if (result.IsValid)
+                return Ok(result);
+
+            return StatusCode(422, result);
         }
 
 

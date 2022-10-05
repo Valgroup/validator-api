@@ -15,7 +15,7 @@ namespace Validator.Domain.Entities
         public Planilha(string unidade, string nome, string email,
             string nivel, DateTime? dataAdmissao,
             string centroCusto, string numeroCentroCusto,
-            string superiorImediato, string emailSuperior, string direcao, string cpf)
+            string superiorImediato, string emailSuperior, string direcao, string cpf, string? gestorCorporativo)
         {
             Id = NewId;
             Unidade = unidade.TrimOrDefault();
@@ -30,8 +30,10 @@ namespace Validator.Domain.Entities
             SuperiorImediato = superiorImediato.ClearCaracters(new char[] { '-' });
             EmailSuperior = emailSuperior.ClearCaracters(new char[] { '-' });
             Direcao = direcao.TrimOrDefault();
+            GestorCorporativo = gestorCorporativo.TrimOrDefault();
 
             Validar();
+            
         }
 
         public Guid Id { get; private set; }
@@ -47,6 +49,7 @@ namespace Validator.Domain.Entities
         public string? SuperiorImediato { get; private set; }
         public string? EmailSuperior { get; private set; }
         public string? Direcao { get; private set; }
+        public string? GestorCorporativo { get; private set; }
         public bool EhValido { get; private set; }
         public string? Validacoes { get; private set; }
         public bool Deleted { get; set; }
@@ -121,7 +124,7 @@ namespace Validator.Domain.Entities
         }
 
         public void Alterar(string? unidade, string? nome, string? nivel,
-            DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao, string? cpf, string? email)
+            DateTime? dataAdm, string? centroCusto, string? numeroCentro, string? superior, string? emailSuperior, string? direcao, string? cpf, string? email, string? gestorCorporativo)
         {
             if (!string.IsNullOrEmpty(cpf))
                 cpf = cpf.Replace("Não tem Registro", "");
@@ -138,6 +141,8 @@ namespace Validator.Domain.Entities
             SuperiorImediato = superior.ClearCaracters(new char[] { '-' });
             EmailSuperior = emailSuperior.ClearCaracters(new char[] { '-' });
             Direcao = direcao.TrimOrDefault();
+            GestorCorporativo = gestorCorporativo.TrimOrDefault();
+
             Validar();
         }
     }

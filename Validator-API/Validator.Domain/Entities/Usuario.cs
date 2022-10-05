@@ -10,7 +10,7 @@ namespace Validator.Domain.Entities
     {
         protected Usuario() { }
 
-        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha, string? documento)
+        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha, string? documento, bool ehGestor)
         {
             AzureId = azureId;
             Nome = nome;
@@ -21,6 +21,7 @@ namespace Validator.Domain.Entities
             Senha = CryptoMD5(senha);
             Documento = documento;
             Ativo = true;
+            EhGestor = ehGestor;
         }
 
         public Guid Id { get; private set; }
@@ -36,6 +37,7 @@ namespace Validator.Domain.Entities
         public string? Cargo { get; private set; }
         public string? Documento { get; private set; }
         public bool EhDiretor { get; private set; }
+        public bool EhGestor { get; private set; }
         public bool Deleted { get; set; }
         public bool Ativo { get; private set; }
         public virtual Divisao? Divisao { get; private set; }
@@ -118,6 +120,14 @@ namespace Validator.Domain.Entities
         public void AtivartOuDesativar(bool valor)
         {
             Ativo = valor;
+        }
+
+        public string MudarSenha()
+        {
+            var novaSenha = "valgroup2022";
+            Senha = CryptoMD5(novaSenha);
+
+            return novaSenha;
         }
     }
 }

@@ -50,6 +50,17 @@ namespace Validator.Application.Services
 
         public async Task<ValidationResult> AdicionarOuAtualizar(ParametroSalvarCommand command)
         {
+            var parametro = await _parametroService.GetByCurrentYear();
+            if (parametro != null)// REGRA PARA IGNORAR O SALVAMENTO DOS PARAMETROS POIS O PROCESSO FINALIZOU
+            {
+                var dh = DateTime.Now;
+                var dhHoje = new DateTime(dh.Year, dh.Month, dh.Day, 23, 59, 50);
+                if (parametro.DhFinalizacao < dhHoje)
+                {
+                    return ValidationResult;
+                }
+            }
+
             if (command.QtdeSugestaoMax == 0 || command.QtdeSugestaoMin == 0 || command.QtdeAvaliador == 0)
             {
                 return ValidationResult;
@@ -85,7 +96,7 @@ namespace Validator.Application.Services
                 }
             }
 
-            var parametro = await _parametroService.GetByCurrentYear();
+
             if (parametro != null)
             {
                 parametro.Editar(command.QtdeAvaliador, command.QtdeSugestaoMin, command.QtdeSugestaoMax, command.DhFinalizacao);
@@ -120,7 +131,7 @@ namespace Validator.Application.Services
         public async Task<ValidationResult> IniciarProcesso(string url)
         {
 
-           // await EnvairEmailAcesso(new List<Usuario> { new Usuario(Guid.NewGuid(), "João Ricardo Recanello", "joao.recanello_ext@valgrouco.com", "", false, "", "valgroup2022", "11111") }, url);
+            // await EnvairEmailAcesso(new List<Usuario> { new Usuario(Guid.NewGuid(), "João Ricardo Recanello", "joao.recanello_ext@valgrouco.com", "", false, "", "valgroup2022", "11111") }, url);
 
             var processo = await _processoService.GetByCurrentYear();
             if (processo == null)
@@ -218,7 +229,8 @@ namespace Validator.Application.Services
                     continue;
 
                 var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x');
-                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF);
+                var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x');
+                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF, ehGestor);
 
                 var setorId = setores.First(f => f.Nome == linha.CentroCusto).Id;
                 var divisaoId = divisoes.First(f => f.Nome == linha.Unidade).Id;
@@ -232,7 +244,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            // await EnvairEmailAcesso(usuarios, url);
+            await EnvairEmailAcesso(usuarios, url);
 
             foreach (var usuario in usuarios)
             {
@@ -286,7 +298,7 @@ namespace Validator.Application.Services
 
                 var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);
 
-                await _sendgridService.SendAsync(usuario.Nome, "joao.recanello_ext@valgroupco.com", html, "Escolha dos Avaliadores");
+                await _sendgridService.SendAsync(usuario.Nome, usuario.Email, html, "Escolha dos Avaliadores");
                 break;
 
             }

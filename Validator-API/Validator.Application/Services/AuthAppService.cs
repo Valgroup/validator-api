@@ -1,12 +1,15 @@
 ﻿using Validator.Application.Interfaces;
 using Validator.Domain.Commands.Logins;
+using Validator.Domain.Core;
 using Validator.Domain.Core.Enums;
 using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Models;
+using Validator.Domain.Dtos;
 using Validator.Domain.Entities;
 using Validator.Domain.Interfaces;
 using Validator.Domain.Interfaces.Repositories;
+using Validator.Service.Sendgrid;
 
 namespace Validator.Application.Services
 {
@@ -17,16 +20,20 @@ namespace Validator.Application.Services
         private readonly IParametroService _parametroService;
         private readonly IUtilReadOnlyRepository _utilReadOnlyRepository;
         private readonly IUserResolver _userResolver;
+        private readonly ISendGridService _sendgridService;
+        private readonly ITemplateRazorService _templateRazorService;
 
         public AuthAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService,
             IProcessoService processoService,
-            IUtilReadOnlyRepository utilReadOnlyRepository, IUserResolver userResolver, IParametroService parametroService) : base(unitOfWork)
+            IUtilReadOnlyRepository utilReadOnlyRepository, IUserResolver userResolver, IParametroService parametroService, ISendGridService sendgridService, ITemplateRazorService templateRazorService) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
             _processoService = processoService;
             _utilReadOnlyRepository = utilReadOnlyRepository;
             _userResolver = userResolver;
             _parametroService = parametroService;
+            _sendgridService = sendgridService;
+            _templateRazorService = templateRazorService;
         }
 
         public async Task<LoginResultCommand> Autenticar(LoginCommand command)
@@ -38,8 +45,6 @@ namespace Validator.Application.Services
             if (!usuario.Autenticar(command.Senha))
                 return new LoginResultCommand { IsValid = false, Message = "Usuário ou senha inválidos" };
 
-            if (usuario.Deleted)
-                return new LoginResultCommand { IsValid = false, Message = "Usuário está inativo" };
 
             bool liberaProcesso = false;
             var processo = await _processoService.GetByCurrentYear();
@@ -133,6 +138,50 @@ namespace Validator.Application.Services
             //}
 
             return new LoginResultCommand { Token = CryptoHelper.Crypto(jwt.Id.ToString()), Jwt = jwt };
+        }
+
+        public async Task<ValidationResult> RecuperarSenha(string email, string url)
+        {
+            var usuario = await _usuarioService.Find(f => f.Email == email && f.Ativo);
+            if (usuario == null)
+            {
+                ValidationResult.Add("Usuário ou senha inválidos");
+                return ValidationResult;
+            }
+
+            var parametros = await _parametroService.GetByCurrentYear();
+
+            if (parametros != null && usuario.Perfil != EPerfilUsuario.Administrador)
+            {
+                var dh = DateTime.Now;
+                var dhHoje = new DateTime(dh.Year, dh.Month, dh.Day, 23, 59, 50);
+                if (parametros.DhFinalizacao < dhHoje)
+                {
+                    ValidationResult.Add($"Oops... A etapa de escolha finalizou em {parametros.DhFinalizacao.ToShortDateString()}! Caso tenha alguma demanda sobre este assunto, acione o RH!");
+                    return ValidationResult;
+                }
+            }
+
+            var novaSenha = usuario.MudarSenha();
+
+            _usuarioService.Update(usuario);
+
+            await CommitAsync();
+
+            var emailDto = new EmailAcessoDto
+            {
+                Nome = usuario.Nome,
+                Senha = novaSenha,
+                Login = usuario.Email,
+                Prazo = parametros.DhFinalizacao.ToShortDateString(),
+                Link = url
+            };
+
+            var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);
+
+            await _sendgridService.SendAsync(usuario.Nome, email, html, "Recuperação de Senha");
+
+            return ValidationResult;
         }
 
         public async Task<PermissaoJwt> Permissao(Usuario? usuario = null)

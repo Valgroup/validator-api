@@ -278,7 +278,20 @@ namespace Validator.Data.Dapper
                             INNER JOIN Divisao D ON D.Id = U.DivisaoId
                             LEFT JOIN Usuarios SUP ON SUP.Id = U.SuperiorId
                             WHERE
-                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Ativo = 1 AND U.Id != @UsuarioId AND U.Perfil = 2 ");
+                            A.AnoBaseId = @AnoBaseId AND U.Perfil != 1 AND U.Ativo = 1 AND U.Id != @UsuarioId ");
+
+            if (usuario.Perfil != Domain.Core.Enums.EPerfilUsuario.Administrador)
+            {
+                var divisoes = new List<string> { "SP1", "MG2" };
+                if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+                {
+                    qrySb.Append(" AND (U.Perfil = 2 OR U.EhGestor = 1 OR D.Nome IN ('SP1', 'MG2')) ");
+                }
+                else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
+                {
+                    qrySb.Append(" AND (U.Perfil = 2 OR U.EhGestor = 1 OR D.Nome NOT IN ('SP1', 'MG2')) ");
+                }
+            }
 
             qrySb.Append(" AND U.Id NOT IN (SELECT UAD.AvaliadorId FROM UsuarioAvaliador UAD WHERE UAD.UsuarioId = @UsuarioId ) ");
 
@@ -294,18 +307,7 @@ namespace Validator.Data.Dapper
             if (avaliadorAntigoId.HasValue)
                 qrySb.Append(" AND U.Id != @AvaliadorAntigoId ");
 
-            if (usuario.Perfil != Domain.Core.Enums.EPerfilUsuario.Administrador)
-            {
-                var divisoes = new List<string> { "SP1", "MG2" };
-                if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
-                {
-                    qrySb.Append(" AND D.Nome IN ('SP1', 'MG2') ");
-                }
-                else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
-                {
-                    qrySb.Append(" AND D.Nome NOT IN ('SP1', 'MG2') ");
-                }
-            }
+           
 
             if (!string.IsNullOrEmpty(command.QueryNome))
                 qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike OR U.Cargo LIKE @WhereLike ) ");
