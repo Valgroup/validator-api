@@ -2,6 +2,7 @@
 using System.Text;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Enums;
+using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 
 namespace Validator.Domain.Entities
@@ -9,6 +10,7 @@ namespace Validator.Domain.Entities
     public class Usuario : EntityWithAnoBase, IAnoBase, ISoftDelete
     {
         protected Usuario() { }
+        private string _senhaGerada;
 
         public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha, string? documento, bool ehGestor)
         {
@@ -18,6 +20,7 @@ namespace Validator.Domain.Entities
             EmailSuperior = emailSuperior;
             EhDiretor = ehDiretor;
             Cargo = cargo;
+            _senhaGerada = senha;
             Senha = CryptoMD5(senha);
             Documento = documento;
             Ativo = true;
@@ -124,10 +127,15 @@ namespace Validator.Domain.Entities
 
         public string MudarSenha()
         {
-            var novaSenha = "valgroup2022";
+            var novaSenha = PasswordHelper.GenerateRandomPassword();
             Senha = CryptoMD5(novaSenha);
 
             return novaSenha;
+        }
+
+        public string SenhaGerada()
+        {
+            return _senhaGerada;
         }
     }
 }

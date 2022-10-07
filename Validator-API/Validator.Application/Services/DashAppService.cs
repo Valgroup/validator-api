@@ -3,6 +3,7 @@ using Validator.Application.Interfaces;
 using Validator.Data.Dapper;
 using Validator.Domain.Commands.Dashes;
 using Validator.Domain.Core;
+using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Dtos;
 using Validator.Domain.Dtos.Dashes;
@@ -230,7 +231,7 @@ namespace Validator.Application.Services
 
                 var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x');
                 var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x');
-                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF, ehGestor);
+                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, PasswordHelper.GenerateRandomPassword(), linha.CPF, ehGestor);
 
                 var setorId = setores.First(f => f.Nome == linha.CentroCusto).Id;
                 var divisaoId = divisoes.First(f => f.Nome == linha.Unidade).Id;
@@ -244,7 +245,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            //await EnvairEmailAcesso(usuarios, url);
+            await EnvairEmailAcesso(usuarios, url);
 
             foreach (var usuario in usuarios)
             {
@@ -290,7 +291,7 @@ namespace Validator.Application.Services
                 var emailDto = new EmailAcessoDto
                 {
                     Nome = usuario.Nome,
-                    Senha = usuario.Id.ToString().Split("-")[0].ToLower(),
+                    Senha = usuario.SenhaGerada(),
                     Login = usuario.Email,
                     Prazo = parametro.DhFinalizacao.ToShortDateString(),
                     Link = url

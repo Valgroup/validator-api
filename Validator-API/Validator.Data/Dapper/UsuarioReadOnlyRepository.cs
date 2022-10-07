@@ -285,11 +285,11 @@ namespace Validator.Data.Dapper
                 var divisoes = new List<string> { "SP1", "MG2" };
                 if (divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
                 {
-                    qrySb.Append(" AND (U.Perfil = 2 OR U.EhGestor = 1 OR D.Nome IN ('SP1', 'MG2')) ");
+                    qrySb.Append(" AND (U.EhGestor = 1 OR D.Nome IN ('SP1', 'MG2')) ");
                 }
                 else if (!divisoes.Contains(usuario.DivisaoNome) && !command.DivisaoId.HasValue)
                 {
-                    qrySb.Append($" AND (U.Perfil = 2 OR U.EhGestor = 1 OR D.Nome IN ('{usuario.DivisaoNome}')) ");
+                    qrySb.Append($" AND (U.EhGestor = 1 OR D.Nome NOT IN ('SP1', 'MG2')) ");
                 }
             }
 

@@ -3,6 +3,7 @@ using Validator.API.Controllers.Common;
 using Validator.Application.Interfaces;
 using Validator.Data.Dapper;
 using Validator.Domain.Commands;
+using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Pagination;
 using Validator.Domain.Dtos.Dashes;
 
@@ -24,7 +25,7 @@ namespace Validator.API.Controllers
         [HttpGet, Route("Inicializar")]
         public async Task<IActionResult> Inicializar()
         {
-            var url = $"{Request.Scheme}://{Request.Host}"; 
+            var url = $"http://matera/Avaliador/{RuntimeConfigurationHelper.Ambiente}/login";
 
             var result = await _dashAppService.IniciarProcesso(url);
             if (result.IsValid)

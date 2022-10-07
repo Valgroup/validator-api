@@ -24,6 +24,8 @@ var cnConfig = builder.Configuration.GetConnectionString("CnValidator");
 RuntimeConfigurationHelper.ConnectionString = cnConfig;
 builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
 
+RuntimeConfigurationHelper.Ambiente = builder.Configuration.GetValue<string>("Ambiente");
+
 // Add services to the container.
 builder.Services.AddTransient<IPlanilhaAppService, PlanilhaAppService>();
 builder.Services.AddTransient<IDashAppService, DashAppService>();
