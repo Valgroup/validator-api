@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Validator.API.Controllers.Common;
 using Validator.Application.Interfaces;
 using Validator.Data.Dapper;
@@ -15,11 +16,13 @@ namespace Validator.API.Controllers
     {
         private readonly IDashAppService _dashAppService;
         private readonly IPlanilhaReadOnlyRepository _planilhaReadOnlyRepository;
+        private readonly INotificacaoReadOnlyRespository _notificacaoReadOnlyRespository;
 
-        public ProcessoController(IDashAppService dashAppService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository)
+        public ProcessoController(IDashAppService dashAppService, IPlanilhaReadOnlyRepository planilhaReadOnlyRepository, INotificacaoReadOnlyRespository notificacaoReadOnlyRespository)
         {
             _dashAppService = dashAppService;
             _planilhaReadOnlyRepository = planilhaReadOnlyRepository;
+            _notificacaoReadOnlyRespository = notificacaoReadOnlyRespository;
         }
 
         [HttpGet, Route("Inicializar")]
@@ -49,6 +52,17 @@ namespace Validator.API.Controllers
                 return await StatusCodeOK(result);
 
             return await EntityValidation(result);
+        }
+
+
+        [HttpGet, Route("EnviarNotificacaoPendencias")]
+        [AllowAnonymous]
+        public async Task<IActionResult> EnviarNotificacaoPendencias()
+        {
+            var url = $"http://matera/Avaliador/{RuntimeConfigurationHelper.Ambiente}/login";
+            await _notificacaoReadOnlyRespository.EnviarNotificacaoPendente(url);
+
+            return Ok("Todas notificações foram enviadas!");
         }
     }
 }

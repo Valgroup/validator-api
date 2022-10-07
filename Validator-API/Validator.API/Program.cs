@@ -52,6 +52,7 @@ builder.Services.AddTransient<IUsuarioAuthReadOnlyRepository, UsuarioAuthReadOnl
 builder.Services.AddTransient<IDashReadOnlyRepository, DashReadOnlyRepository>();
 builder.Services.AddTransient<IPlanilhaReadOnlyRepository, PlanilhaReadOnlyRepository>();
 builder.Services.AddTransient<IUtilReadOnlyRepository, UtilReadOnlyRepository>();
+builder.Services.AddTransient<INotificacaoReadOnlyRespository, NotificacaoReadOnlyRespository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

@@ -231,7 +231,7 @@ namespace Validator.Application.Services
 
                 var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x');
                 var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x');
-                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, PasswordHelper.GenerateRandomPassword(), linha.CPF, ehGestor);
+                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF, ehGestor);
 
                 var setorId = setores.First(f => f.Nome == linha.CentroCusto).Id;
                 var divisaoId = divisoes.First(f => f.Nome == linha.Unidade).Id;
@@ -245,7 +245,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            await EnvairEmailAcesso(usuarios, url);
+            //await EnvairEmailAcesso(usuarios, url);
 
             foreach (var usuario in usuarios)
             {
@@ -300,7 +300,7 @@ namespace Validator.Application.Services
                 var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);
 
                 await _sendgridService.SendAsync(usuario.Nome, usuario.Email, html, "Escolha dos Avaliadores");
-                break;
+              
 
             }
         }
