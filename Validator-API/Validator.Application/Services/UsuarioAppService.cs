@@ -56,6 +56,8 @@ namespace Validator.Application.Services
         {
             var parametro = await _parametroService.GetByCurrentYear();
 
+            ids = ids.Distinct().ToList();
+
             if (ids.Count < parametro.QtdeSugestaoMin)
             {
                 ValidationResult.Add($"Só é permitido escolher a quantidade miníma de {parametro.QtdeSugestaoMin} avaliadores");
