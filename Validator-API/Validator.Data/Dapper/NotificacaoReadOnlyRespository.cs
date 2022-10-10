@@ -19,18 +19,28 @@ namespace Validator.Data.Dapper
         public async Task EnviarNotificacaoPendente(string url)
         {
             using var cn = CnRead;
+            var notificacoes = new List<NotificacaoDto>();
 
-            var usuarios = await cn.QueryAsync<NotificacaoDto>(@"SELECT 
-		                                                                US.Nome,
-		                                                                US.Email,
-                                                                        (SELECT TOP 1 P.DhFinalizacao FROM Parametro P) DhFinalizacao
-                                                                  FROM UsuarioAvaliador UA
-                                                                  INNER JOIN Usuarios U ON U.Id = UA.UsuarioId
-                                                                  INNER JOIN Usuarios US ON US.SuperiorId = U.SuperiorId
+            var usuariosSuperiores = await cn.QueryAsync<NotificacaoDto>(@"SELECT US.Nome, US.Email, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P) DhFinalizacao FROM Usuarios U
+                                                                           INNER JOIN Usuarios US ON US.Id = U.SuperiorId
+                                                                           WHERE
+                                                                           U.Id IN (SELECT UA.UsuarioId FROM UsuarioAvaliador UA WHERE UA.Status IN (0,2) AND DATEDIFF(DAY, UA.DataHora, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P)) <= 5 ) ");
+            if (usuariosSuperiores.Any())
+            {
+                notificacoes.AddRange(usuariosSuperiores);
+            }
+
+            var usuarios = await cn.QueryAsync<NotificacaoDto>(@" SELECT Id, Nome, Email, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P) DhFinalizacao FROM Usuarios
                                                                   WHERE
-                                                                  DATEDIFF(DAY, UA.DataHora, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P)) <= 5 ");
+                                                                  Perfil IN (2,4)
+                                                                  AND Id NOT IN (SELECT UA.UsuarioId FROM UsuarioAvaliador UA)");
 
-            foreach (var item in usuarios)
+            if (usuarios.Any())
+            {
+                notificacoes.AddRange(usuarios);
+            }
+
+            foreach (var item in notificacoes)
             {
                 var emailDto = new EmailAcessoDto
                 {
