@@ -28,9 +28,7 @@ namespace Validator.API.Controllers
         [HttpGet, Route("Inicializar")]
         public async Task<IActionResult> Inicializar()
         {
-            var url = $"http://matera/Avaliador/{RuntimeConfigurationHelper.Ambiente}/login";
-
-            var result = await _dashAppService.IniciarProcesso(url);
+            var result = await _dashAppService.IniciarProcesso();
             if (result.IsValid)
                 return await StatusCodeOK(result);
 

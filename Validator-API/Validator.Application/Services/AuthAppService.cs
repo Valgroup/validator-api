@@ -140,7 +140,7 @@ namespace Validator.Application.Services
             return new LoginResultCommand { Token = CryptoHelper.Crypto(jwt.Id.ToString()), Jwt = jwt };
         }
 
-        public async Task<ValidationResult> RecuperarSenha(string email, string url)
+        public async Task<ValidationResult> RecuperarSenha(string email)
         {
             var usuario = await _usuarioService.Find(f => f.Email == email && f.Ativo);
             if (usuario == null)
@@ -174,7 +174,7 @@ namespace Validator.Application.Services
                 Senha = novaSenha,
                 Login = usuario.Email,
                 Prazo = parametros.DhFinalizacao.ToShortDateString(),
-                Link = url
+                Link = RuntimeConfigurationHelper.UrlApp
             };
 
             var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Validator.Application.Interfaces;
 using Validator.Domain.Commands.Logins;
 using Validator.Domain.Core;
-using Validator.Domain.Core.Helpers;
 using Validator.Domain.Core.Models;
 
 namespace Validator.API.Controllers
@@ -35,13 +34,10 @@ namespace Validator.API.Controllers
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, ex.Message);
             }
 
         }
-
-
 
         [HttpGet, Route("Permissoes")]
         [ProducesResponseType(typeof(PermissaoJwt), 200)]
@@ -56,8 +52,7 @@ namespace Validator.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> RecuperarSenha(string email)
         {
-            var url = $"http://matera/Avaliador/{RuntimeConfigurationHelper.Ambiente}/login";
-            var result = await _authAppService.RecuperarSenha(email, url);
+            var result = await _authAppService.RecuperarSenha(email);
             if (result.IsValid)
                 return Ok(result);
 

@@ -9,6 +9,6 @@ namespace Validator.Application.Interfaces
     {
         Task<LoginResultCommand> Autenticar(LoginCommand command);
         Task<PermissaoJwt> Permissao(Usuario? usuario = null);
-        Task<ValidationResult> RecuperarSenha(string email, string url);
+        Task<ValidationResult> RecuperarSenha(string email);
     }
 }

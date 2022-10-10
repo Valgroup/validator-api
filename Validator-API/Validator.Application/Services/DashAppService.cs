@@ -129,11 +129,8 @@ namespace Validator.Application.Services
             return ValidationResult;
         }
 
-        public async Task<ValidationResult> IniciarProcesso(string url)
+        public async Task<ValidationResult> IniciarProcesso()
         {
-
-            // await EnvairEmailAcesso(new List<Usuario> { new Usuario(Guid.NewGuid(), "João Ricardo Recanello", "joao.recanello_ext@valgrouco.com", "", false, "", "valgroup2022", "11111") }, url);
-
             var processo = await _processoService.GetByCurrentYear();
             if (processo == null)
             {
@@ -231,7 +228,7 @@ namespace Validator.Application.Services
 
                 var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x');
                 var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x');
-                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF, ehGestor);
+                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, PasswordHelper.GenerateRandomPassword(), linha.CPF, ehGestor);
 
                 var setorId = setores.First(f => f.Nome == linha.CentroCusto).Id;
                 var divisaoId = divisoes.First(f => f.Nome == linha.Unidade).Id;
@@ -244,7 +241,7 @@ namespace Validator.Application.Services
             }
 
             await CommitAsync();
-            
+
             foreach (var usuario in usuarios)
             {
                 var superior = usuarios.FirstOrDefault(f => f.Email == usuario.EmailSuperior);
@@ -261,7 +258,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            await EnvairEmailAcesso(usuarios, url);
+            await EnvairEmailAcesso(usuarios);
 
             return ValidationResult;
 
@@ -282,9 +279,11 @@ namespace Validator.Application.Services
             return await _dashReadOnlyRepository.ObterResultados(command);
         }
 
-        private async Task EnvairEmailAcesso(List<Usuario> usuarios, string url)
+        private async Task EnvairEmailAcesso(List<Usuario> usuarios)
         {
             var parametro = await _parametroService.GetByCurrentYear();
+
+            string url = RuntimeConfigurationHelper.UrlApp;
 
             foreach (var usuario in usuarios)
             {
@@ -300,7 +299,7 @@ namespace Validator.Application.Services
                 var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);
 
                 await _sendgridService.SendAsync(usuario.Nome, usuario.Email, html, "Escolha dos Avaliadores");
-              
+
 
             }
         }
