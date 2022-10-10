@@ -244,9 +244,7 @@ namespace Validator.Application.Services
             }
 
             await CommitAsync();
-
-            await EnvairEmailAcesso(usuarios, url);
-
+            
             foreach (var usuario in usuarios)
             {
                 var superior = usuarios.FirstOrDefault(f => f.Email == usuario.EmailSuperior);
@@ -262,6 +260,8 @@ namespace Validator.Application.Services
             _processoService.Update(processo);
 
             await CommitAsync();
+
+            await EnvairEmailAcesso(usuarios, url);
 
             return ValidationResult;
 
