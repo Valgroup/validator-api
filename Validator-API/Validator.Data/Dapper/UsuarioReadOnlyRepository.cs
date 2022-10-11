@@ -250,7 +250,7 @@ namespace Validator.Data.Dapper
             };
         }
 
-        public async Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command, Guid? avaliadorAntigoId = null)
+        public async Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command, Guid? avaliadorAntigoId = null, List<Guid>? avaliadoresEscolhidosIds = null)
         {
             using var cn = CnRead;
             var usuario = await _userResolver.GetAuthenticateAsync();
@@ -294,6 +294,12 @@ namespace Validator.Data.Dapper
             }
 
             qrySb.Append(" AND U.Id NOT IN (SELECT UAD.AvaliadorId FROM UsuarioAvaliador UAD WHERE UAD.UsuarioId = @UsuarioId ) ");
+
+            if (avaliadoresEscolhidosIds != null && avaliadoresEscolhidosIds.Any())
+            {
+                var idsNotIn = avaliadoresEscolhidosIds.Select(s => $"'{s}'");
+                qrySb.Append($" AND U.Id NOT IN ({idsNotIn}) ");
+            }
 
             if (usuario.SuperiorId.HasValue)
                 qrySb.Append(" AND U.Id != @SuperiorId ");

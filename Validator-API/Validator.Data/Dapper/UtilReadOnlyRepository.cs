@@ -15,6 +15,18 @@ namespace Validator.Data.Dapper
             _userResolver = userResolver;
         }
 
+        public async Task<int> ObterQtdPendetes()
+        {
+            using var cn = CnRead;
+            return await cn.QueryFirstOrDefaultAsync<int>(@"SELECT COUNT(1) QTD FROM Planilhas WHERE EhValido = 0");
+        }
+
+        public async Task<int> ObterQtdTotal()
+        {
+            using var cn = CnRead;
+            return await cn.QueryFirstOrDefaultAsync<int>(@"SELECT COUNT(1) QTD FROM Planilhas WHERE EhValido = 1");
+        }
+
         public async Task<IEnumerable<SelectedItemDto>> ObterTodasDivisoes()
         {
             using var cn = CnRead;

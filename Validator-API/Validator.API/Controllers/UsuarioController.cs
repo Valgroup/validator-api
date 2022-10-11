@@ -70,7 +70,7 @@ namespace Validator.API.Controllers
                 QueryNome = command.QueryNome,
                 Take = command.Take,
                 UsuarioId = command.UsuarioId
-            }, command.AvaliadorId);
+            }, command.AvaliadorId, command.AvaliadoresEscolhidoIds);
 
             var dto = new SubstiuirAvaliadorDto
             {

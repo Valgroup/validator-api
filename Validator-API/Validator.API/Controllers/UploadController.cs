@@ -17,6 +17,8 @@ namespace Validator.API.Controllers
         }
 
         [HttpPost, DisableRequestSizeLimit, Route("UploadXLS")]
+        [ProducesResponseType(typeof(UploadResult), 200)]
+        [ProducesResponseType(typeof(ValidationResult), 422)]
         public async Task<IActionResult> UploadXLS()
         {
             try
@@ -43,7 +45,7 @@ namespace Validator.API.Controllers
 
                     var result = await _planilhaAppService.Updload(memory);
                     if (result.IsValid)
-                        return await StatusCodeOK(result);
+                        return Ok(result);
 
                     return await EntityValidation(result);
                 }

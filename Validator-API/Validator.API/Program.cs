@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 using Validator.API.Filter;
 using Validator.API.Middlewares;
 using Validator.API.Resolvers;
@@ -19,9 +20,10 @@ using Validator.Domain.Services;
 using Validator.Service.Sendgrid;
 
 var builder = WebApplication.CreateBuilder(args);
-
+//var cn = SqlTcp.NewSQLTCPConnectionString();
 var cnConfig = builder.Configuration.GetConnectionString("CnValidator");
 RuntimeConfigurationHelper.ConnectionString = cnConfig;
+
 builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
 
 RuntimeConfigurationHelper.Ambiente = builder.Configuration.GetValue<string>("Ambiente");

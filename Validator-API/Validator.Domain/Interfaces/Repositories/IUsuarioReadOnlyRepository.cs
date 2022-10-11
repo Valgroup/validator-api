@@ -12,7 +12,7 @@ namespace Validator.Domain.Interfaces.Repositories
         Task<IPagedResult<AvaliadorDto>> ObterAvaliadores(AvaliadoresConsultaCommand command);
         Task<IPagedResult<AvaliadorDto>> ObterAvaliadoresDetalhes(Guid avaliadoId);
         Task<IPagedResult<AvaliadorDto>> EscolherAvaliadores(AvaliadoresConsultaCommand command);
-        Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command, Guid? avaliadorAntigoId = null);
+        Task<IPagedResult<AvaliadorDto>> ObterSugestaoAvaliadores(SugestaoAvaliadoresConsultaCommand command, Guid? avaliadorAntigoId = null, List<Guid>? avaliadoresEscolhidosIds = null);
         Task<IPagedResult<UsuarioSubordinadoDto>> ObterSubordinados(PaginationBaseCommand command);
         Task<UsuarioDto> ObterDetalhes(Guid id);
         Task<IPagedResult<UsuarioAprovacaoSubordinadoDto>> ObterAprovacaoSubordinados(AprovacaoSubordinadosCommand command);

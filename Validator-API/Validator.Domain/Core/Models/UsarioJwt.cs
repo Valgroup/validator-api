@@ -37,5 +37,7 @@ namespace Validator.Domain.Core.Models
         public bool HabilitarParametros { get; set; }
         public bool Download { get; set; }
         public bool SugestaoEnviada { get; set; }
+        public int QtdTotal { get; set; }
+        public int QtdPendentes { get; set; }
     }
 }

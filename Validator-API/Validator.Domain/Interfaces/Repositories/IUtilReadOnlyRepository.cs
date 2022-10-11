@@ -9,6 +9,8 @@ namespace Validator.Domain.Interfaces.Repositories
         Task<bool> TemPendencias();
         Task<bool> TemDadosExportacao();
         Task<bool> TemSugestaoEnviadas(Guid usuarioId);
-        
+        Task<int> ObterQtdPendetes();
+        Task<int> ObterQtdTotal();
+
     }
 }

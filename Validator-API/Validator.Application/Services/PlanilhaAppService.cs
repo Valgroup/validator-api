@@ -118,9 +118,12 @@ namespace Validator.Application.Services
             return ValidationResult;
         }
 
-        public async Task<ValidationResult> Updload(Stream excelStream)
+        public async Task<UploadResult> Updload(Stream excelStream)
         {
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            int qtdPedentes = 0;
+            int qtdTotal = 0;
+
             using (var reader = ExcelReaderFactory.CreateReader(excelStream, new ExcelReaderConfiguration { FallbackEncoding = Encoding.UTF8 }))
             {
                 var dataSet = reader.AsDataSet();
@@ -173,9 +176,12 @@ namespace Validator.Application.Services
 
                 await CommitAsync();
 
+                qtdTotal = planilhas.Where(w => w.EhValido).Count();
+                qtdPedentes = planilhas.Where(w => !w.EhValido).Count();
+
             }
 
-            return ValidationResult;
+            return new UploadResult { };
         }
 
         public async Task<byte[]> GerarAvaliacao()

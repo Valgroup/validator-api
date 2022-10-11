@@ -236,7 +236,9 @@ namespace Validator.Application.Services
                         LimparBase = true,
                         ConsutarUsuarios = true,
                         HabilitarParametros = habilitarParametros,
-                        Download = download
+                        Download = download,
+                        QtdPendentes = await _utilReadOnlyRepository.ObterQtdPendetes(),
+                        QtdTotal = await _utilReadOnlyRepository.ObterQtdTotal()
                     };
 
                 case Domain.Core.Enums.EPerfilUsuario.Avaliado:
