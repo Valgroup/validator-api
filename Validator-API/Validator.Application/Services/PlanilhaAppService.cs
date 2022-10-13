@@ -232,10 +232,13 @@ namespace Validator.Application.Services
 
                 foreach (var item in dados)
                 {
-                    ws.Cell($"A{linha}").Value = item.CPFAvaliado;
-                    ws.Cell($"B{linha}").Value = item.CPFAvaliador;
+                    ws.Cell($"A{linha}").SetValue(item.CPFAvaliado);
+                    ws.Cell($"B{linha}").SetValue(item.CPFAvaliador);
                     ws.Cell($"C{linha}").Value = item.Tipo;
                     ws.Cell($"D{linha}").Value = item.Status;
+
+                    ws.Cell($"A{linha}").DataType = XLDataType.Text;
+                    ws.Cell($"B{linha}").DataType = XLDataType.Text;
 
                     var linhaEstilo = ws.Range($"A{linha}:D{linha}");
 

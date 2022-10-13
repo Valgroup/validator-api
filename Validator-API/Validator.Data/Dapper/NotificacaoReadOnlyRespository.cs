@@ -40,6 +40,7 @@ namespace Validator.Data.Dapper
                 notificacoes.AddRange(usuarios);
             }
 
+            var dhFinalizacao = new DateTime(2022, 28, 10);
             foreach (var item in notificacoes)
             {
                 var emailDto = new EmailAcessoDto
@@ -47,7 +48,7 @@ namespace Validator.Data.Dapper
                     Nome = item.Nome,
                   
                     Login = item.Email,
-                    Prazo = item.DhFinalizacao.ToShortDateString(),
+                    Prazo = dhFinalizacao.ToShortDateString(),
                     Link = url
                 };
 

@@ -281,8 +281,8 @@ namespace Validator.Application.Services
 
         private async Task EnvairEmailAcesso(List<Usuario> usuarios)
         {
-            var parametro = await _parametroService.GetByCurrentYear();
-
+            //var parametro = await _parametroService.GetByCurrentYear();
+            var dhFinalizacao = new DateTime(2022, 28, 10);
             string url = RuntimeConfigurationHelper.UrlApp;
 
             foreach (var usuario in usuarios)
@@ -292,7 +292,7 @@ namespace Validator.Application.Services
                     Nome = usuario.Nome,
                     Senha = usuario.SenhaGerada(),
                     Login = usuario.Email,
-                    Prazo = parametro.DhFinalizacao.ToShortDateString(),
+                    Prazo = dhFinalizacao.ToShortDateString(),
                     Link = url
                 };
 
