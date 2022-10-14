@@ -52,5 +52,14 @@ namespace Validator.API.Resolvers
 
             return Guid.Empty;
         }
+
+        public async Task<bool> IsAdministrator()
+        {
+            var user = await GetAuthenticateAsync();
+            if (user != null)
+                return user.Perfil == Domain.Core.Enums.EPerfilUsuario.Administrador;
+
+            return false;
+        }
     }
 }

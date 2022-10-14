@@ -297,8 +297,8 @@ namespace Validator.Data.Dapper
 
             if (avaliadoresEscolhidosIds != null && avaliadoresEscolhidosIds.Any())
             {
-                var idsNotIn = avaliadoresEscolhidosIds.Select(s => $"'{s}'");
-                qrySb.Append($" AND U.Id NOT IN ({idsNotIn}) ");
+                var idsNotIn = avaliadoresEscolhidosIds.Select(s => $"'{s}'").ToList();
+                qrySb.Append($" AND U.Id NOT IN ({string.Join(",", idsNotIn)}) ");
             }
 
             if (usuario.SuperiorId.HasValue)

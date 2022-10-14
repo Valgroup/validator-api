@@ -6,5 +6,6 @@ namespace Validator.Domain.Core.Interfaces
     {
         Task<Guid> GetYearIdAsync();
         Task<UsarioJwt> GetAuthenticateAsync();
+        Task<bool> IsAdministrator();
     }
 }

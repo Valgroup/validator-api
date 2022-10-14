@@ -78,7 +78,7 @@ namespace Validator.Application.Services
                 Perfil = usuario.Perfil,
                 Permissao = new PermissaoJwt(),
                 AnoBaseId = usuario.AnoBaseId,
-                DivisaoNome = usuario.Divisao.Nome,
+                DivisaoNome = usuario?.Divisao?.Nome,
                 DivisaoId = usuario.DivisaoId
             };
 

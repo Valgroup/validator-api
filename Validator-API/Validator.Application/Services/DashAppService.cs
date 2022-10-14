@@ -226,12 +226,12 @@ namespace Validator.Application.Services
                 if (usuarioExiste != null)
                     continue;
 
-                var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x');
-                var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x');
-                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, PasswordHelper.GenerateRandomPassword(), linha.CPF, ehGestor);
+                var ehDiretor = !string.IsNullOrEmpty(linha.Direcao) && linha.Direcao.Contains('x', StringComparison.InvariantCultureIgnoreCase);
+                var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x', StringComparison.InvariantCultureIgnoreCase);
+                var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, "valgroup2022", linha.CPF, ehGestor);
 
-                var setorId = setores.First(f => f.Nome == linha.CentroCusto).Id;
-                var divisaoId = divisoes.First(f => f.Nome == linha.Unidade).Id;
+                var setorId = setores.First(f => f.Nome.Contains(linha.CentroCusto, StringComparison.InvariantCultureIgnoreCase)).Id;
+                var divisaoId = divisoes.First(f => f.Nome.Contains(linha.Unidade, StringComparison.InvariantCultureIgnoreCase)).Id;
                 usuario.InformarDadosExtras(setorId, divisaoId);
 
                 usuarios.Add(usuario);
@@ -258,7 +258,7 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            await EnvairEmailAcesso(usuarios);
+            //await EnvairEmailAcesso(usuarios);
 
             return ValidationResult;
 
@@ -282,7 +282,7 @@ namespace Validator.Application.Services
         private async Task EnvairEmailAcesso(List<Usuario> usuarios)
         {
             //var parametro = await _parametroService.GetByCurrentYear();
-            var dhFinalizacao = new DateTime(2022, 28, 10);
+            var dhFinalizacao = new DateTime(2022, 10, 28);
             string url = RuntimeConfigurationHelper.UrlApp;
 
             foreach (var usuario in usuarios)

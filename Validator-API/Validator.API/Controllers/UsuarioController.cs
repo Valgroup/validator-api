@@ -3,6 +3,7 @@ using Validator.API.Controllers.Common;
 using Validator.Application.Interfaces;
 using Validator.Domain.Commands;
 using Validator.Domain.Commands.Usuarios;
+using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Core.Pagination;
 using Validator.Domain.Dtos.Usuarios;
 using Validator.Domain.Interfaces.Repositories;
@@ -15,17 +16,20 @@ namespace Validator.API.Controllers
     {
         private readonly IUsuarioReadOnlyRepository _usuarioReadOnlyRepository;
         private readonly IUsuarioAppService _usuarioAppService;
+        private readonly IUserResolver _userResolver;
 
-        public UsuarioController(IUsuarioReadOnlyRepository usuarioReadOnlyRepository, IUsuarioAppService usuarioAppService)
+        public UsuarioController(IUsuarioReadOnlyRepository usuarioReadOnlyRepository, IUsuarioAppService usuarioAppService, IUserResolver userResolver)
         {
             _usuarioReadOnlyRepository = usuarioReadOnlyRepository;
             _usuarioAppService = usuarioAppService;
+            _userResolver = userResolver;
         }
 
         [HttpPost, Route("Todos")]
         [ProducesResponseType(typeof(PagedResult<UsuarioDto>), 200)]
         public async Task<IActionResult> Todos(UsuarioAdmConsultaCommand command)
         {
+            
             return Ok(await _usuarioReadOnlyRepository.Todos(command));
         }
 
