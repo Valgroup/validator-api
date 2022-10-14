@@ -2,6 +2,7 @@
 using Validator.Data.Repositories;
 using Validator.Domain.Core.Interfaces;
 using Validator.Domain.Dtos;
+using Validator.Domain.Entities;
 using Validator.Domain.Interfaces.Repositories;
 
 namespace Validator.Data.Dapper
@@ -13,6 +14,12 @@ namespace Validator.Data.Dapper
         public UtilReadOnlyRepository(IUserResolver userResolver)
         {
             _userResolver = userResolver;
+        }
+
+        public async Task<AnoBase> ObterAnoBae()
+        {
+            using var cn = CnRead;
+            return await cn.QueryFirstOrDefaultAsync<AnoBase>(@"  SELECT TOP 1 * FROM AnoBases");
         }
 
         public async Task<int> ObterQtdPendetes()

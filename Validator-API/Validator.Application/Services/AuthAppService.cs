@@ -1,5 +1,6 @@
 ﻿using Validator.Application.Interfaces;
 using Validator.Domain.Commands.Logins;
+using Validator.Domain.Commands.Usuarios;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Enums;
 using Validator.Domain.Core.Helpers;
@@ -25,7 +26,11 @@ namespace Validator.Application.Services
 
         public AuthAppService(IUnitOfWork unitOfWork, IUsuarioService usuarioService,
             IProcessoService processoService,
-            IUtilReadOnlyRepository utilReadOnlyRepository, IUserResolver userResolver, IParametroService parametroService, ISendGridService sendgridService, ITemplateRazorService templateRazorService) : base(unitOfWork)
+            IUtilReadOnlyRepository utilReadOnlyRepository,
+            IUserResolver userResolver,
+            IParametroService parametroService,
+            ISendGridService sendgridService,
+            ITemplateRazorService templateRazorService) : base(unitOfWork)
         {
             _usuarioService = usuarioService;
             _processoService = processoService;
@@ -277,6 +282,36 @@ namespace Validator.Application.Services
                     return new PermissaoJwt();
 
             }
+        }
+
+        public async Task<ValidationResult> AdicionarAdm(UsuarioAdministradorCommand command)
+        {
+            var anoBase = await _utilReadOnlyRepository.ObterAnoBae();
+            var usuario = new Usuario(Guid.NewGuid(), command.Nome, command.Email, null, false, "RH", PasswordHelper.GenerateRandomPassword(), null, false);
+            usuario.AnoBaseId = anoBase.AnoBaseId;
+
+            usuario.EhAdministrador();
+
+            await _usuarioService.CreateAsync(usuario);
+
+            await CommitAsync();
+
+            var parametros = await _parametroService.GetByCurrentYear();
+
+            var emailDto = new EmailAcessoDto
+            {
+                Nome = usuario.Nome,
+                Senha = usuario.SenhaGerada(),
+                Login = usuario.Email,
+                Prazo = parametros.DhFinalizacao.ToShortDateString(),
+                Link = RuntimeConfigurationHelper.UrlApp
+            };
+
+            var html = await _templateRazorService.BuilderHtmlAsString("Email/_EnvioAcesso", emailDto);
+
+            await _sendgridService.SendAsync(usuario.Nome, command.Email, html, "Acesso de Administrador");
+
+            return ValidationResult;
         }
     }
 }

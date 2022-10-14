@@ -8,7 +8,7 @@ namespace Validator.Domain.Core.Helpers
         {
             var opts = new PasswordOptions()
             {
-                RequiredLength = 8,
+                RequiredLength = 14,
                 RequiredUniqueChars = 4,
                 RequireDigit = true,
                 RequireLowercase = true,

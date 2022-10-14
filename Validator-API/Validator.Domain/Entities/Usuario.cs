@@ -137,5 +137,10 @@ namespace Validator.Domain.Entities
         {
             return _senhaGerada;
         }
+
+        public void EhAdministrador()
+        {
+            Perfil = EPerfilUsuario.Administrador;
+        }
     }
 }

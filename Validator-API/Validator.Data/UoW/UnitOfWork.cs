@@ -40,7 +40,7 @@ namespace Validator.Data.UoW
 
                 if (entryMustHaveYear == null) continue;
 
-                if (entry.State == EntityState.Added)
+                if (entry.State == EntityState.Added && yearId != Guid.Empty)
                     entryMustHaveYear.AnoBaseId = yearId;
                 else
                     entry.Property(nameof(IAnoBase.AnoBaseId)).IsModified = false;

@@ -1,4 +1,5 @@
 ﻿using Validator.Domain.Dtos;
+using Validator.Domain.Entities;
 
 namespace Validator.Domain.Interfaces.Repositories
 {
@@ -11,6 +12,8 @@ namespace Validator.Domain.Interfaces.Repositories
         Task<bool> TemSugestaoEnviadas(Guid usuarioId);
         Task<int> ObterQtdPendetes();
         Task<int> ObterQtdTotal();
+
+        Task<AnoBase> ObterAnoBae();
 
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Validator.Application.Interfaces;
 using Validator.Domain.Commands.Logins;
+using Validator.Domain.Commands.Usuarios;
 using Validator.Domain.Core;
 using Validator.Domain.Core.Models;
 
@@ -57,6 +58,28 @@ namespace Validator.API.Controllers
                 return Ok(result);
 
             return StatusCode(422, result);
+        }
+
+
+        [HttpPost, Route("AdicionarAdministrador")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(LoginResultCommand), 200)]
+        [ProducesResponseType(typeof(LoginResultCommand), 422)]
+        public async Task<IActionResult> AdicionarAdministrador([FromBody] UsuarioAdministradorCommand command)
+        {
+            try
+            {
+                var result = await _authAppService.AdicionarAdm(command);
+                if (result.IsValid)
+                    return Ok(result);
+
+                return StatusCode(422, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
         }
 
 
