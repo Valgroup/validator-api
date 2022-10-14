@@ -303,7 +303,7 @@ namespace Validator.Application.Services
                 Nome = usuario.Nome,
                 Senha = usuario.SenhaGerada(),
                 Login = usuario.Email,
-                Prazo = parametros.DhFinalizacao.ToShortDateString(),
+                Prazo = parametros != null ? parametros.DhFinalizacao.ToShortDateString() : new DateTime(2022, 10, 28).ToShortDateString(),
                 Link = RuntimeConfigurationHelper.UrlApp
             };
 
