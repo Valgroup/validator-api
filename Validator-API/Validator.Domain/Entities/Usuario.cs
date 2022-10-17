@@ -95,7 +95,7 @@ namespace Validator.Domain.Entities
             return Senha == CryptoMD5(senha);
         }
 
-        public void InformarDadosExtras(Guid setorId, Guid divisaoId)
+        public void InformarDadosExtras(Guid? setorId, Guid? divisaoId)
         {
             SetorId = setorId;
             DivisaoId = divisaoId;

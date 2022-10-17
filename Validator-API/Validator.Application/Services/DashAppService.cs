@@ -189,7 +189,10 @@ namespace Validator.Application.Services
             var unidades = planilhas.Select(s => s.Unidade).DistinctBy(s => s);
             foreach (var nome in unidades)
             {
-                var existe = divisoesExistentes.FirstOrDefault(f => f.Nome.Contains(nome));
+                if (string.IsNullOrEmpty(nome))
+                    continue;
+
+                var existe = divisoesExistentes.FirstOrDefault(f => f.Nome.ToLower() == nome.ToLower());
                 if (existe != null)
                 {
                     divisoes.Add(existe);
@@ -206,7 +209,10 @@ namespace Validator.Application.Services
             var setoresOuNiveis = planilhas.Select(s => s.CentroCusto).DistinctBy(s => s);
             foreach (var centroCusto in setoresOuNiveis)
             {
-                var existe = setoresExistentes.FirstOrDefault(f => f.Nome.Contains(centroCusto));
+                if (string.IsNullOrEmpty(centroCusto))
+                    continue;
+
+                var existe = setoresExistentes.FirstOrDefault(f => f.Nome.ToLower() == centroCusto.ToLower());
                 if (existe != null)
                 {
                     setores.Add(existe);
@@ -230,8 +236,8 @@ namespace Validator.Application.Services
                 var ehGestor = !string.IsNullOrEmpty(linha.GestorCorporativo) && linha.GestorCorporativo.Contains('x', StringComparison.InvariantCultureIgnoreCase);
                 var usuario = new Usuario(Guid.NewGuid(), linha.Nome, linha.Email, linha.EmailSuperior, ehDiretor, linha.Nivel, linha.CPF, ehGestor);
 
-                var setorId = setores.First(f => f.Nome.Contains(linha.CentroCusto, StringComparison.InvariantCultureIgnoreCase)).Id;
-                var divisaoId = divisoes.First(f => f.Nome.Contains(linha.Unidade, StringComparison.InvariantCultureIgnoreCase)).Id;
+                var setorId = setores.FirstOrDefault(f => f.Nome.ToLower() == linha.CentroCusto.ToLower())?.Id;
+                var divisaoId = divisoes.FirstOrDefault(f => f.Nome.ToLower() == linha.Unidade.ToLower())?.Id;
                 usuario.InformarDadosExtras(setorId, divisaoId);
 
                 usuarios.Add(usuario);
