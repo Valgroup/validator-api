@@ -4,8 +4,11 @@ namespace Validator.Domain.Core.Helpers
 {
     public class PasswordHelper
     {
-        public static string GenerateRandomPassword()
+        public static string GenerateRandomPassword(Guid usuarioId)
         {
+            return usuarioId.ToString().Replace("-", "");
+
+
             var opts = new PasswordOptions()
             {
                 RequiredLength = 14,

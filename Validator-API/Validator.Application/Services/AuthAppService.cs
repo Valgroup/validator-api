@@ -178,7 +178,7 @@ namespace Validator.Application.Services
                 Nome = usuario.Nome,
                 Senha = novaSenha,
                 Login = usuario.Email,
-                Prazo = parametros.DhFinalizacao.ToShortDateString(),
+                Prazo = parametros != null ? parametros.DhFinalizacao.ToShortDateString() : new DateTime(2022, 10, 28).ToShortDateString(),
                 Link = RuntimeConfigurationHelper.UrlApp
             };
 
@@ -287,7 +287,7 @@ namespace Validator.Application.Services
         public async Task<ValidationResult> AdicionarAdm(UsuarioAdministradorCommand command)
         {
             var anoBase = await _utilReadOnlyRepository.ObterAnoBae();
-            var usuario = new Usuario(Guid.NewGuid(), command.Nome, command.Email, null, false, "RH", PasswordHelper.GenerateRandomPassword(), null, false);
+            var usuario = new Usuario(Guid.NewGuid(), command.Nome, command.Email, null, false, "RH", null, false);
             usuario.AnoBaseId = anoBase.AnoBaseId;
 
             usuario.EhAdministrador();
@@ -296,14 +296,14 @@ namespace Validator.Application.Services
 
             await CommitAsync();
 
-            var parametros = await _parametroService.GetByCurrentYear();
+            //var parametros = await _parametroService.GetByCurrentYear();
 
             var emailDto = new EmailAcessoDto
             {
                 Nome = usuario.Nome,
                 Senha = usuario.SenhaGerada(),
                 Login = usuario.Email,
-                Prazo = parametros != null ? parametros.DhFinalizacao.ToShortDateString() : new DateTime(2022, 10, 28).ToShortDateString(),
+                Prazo = new DateTime(2022, 10, 28).ToShortDateString(),
                 Link = RuntimeConfigurationHelper.UrlApp
             };
 
