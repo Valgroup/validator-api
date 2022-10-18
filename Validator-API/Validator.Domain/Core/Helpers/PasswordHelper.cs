@@ -6,7 +6,9 @@ namespace Validator.Domain.Core.Helpers
     {
         public static string GenerateRandomPassword(Guid usuarioId)
         {
-            return usuarioId.ToString().Replace("-", "");
+            return "valgroup2022";
+
+            //return usuarioId.ToString().Replace("-", "");
 
 
             var opts = new PasswordOptions()
