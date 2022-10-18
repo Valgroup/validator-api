@@ -65,6 +65,7 @@ namespace Validator.API.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(LoginResultCommand), 200)]
         [ProducesResponseType(typeof(LoginResultCommand), 422)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> AdicionarAdministrador([FromBody] UsuarioAdministradorCommand command)
         {
             try
