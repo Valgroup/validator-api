@@ -22,9 +22,9 @@ using Validator.Service.Sendgrid;
 var builder = WebApplication.CreateBuilder(args);
 var cn = SqlTcp.NewSQLTCPConnectionString();
 var cnConfig = builder.Configuration.GetConnectionString("CnValidator");
-RuntimeConfigurationHelper.ConnectionString = cnConfig;
+RuntimeConfigurationHelper.ConnectionString = cn.ConnectionString;
 
-builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cnConfig));
+builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cn.ConnectionString));
 
 RuntimeConfigurationHelper.Ambiente = builder.Configuration.GetValue<string>("Ambiente");
 RuntimeConfigurationHelper.UrlApp = builder.Configuration.GetValue<string>("UrlApp");
