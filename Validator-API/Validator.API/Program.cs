@@ -20,14 +20,13 @@ using Validator.Domain.Services;
 using Validator.Service.Sendgrid;
 
 var builder = WebApplication.CreateBuilder(args);
-var cn = SqlTcp.NewSQLTCPConnectionString();
 var cnConfig = builder.Configuration.GetConnectionString("CnValidator");
 RuntimeConfigurationHelper.ConnectionString = cn.ConnectionString;
 
 builder.Services.AddDbContext<ValidatorContext>(o => o.UseSqlServer(cn.ConnectionString));
 
 RuntimeConfigurationHelper.Ambiente = builder.Configuration.GetValue<string>("Ambiente");
-RuntimeConfigurationHelper.UrlApp = builder.Configuration.GetValue<string>("UrlApp");
+RuntimeConfigurationHelper.UrlApp = builder.Configuration.GetValue<string>("UrlAvaliadorApp");
 
 // Add services to the container.
 builder.Services.AddTransient<IPlanilhaAppService, PlanilhaAppService>();
