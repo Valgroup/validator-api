@@ -24,7 +24,7 @@ namespace Validator.Data.Dapper
             var usuariosSuperiores = await cn.QueryAsync<NotificacaoDto>(@"SELECT US.Nome, US.Email, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P) DhFinalizacao FROM Usuarios U
                                                                            INNER JOIN Usuarios US ON US.Id = U.SuperiorId
                                                                            WHERE
-                                                                           U.Id IN (SELECT UA.UsuarioId FROM UsuarioAvaliador UA WHERE UA.Status IN (0,2) AND DATEDIFF(DAY, UA.DataHora, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P)) <= 5 ) ");
+                                                                           U.Id IN (SELECT UA.UsuarioId FROM UsuarioAvaliador UA WHERE UA.Status IN (0,2) AND DATEDIFF(DAY, UA.DataHora, (SELECT TOP 1 P.DhFinalizacao FROM Parametro P)) <= 20 )  GROUP BY US.Nome, US.Email ");
             if (usuariosSuperiores.Any())
             {
                 notificacoes.AddRange(usuariosSuperiores);
@@ -40,7 +40,7 @@ namespace Validator.Data.Dapper
                 notificacoes.AddRange(usuarios);
             }
 
-            var dhFinalizacao = new DateTime(2022, 28, 10);
+            var dhFinalizacao = new DateTime(2022, 10, 28);
             foreach (var item in notificacoes)
             {
                 var emailDto = new EmailAcessoDto

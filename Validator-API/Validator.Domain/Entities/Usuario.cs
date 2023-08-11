@@ -12,19 +12,22 @@ namespace Validator.Domain.Entities
         protected Usuario() { }
         private string _senhaGerada;
 
-        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string senha, string? documento, bool ehGestor)
+        public Usuario(Guid azureId, string nome, string email, string emailSuperior, bool ehDiretor, string cargo, string? documento, bool ehGestor)
         {
+            Id = NewId;
+
             AzureId = azureId;
             Nome = nome;
             Email = email;
             EmailSuperior = emailSuperior;
             EhDiretor = ehDiretor;
             Cargo = cargo;
-            _senhaGerada = senha;
-            Senha = CryptoMD5(senha);
+            _senhaGerada = PasswordHelper.GenerateRandomPassword(Id);
+            Senha = CryptoMD5(_senhaGerada);
             Documento = documento;
             Ativo = true;
             EhGestor = ehGestor;
+            
         }
 
         public Guid Id { get; private set; }
@@ -92,7 +95,7 @@ namespace Validator.Domain.Entities
             return Senha == CryptoMD5(senha);
         }
 
-        public void InformarDadosExtras(Guid setorId, Guid divisaoId)
+        public void InformarDadosExtras(Guid? setorId, Guid? divisaoId)
         {
             SetorId = setorId;
             DivisaoId = divisaoId;
@@ -127,7 +130,7 @@ namespace Validator.Domain.Entities
 
         public string MudarSenha()
         {
-            var novaSenha = PasswordHelper.GenerateRandomPassword();
+            var novaSenha = PasswordHelper.GenerateRandomPassword(Id);
             Senha = CryptoMD5(novaSenha);
 
             return novaSenha;
@@ -142,5 +145,7 @@ namespace Validator.Domain.Entities
         {
             Perfil = EPerfilUsuario.Administrador;
         }
+
+
     }
 }

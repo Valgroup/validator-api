@@ -316,7 +316,7 @@ namespace Validator.Data.Dapper
            
 
             if (!string.IsNullOrEmpty(command.QueryNome))
-                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR SUP.Nome LIKE @WhereLike OR U.Cargo LIKE @WhereLike ) ");
+                qrySb.Append(" AND (U.Nome LIKE @WhereLike OR U.Email LIKE @WhereLike OR S.Nome LIKE @WhereLike OR D.Nome LIKE @WhereLike OR U.Cargo LIKE @WhereLike ) ");
 
             qrySb.Append("ORDER BY U.Nome ");
             qrySb.Append("OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY ");

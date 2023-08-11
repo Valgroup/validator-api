@@ -18,7 +18,8 @@ namespace Validator.API.Controllers
         public async Task<IActionResult> Download()
         {
             var stream = await _planilhaAppService.GerarAvaliacao();
-            
+            //application/vnd.ms-excel
+            //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
             return File(stream, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: $"Avaliador-{DateTime.Now.ToString("dd-MM-yyyy-HH-mm")}");
         }
     }

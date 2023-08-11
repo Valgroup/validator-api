@@ -14,7 +14,7 @@ namespace Validator.Service.Sendgrid
 
         public async Task SendAsync(string name, string emailTo, string html, string subject)
         {
-            var from = new EmailAddress("ti.sp1@valgroupco.com", "Valgroup TI");
+            var from = new EmailAddress("nao-responder@valgroupco.com", "Valgroup TI");
             var to = new EmailAddress(emailTo, name);
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, html, html);

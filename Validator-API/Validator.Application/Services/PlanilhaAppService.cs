@@ -189,6 +189,7 @@ namespace Validator.Application.Services
             using (var workBook = new XLWorkbook())
             {
                 var ws = workBook.Worksheets.Add(DateTime.Now.Year.ToString());
+                               
                 ws.Cell("A1").Value = "";
                 ws.Cell("B1").Value = "Avaliação 180";
                 ws.Cell("C1").Value = "";
@@ -263,6 +264,7 @@ namespace Validator.Application.Services
 
                 using var ms = new MemoryStream();
                 workBook.SaveAs(ms);
+                await ms.FlushAsync();
                 ms.Position = 0;
                 return ms.ToArray();
             }

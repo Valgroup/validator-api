@@ -57,7 +57,7 @@ namespace Validator.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> EnviarNotificacaoPendencias()
         {
-            var url = $"http://matera/Avaliador/{RuntimeConfigurationHelper.Ambiente}/login";
+            var url = RuntimeConfigurationHelper.UrlApp;
             await _notificacaoReadOnlyRespository.EnviarNotificacaoPendente(url);
 
             return Ok("Todas notificações foram enviadas!");
